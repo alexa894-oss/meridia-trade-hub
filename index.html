@@ -388,20 +388,27 @@ section { padding: 96px 0; }
   background: var(--white);
   border-top: var(--hairline);
   border-bottom: var(--hairline);
+  padding: 56px 0;
 }
+#quienes .section-header { margin-bottom: 36px; }
+#quienes .section-title { margin-bottom: 10px; }
+#quienes .section-desc { font-size: 0.9rem; }
 .pillars-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 28px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
 }
 .pillar-card {
-  padding: 36px 32px;
+  padding: 22px 24px;
   border: var(--hairline);
   border-radius: var(--r-card);
   background: var(--paper);
   transition: all var(--transition);
   position: relative;
   overflow: hidden;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
 }
 .pillar-card::before {
   content: '';
@@ -415,28 +422,160 @@ section { padding: 96px 0; }
   transition: opacity var(--transition);
 }
 .pillar-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
   border-color: rgba(201,168,76,0.4);
   box-shadow: var(--shadow-hover);
 }
 .pillar-card:hover::before { opacity: 1; }
 .pillar-icon {
-  width: 44px;
-  height: 44px;
-  margin-bottom: 24px;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
   color: var(--gold);
+  margin-top: 2px;
 }
+.pillar-text {}
 .pillar-title {
   font-family: 'Fraunces', serif;
-  font-size: 1.15rem;
+  font-size: 1rem;
   font-weight: 400;
   color: var(--navy);
-  margin-bottom: 12px;
+  margin-bottom: 6px;
 }
 .pillar-body {
-  font-size: 0.9rem;
+  font-size: 0.83rem;
   color: var(--text-light);
-  line-height: 1.65;
+  line-height: 1.6;
+}
+@media (max-width: 640px) {
+  .pillars-grid { grid-template-columns: 1fr; }
+  #quienes { padding: 48px 0; }
+}
+
+/* ─── ACCORDION ──────────────────────────────────────────────────────────── */
+.accordion { display: flex; flex-direction: column; gap: 10px; }
+.accordion-item {
+  border: var(--hairline);
+  border-radius: var(--r-card);
+  background: var(--paper);
+  overflow: hidden;
+  transition: border-color var(--transition);
+}
+.accordion-item.open { border-color: rgba(201,168,76,0.4); }
+.accordion-trigger {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px 20px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.accordion-trigger:hover { background: rgba(201,168,76,0.04); }
+.accordion-icon-wrap {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--gold-label);
+}
+.accordion-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--navy);
+  flex: 1;
+}
+.accordion-chevron {
+  color: var(--text-light);
+  transition: transform var(--transition);
+  flex-shrink: 0;
+}
+.accordion-item.open .accordion-chevron { transform: rotate(180deg); }
+.accordion-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s cubic-bezier(.4,0,.2,1);
+}
+.accordion-body-inner {
+  padding: 0 20px 16px 68px;
+  font-size: 0.84rem;
+  color: var(--text-light);
+  line-height: 1.6;
+}
+
+/* ─── WHATSAPP FIELD ─────────────────────────────────────────────────────── */
+.phone-wrap {
+  display: flex;
+  gap: 8px;
+}
+.phone-code-select {
+  flex-shrink: 0;
+  width: 108px;
+  padding: 11px 10px;
+  border: 1px solid rgba(27,42,74,0.18);
+  border-radius: var(--r-input);
+  font-family: 'Archivo', sans-serif;
+  font-size: 0.85rem;
+  color: var(--navy);
+  background: var(--white);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23525a70' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 24px;
+  cursor: pointer;
+}
+.phone-code-select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+}
+.phone-input-num {
+  flex: 1;
+}
+
+/* ─── CALENDLY SECTION ───────────────────────────────────────────────────── */
+#agendar {
+  background: var(--paper);
+  border-top: var(--hairline);
+  padding: 80px 0;
+}
+.agendar-inner {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 64px;
+  align-items: start;
+}
+.agendar-text .section-header { margin-bottom: 28px; }
+.agendar-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.82rem;
+  color: var(--text-light);
+  margin-bottom: 10px;
+}
+.agendar-pill svg { color: var(--gold); flex-shrink: 0; }
+.calendly-wrap {
+  border-radius: var(--r-card);
+  overflow: hidden;
+  border: var(--hairline);
+  min-height: 640px;
+  background: var(--white);
+}
+@media (max-width: 900px) {
+  .agendar-inner { grid-template-columns: 1fr; gap: 36px; }
+  .calendly-wrap { min-height: 580px; }
 }
 
 /* ─── SHOWROOM ───────────────────────────────────────────────────────────── */
@@ -1228,6 +1367,7 @@ section { padding: 96px 0; }
         <li><a href="#quienes">Quiénes somos</a></li>
         <li><a href="#catalogo">Catálogo</a></li>
         <li><a href="#showroom">Showroom</a></li>
+        <li><a href="#agendar">Agendar llamada</a></li>
       </ul>
       <a href="#cotiza" class="btn btn-primary btn-sm nav-cta">Solicitar cotización</a>
       <button class="hamburger" id="hamburgerBtn" aria-label="Menú">
@@ -1269,7 +1409,7 @@ section { padding: 96px 0; }
   </div>
   <div class="hero-content">
     <div class="hero-badge-wrap">
-      <span class="badge badge-outline badge-dot">Panamá · China · Latinoamérica</span>
+      <span class="badge badge-outline badge-dot">China · Latinoamérica</span>
     </div>
     <h1 class="hero-title">
       Tu ventana directa a<br><em>fábricas verificadas</em> en China
@@ -1349,8 +1489,8 @@ section { padding: 96px 0; }
               </div>
             </div>
             <div class="factory-meta-item">
-              <span class="factory-meta-label">Confianza</span>
-              <div class="trust-score"><span class="trust-stars">★★★★★</span> 4.9</div>
+              <span class="factory-meta-label">Ubicación</span>
+              <span class="factory-meta-value">Guangzhou, Guangdong</span>
             </div>
           </div>
           <div class="factory-actions">
@@ -1404,8 +1544,8 @@ section { padding: 96px 0; }
               </div>
             </div>
             <div class="factory-meta-item">
-              <span class="factory-meta-label">Confianza</span>
-              <div class="trust-score"><span class="trust-stars">★★★★★</span> 4.8</div>
+              <span class="factory-meta-label">Ubicación</span>
+              <span class="factory-meta-value">Shenzhen, Guangdong</span>
             </div>
           </div>
           <div class="factory-actions">
@@ -1456,8 +1596,8 @@ section { padding: 96px 0; }
               </div>
             </div>
             <div class="factory-meta-item">
-              <span class="factory-meta-label">Confianza</span>
-              <div class="trust-score"><span class="trust-stars">★★★★☆</span> 4.7</div>
+              <span class="factory-meta-label">Ubicación</span>
+              <span class="factory-meta-value">Yiwu, Zhejiang</span>
             </div>
           </div>
           <div class="factory-actions">
@@ -1508,8 +1648,8 @@ section { padding: 96px 0; }
               </div>
             </div>
             <div class="factory-meta-item">
-              <span class="factory-meta-label">Confianza</span>
-              <div class="trust-score"><span class="trust-stars">★★★★☆</span> 4.7</div>
+              <span class="factory-meta-label">Ubicación</span>
+              <span class="factory-meta-value">Ningbo, Zhejiang</span>
             </div>
           </div>
           <div class="factory-actions">
@@ -1600,7 +1740,7 @@ section { padding: 96px 0; }
     <div class="section-header center">
       <span class="badge badge-gold section-eyebrow">Quiénes somos</span>
       <h2 class="section-title">Una casa de comercio curada,<br><em class="serif" style="font-style:italic;color:var(--gold-label)">no un marketplace masivo</em></h2>
-      <p class="section-desc">Meridia nació para resolver el problema real del comprador LATAM: demasiadas opciones sin respaldo, agentes sin presencia digital y procesos opacos. Nosotros simplificamos el acceso a China con rigor y transparencia.</p>
+      <p class="section-desc">Simplificamos el acceso a China para compradores corporativos de Latinoamérica — con rigor, transparencia y un solo punto de contacto.</p>
     </div>
     <div class="pillars-grid">
       <div class="pillar-card">
@@ -1608,8 +1748,10 @@ section { padding: 96px 0; }
           <circle cx="22" cy="22" r="20" stroke="currentColor" stroke-width="1.5"/>
           <path d="M14 22l5 5 11-10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <h3 class="pillar-title">Fábricas avaladas</h3>
-        <p class="pillar-body">Cada fábrica en nuestro catálogo pasó por un proceso de verificación documental, visita comercial y análisis de capacidad. No trabajamos con intermediarios anónimos.</p>
+        <div class="pillar-text">
+          <h3 class="pillar-title">Fábricas avaladas</h3>
+          <p class="pillar-body">Cada fábrica pasó por verificación documental, visita comercial y análisis de capacidad. Sin intermediarios anónimos.</p>
+        </div>
       </div>
       <div class="pillar-card">
         <svg class="pillar-icon" viewBox="0 0 44 44" fill="none">
@@ -1617,8 +1759,10 @@ section { padding: 96px 0; }
           <path d="M10 36c0-6.627 5.373-12 12-12s12 5.373 12 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
           <circle cx="22" cy="22" r="20" stroke="currentColor" stroke-width="1" opacity=".3"/>
         </svg>
-        <h3 class="pillar-title">Un solo punto de contacto</h3>
-        <p class="pillar-body">No hablas con 10 proveedores distintos. Meridia es tu interlocutor único: coordina, consulta y cotiza en tu nombre — en español, desde Panamá.</p>
+        <div class="pillar-text">
+          <h3 class="pillar-title">Un solo punto de contacto</h3>
+          <p class="pillar-body">Meridia coordina, consulta y cotiza en tu nombre — en español, sin que hables con 10 proveedores distintos.</p>
+        </div>
       </div>
       <div class="pillar-card">
         <svg class="pillar-icon" viewBox="0 0 44 44" fill="none">
@@ -1626,8 +1770,10 @@ section { padding: 96px 0; }
           <path d="M14 18h16M14 23h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
           <path d="M28 27l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <h3 class="pillar-title">Curado, no infinito</h3>
-        <p class="pillar-body">Cuatro fábricas. Tres categorías. Sin ruido. Preferimos presentar opciones sólidas que abrumar con cientos de resultados sin contexto — la calidad de la selección es nuestro diferencial.</p>
+        <div class="pillar-text">
+          <h3 class="pillar-title">Curado, no infinito</h3>
+          <p class="pillar-body">Cuatro fábricas, tres categorías, sin ruido. La calidad de la selección es nuestro diferencial frente a cualquier marketplace masivo.</p>
+        </div>
       </div>
       <div class="pillar-card">
         <svg class="pillar-icon" viewBox="0 0 44 44" fill="none">
@@ -1637,8 +1783,10 @@ section { padding: 96px 0; }
           <path d="M4 22h36" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
           <path d="M6 14h32M6 30h32" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity=".5"/>
         </svg>
-        <h3 class="pillar-title">El puente de Panamá</h3>
-        <p class="pillar-body">Con sede en Ciudad de Panamá — hub logístico y financiero entre China y América Latina — operamos en la intersección natural del comercio internacional que conecta ambos mundos.</p>
+        <div class="pillar-text">
+          <h3 class="pillar-title">El puente de Panamá</h3>
+          <p class="pillar-body">Desde Ciudad de Panamá — hub logístico entre China y LATAM — operamos en la intersección natural del comercio internacional.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -1654,32 +1802,41 @@ section { padding: 96px 0; }
           <h2 class="section-title">El primer paso<br>es una conversación</h2>
           <p class="section-desc">Cuéntanos qué necesitas. Revisamos tu consulta y respondemos en un día hábil con opciones concretas — sin compromisos, sin costos ocultos.</p>
         </div>
-        <div class="cotiza-points">
-          <div class="cotiza-point">
-            <div class="cotiza-point-icon">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-            </div>
-            <div class="cotiza-point-text">
-              <strong>Solo empresas con RUC / NIT</strong>
-              <span>Trabajamos exclusivamente con compradores corporativos registrados. No gestionamos pedidos de personas naturales ni venta unitaria.</span>
-            </div>
-          </div>
-          <div class="cotiza-point">
-            <div class="cotiza-point-icon">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-            </div>
-            <div class="cotiza-point-text">
-              <strong>Respuesta en 1 día hábil</strong>
-              <span>Una vez recibida tu solicitud, te contactamos con una propuesta preliminar o solicitamos los detalles adicionales que necesitemos.</span>
+        <div class="accordion" id="cotizaAccordion">
+          <div class="accordion-item">
+            <button class="accordion-trigger" onclick="toggleAccordion(this)">
+              <span class="accordion-icon-wrap">
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </span>
+              <span class="accordion-title">Solo empresas con RUC / NIT</span>
+              <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="accordion-body">
+              <div class="accordion-body-inner">Trabajamos exclusivamente con compradores corporativos registrados. No gestionamos pedidos de personas naturales ni venta unitaria.</div>
             </div>
           </div>
-          <div class="cotiza-point">
-            <div class="cotiza-point-icon">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="accordion-item">
+            <button class="accordion-trigger" onclick="toggleAccordion(this)">
+              <span class="accordion-icon-wrap">
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              </span>
+              <span class="accordion-title">Respuesta en 1 día hábil</span>
+              <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="accordion-body">
+              <div class="accordion-body-inner">Una vez recibida tu solicitud, te contactamos con una propuesta preliminar o solicitamos los detalles adicionales que necesitemos.</div>
             </div>
-            <div class="cotiza-point-text">
-              <strong>Sin costo de consulta</strong>
-              <span>La cotización inicial es gratuita. Si avanzamos, te explicamos claramente cómo funciona el proceso antes de cualquier compromiso.</span>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-trigger" onclick="toggleAccordion(this)">
+              <span class="accordion-icon-wrap">
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span class="accordion-title">Sin costo de consulta</span>
+              <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="accordion-body">
+              <div class="accordion-body-inner">La cotización inicial es gratuita. Si avanzamos, te explicamos claramente cómo funciona el proceso antes de cualquier compromiso.</div>
             </div>
           </div>
         </div>
@@ -1704,6 +1861,26 @@ section { padding: 96px 0; }
               <div class="form-group form-col">
                 <label class="form-label">Correo corporativo</label>
                 <input class="form-input" type="email" placeholder="correo@empresa.com" required>
+              </div>
+              <div class="form-group form-col">
+                <label class="form-label">WhatsApp</label>
+                <div class="phone-wrap">
+                  <select class="phone-code-select" id="phoneCode" onchange="syncPhoneCode()">
+                    <option value="+507">🇵🇦 +507</option>
+                    <option value="+57">🇨🇴 +57</option>
+                    <option value="+52">🇲🇽 +52</option>
+                    <option value="+51">🇵🇪 +51</option>
+                    <option value="+56">🇨🇱 +56</option>
+                    <option value="+506">🇨🇷 +506</option>
+                    <option value="+593">🇪🇨 +593</option>
+                    <option value="+502">🇬🇹 +502</option>
+                    <option value="+1">🇩🇴 +1</option>
+                    <option value="+1">🇺🇸 +1</option>
+                    <option value="+34">🇪🇸 +34</option>
+                    <option value="+86">🇨🇳 +86</option>
+                  </select>
+                  <input class="form-input phone-input-num" id="phoneNum" type="tel" placeholder="6123 4567" required>
+                </div>
               </div>
               <div class="form-group">
                 <label class="form-label">País</label>
@@ -1753,6 +1930,43 @@ section { padding: 96px 0; }
           <h3>¡Solicitud recibida!</h3>
           <p>Revisaremos tu consulta y te responderemos en un día hábil con las opciones más adecuadas para tu empresa. Revisa tu bandeja de entrada — también el spam.</p>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── AGENDAR LLAMADA ────────────────────────────────────────────────── -->
+<section id="agendar">
+  <div class="container">
+    <div class="agendar-inner">
+      <div class="agendar-text">
+        <div class="section-header">
+          <span class="badge badge-gold section-eyebrow">Segunda opción</span>
+          <h2 class="section-title">¿Prefieres hablar<br>con nosotros primero?</h2>
+          <p class="section-desc">Agenda una llamada de 20 minutos con nuestro equipo para entender tus necesidades de importación, resolver dudas y orientarte hacia la fábrica más adecuada para tu proyecto.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div class="agendar-pill">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            20 minutos · sin compromiso
+          </div>
+          <div class="agendar-pill">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            En español · equipo Meridia
+          </div>
+          <div class="agendar-pill">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Sin costo
+          </div>
+        </div>
+      </div>
+      <div class="calendly-wrap">
+        <!-- CALENDLY INLINE WIDGET — reemplaza el data-url con tu enlace de Calendly -->
+        <div class="calendly-inline-widget"
+          data-url="https://calendly.com/meridiatradehub/consulta-20min?hide_gdpr_banner=1&primary_color=C9A84C"
+          style="min-width:300px;height:640px;">
+        </div>
+        <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
       </div>
     </div>
   </div>
@@ -1946,6 +2160,55 @@ function preselectCategory(cat) {
     }
   }, 300);
 }
+
+// Accordion
+function toggleAccordion(trigger) {
+  const item = trigger.closest('.accordion-item');
+  const body = item.querySelector('.accordion-body');
+  const isOpen = item.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.accordion-item.open').forEach(el => {
+    el.classList.remove('open');
+    el.querySelector('.accordion-body').style.maxHeight = '0';
+  });
+  // Open clicked if it was closed
+  if (!isOpen) {
+    item.classList.add('open');
+    body.style.maxHeight = body.scrollHeight + 'px';
+  }
+}
+
+// Phone code sync with country
+const countryPhoneMap = {
+  'Panamá': '+507',
+  'Colombia': '+57',
+  'México': '+52',
+  'Perú': '+51',
+  'Chile': '+56',
+  'Costa Rica': '+506',
+  'Ecuador': '+593',
+  'Guatemala': '+502',
+  'República Dominicana': '+1',
+};
+const countrySelect = document.querySelector('select[required]:first-of-type');
+// Find the country select (it's the one after WhatsApp)
+document.querySelectorAll('.form-select').forEach(sel => {
+  if ([...sel.options].some(o => o.text === 'Panamá')) {
+    sel.addEventListener('change', () => {
+      const code = countryPhoneMap[sel.value];
+      if (code) {
+        const phoneCode = document.getElementById('phoneCode');
+        for (let i = 0; i < phoneCode.options.length; i++) {
+          if (phoneCode.options[i].value === code) {
+            phoneCode.selectedIndex = i;
+            break;
+          }
+        }
+      }
+    });
+  }
+});
+function syncPhoneCode() { /* triggered by select onchange, handled above */ }
 </script>
 </body>
 </html>
