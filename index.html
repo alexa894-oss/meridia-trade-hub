@@ -1730,23 +1730,23 @@ section { padding: 96px 0; }
     <div class="showroom-inner">
       <div class="showroom-text">
         <div class="showroom-badge-wrap">
-          <span class="badge badge-amber badge-dot">En Construcción</span>
+          <span class="badge badge-amber badge-dot" data-i18n="sr.badge">En Construcción</span>
         </div>
-        <h2 class="showroom-title">Showroom físico<br>en <em>Ciudad de Panamá</em></h2>
-        <p class="showroom-desc">Estamos construyendo el primer espacio de exhibición permanente en LATAM donde los compradores corporativos podrán tocar, comparar y evaluar materiales reales de nuestras fábricas verificadas — sin volar a Guangzhou.</p>
+        <h2 class="showroom-title" data-i18n-html="sr.title">Showroom físico<br>en <em>Ciudad de Panamá</em></h2>
+        <p class="showroom-desc" data-i18n="sr.desc">Estamos construyendo el primer espacio de exhibición permanente en LATAM donde los compradores corporativos podrán tocar, comparar y evaluar materiales reales de nuestras fábricas verificadas — sin volar a Guangzhou.</p>
         <div class="showroom-meta">
           <div class="showroom-meta-item">
-            <span class="showroom-meta-label">Apertura estimada</span>
+            <span class="showroom-meta-label" data-i18n="sr.opening">Apertura estimada</span>
             <span class="showroom-meta-value" data-i18n="showroom.date">Diciembre 2026</span>
           </div>
           <div class="showroom-meta-item">
-            <span class="showroom-meta-label">Ubicación</span>
-            <span class="showroom-meta-value">Ciudad de Panamá</span>
+            <span class="showroom-meta-label" data-i18n="sr.loc.label">Ubicación</span>
+            <span class="showroom-meta-value" data-i18n="sr.loc.value">Ciudad de Panamá</span>
           </div>
         </div>
         <div class="progress-wrap">
           <div class="progress-label">
-            <span>Avance de obra</span>
+            <span data-i18n="sr.progress">Avance de obra</span>
             <span>68%</span>
           </div>
           <div class="progress-bar-bg">
@@ -1756,15 +1756,15 @@ section { padding: 96px 0; }
         <div class="showroom-features">
           <div class="showroom-feature">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8l4 4 8-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Muestras físicas de materiales de construcción y pisos
+            <span data-i18n="sr.f1">Muestras físicas de materiales de construcción y pisos</span>
           </div>
           <div class="showroom-feature">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8l4 4 8-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Exhibición de productos cosméticos con fichas técnicas impresas
+            <span data-i18n="sr.f2">Exhibición de productos cosméticos con fichas técnicas impresas</span>
           </div>
           <div class="showroom-feature">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8l4 4 8-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Sala de reuniones para citas con compradores corporativos
+            <span data-i18n="sr.f3">Sala de reuniones para citas con compradores corporativos</span>
           </div>
         </div>
       </div>
@@ -2224,6 +2224,13 @@ const translations = {
     'acc3.title':'Sin costo de consulta','acc3.body':'La cotización inicial es gratuita. Si avanzamos, te explicamos claramente cómo funciona el proceso antes de cualquier compromiso.',
     'form.title':'Solicitud de cotización',
     'showroom.date':'Diciembre 2026',
+    'sr.badge':'En Construcción','sr.title':'Showroom físico<br>en <em>Ciudad de Panamá</em>',
+    'sr.desc':'Estamos construyendo el primer espacio de exhibición permanente en LATAM donde los compradores corporativos podrán tocar, comparar y evaluar materiales reales de nuestras fábricas verificadas — sin volar a Guangzhou.',
+    'sr.opening':'Apertura estimada','sr.loc.label':'Ubicación','sr.loc.value':'Ciudad de Panamá',
+    'sr.progress':'Avance de obra',
+    'sr.f1':'Muestras físicas de materiales de construcción y pisos',
+    'sr.f2':'Exhibición de productos cosméticos con fichas técnicas impresas',
+    'sr.f3':'Sala de reuniones para citas con compradores corporativos',
     'cal.eyebrow':'¿Prefieres hablar primero?','cal.title':'Agenda una llamada de 20 minutos','cal.sub':'Sin compromiso · en español · sin costo','cal.btn':'Agendar llamada',
   },
   en: {
@@ -2252,6 +2259,13 @@ const translations = {
     'acc3.title':'No consultation fee','acc3.body':'The initial quote is free. If we move forward, we clearly explain how the process works before any commitment.',
     'form.title':'Quote Request',
     'showroom.date':'December 2026',
+    'sr.badge':'Under Construction','sr.title':'Physical Showroom<br>in <em>Panama City</em>',
+    'sr.desc':'We are building the first permanent exhibition space in LATAM where corporate buyers can touch, compare and evaluate real materials from our verified factories — without flying to Guangzhou.',
+    'sr.opening':'Estimated opening','sr.loc.label':'Location','sr.loc.value':'Panama City',
+    'sr.progress':'Construction progress',
+    'sr.f1':'Physical samples of construction materials and flooring',
+    'sr.f2':'Cosmetic product display with printed technical sheets',
+    'sr.f3':'Meeting room for appointments with corporate buyers',
     'cal.eyebrow':'Prefer to talk first?','cal.title':'Schedule a 20-minute call','cal.sub':'No commitment · in English or Spanish · free','cal.btn':'Schedule a Call',
   },
   zh: {
@@ -2280,6 +2294,13 @@ const translations = {
     'acc3.title':'免费咨询','acc3.body':'初步报价完全免费。如有进展，我们将在任何承诺前清楚说明流程。',
     'form.title':'报价申请',
     'showroom.date':'2026年12月',
+    'sr.badge':'建设中','sr.title':'实体展厅<br>位于<em>巴拿马城</em>',
+    'sr.desc':'我们正在拉丁美洲建造首个永久性展览空间，企业买家可在此亲手触摸、比较和评估我们认证工厂的真实材料——无需飞往广州。',
+    'sr.opening':'预计开放时间','sr.loc.label':'地点','sr.loc.value':'巴拿马城',
+    'sr.progress':'建设进度',
+    'sr.f1':'建筑材料与地板实物样品展示',
+    'sr.f2':'化妆品产品展示及印刷技术资料',
+    'sr.f3':'企业买家预约会议室',
     'cal.eyebrow':'希望先通话？','cal.title':'预约20分钟通话','cal.sub':'无需承诺 · 中英西文服务 · 免费','cal.btn':'预约通话',
   }
 };
