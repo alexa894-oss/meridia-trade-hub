@@ -973,6 +973,7 @@ export type Database = {
           moq_unit: string | null
           offer_type: Database["public"]["Enums"]["offer_type"]
           production_time_days: number | null
+          reviewed_at: string | null
           rfq_id: string
           sample_available: boolean | null
           sample_cost: number | null
@@ -1001,6 +1002,7 @@ export type Database = {
           moq_unit?: string | null
           offer_type?: Database["public"]["Enums"]["offer_type"]
           production_time_days?: number | null
+          reviewed_at?: string | null
           rfq_id: string
           sample_available?: boolean | null
           sample_cost?: number | null
@@ -1029,6 +1031,7 @@ export type Database = {
           moq_unit?: string | null
           offer_type?: Database["public"]["Enums"]["offer_type"]
           production_time_days?: number | null
+          reviewed_at?: string | null
           rfq_id?: string
           sample_available?: boolean | null
           sample_cost?: number | null
@@ -1292,6 +1295,10 @@ export type Database = {
         Args: { p_factories: string[]; p_rfq: string }
         Returns: number
       }
+      admin_hide_quote: {
+        Args: { p_hide: boolean; p_quote: string; p_reason: string }
+        Returns: undefined
+      }
       admin_review_company: {
         Args: {
           p_action: Database["public"]["Enums"]["company_review_action"]
@@ -1307,6 +1314,10 @@ export type Database = {
       }
       admin_unassign_rfq: {
         Args: { p_factory: string; p_rfq: string }
+        Returns: undefined
+      }
+      buyer_quote_action: {
+        Args: { p_action: string; p_quote: string }
         Returns: undefined
       }
       can_access_conversation: {
@@ -1332,6 +1343,7 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      expire_quotes: { Args: { p_rfq: string }; Returns: undefined }
       find_contact_info: { Args: { p_text: string }; Returns: string }
       get_public_settings: { Args: never; Returns: Json }
       get_rfq_buyer_profile: {
@@ -1361,6 +1373,7 @@ export type Database = {
       }
       is_admin: { Args: never; Returns: boolean }
       is_assigned: { Args: { p_rfq: string }; Returns: boolean }
+      mark_quotes_reviewed: { Args: { p_rfq: string }; Returns: undefined }
       my_company_editable: { Args: never; Returns: boolean }
       my_company_id: { Args: never; Returns: string }
       my_role: {
@@ -1372,6 +1385,7 @@ export type Database = {
       setting: { Args: { p_key: string }; Returns: Json }
       storage_owner_id: { Args: { p_name: string }; Returns: string }
       submit_company_for_review: { Args: never; Returns: undefined }
+      submit_quote: { Args: { p_quote: string }; Returns: undefined }
       submit_rfq: { Args: { p_rfq: string }; Returns: undefined }
     }
     Enums: {

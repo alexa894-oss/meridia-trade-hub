@@ -26,7 +26,12 @@ export type FieldErrorCode =
   | "deadlineFuture"
   | "referenceRequired"
   | "portRequiredForCif"
-  | "contactInfo";
+  | "contactInfo"
+  | "alternativeNotAccepted"
+  | "pricePerTerm"
+  | "invalidDays"
+  | "validityFuture"
+  | "sumTo100";
 
 export type FormState<F extends string = string> = {
   status: "idle" | "error" | "success";

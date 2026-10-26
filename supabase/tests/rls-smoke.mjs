@@ -123,7 +123,7 @@ await expectError('empresa en revisión no puede editar contacto', () => q(`upda
 check('fábrica no ve sectores inactivos ni datos de otros', (await q(`select * from company_contacts`)).length === 1);
 await asUser(buyer);
 
-await asUser(facA);
+await asSuper(); // atajo de datos: el flujo real de envío se prueba en la Etapa 5
 await q(`update quotes set status='submitted', currency='USD', moq=10, production_time_days=30, departure_port='Shenzhen', valid_until='2026-12-31', deposit_pct=30, balance_pct=70, sample_available=false where rfq_id=$1`, [rfq]);
 await asUser(buyer);
 const fp = await q(`select * from get_rfq_factory_profiles($1)`, [rfq]);
@@ -212,6 +212,49 @@ await asUser(admin);
 await expectError('cerrar exige mensaje', () => q(`select admin_rfq_action($1,'close','')`, [draft]));
 await q(`select admin_rfq_action($1,'close','Proyecto cancelado')`, [draft]);
 check('cerrada con nota en historial', (await q(`select note from status_history where entity_id=$1 and to_status='closed'`, [draft]))[0]?.note === 'Proyecto cancelado');
+
+// --- Etapa 5: cotizaciones ---
+await asSuper();
+const rfq5 = (await q(`insert into rfqs(buyer_company_id,created_by,status,product,category_id,description,quantity,unit_id,destination_country,deadline,incoterms,destination_port,accepts_alternatives,technical_specs,reference_url) values ($1,$2,'assigned','Pisos',$3,'desc',100,$4,'PA',current_date+20,'{FOB,CIF}','Balboa',false,'60x60','https://x.test') returning id`, [cBuyer, buyer, cat, unit]))[0].id;
+await q(`insert into rfq_assignments(rfq_id,factory_company_id,assigned_by) values ($1,$2,$3),($1,$4,$3)`, [rfq5, cA, admin, cPending]);
+await asUser(facA);
+const qA = (await q(`insert into quotes(rfq_id,factory_company_id,created_by,offer_type,alternative_differences,currency,moq,production_time_days,departure_port,valid_until,deposit_pct,deposit_timing,balance_pct,balance_timing,sample_available) values ($1,$2,$3,'alternative','Otro acabado','USD',50,30,'Shenzhen',current_date+15,30,'Al confirmar',70,'Antes de embarcar',false) returning id`, [rfq5, cA, facA]))[0].id;
+await q(`insert into quote_prices(quote_id,incoterm,unit_price) values ($1,'FOB',10)`, [qA]);
+await expectError('alternativa no aceptada por el comprador falla', () => q(`select submit_quote($1)`, [qA]));
+await q(`update quotes set offer_type='exact', alternative_differences=null where id=$1`, [qA]);
+await expectError('falta precio para CIF', () => q(`select submit_quote($1)`, [qA]));
+await q(`insert into quote_prices(quote_id,incoterm,unit_price) values ($1,'CIF',12)`, [qA]);
+await expectError('precio para término no pedido falla', () => q(`insert into quote_prices(quote_id,incoterm,unit_price) values ($1,'EXW',9)`, [qA]).then(() => q(`select submit_quote($1)`, [qA])));
+await q(`delete from quote_prices where quote_id=$1 and incoterm='EXW'`, [qA]);
+await q(`update quotes set deposit_timing='Llamar al 6000-0000' where id=$1`, [qA]);
+await expectError('condiciones con datos de contacto fallan', () => q(`select submit_quote($1)`, [qA]));
+await q(`update quotes set deposit_timing='Al confirmar la orden', deposit_pct=40 where id=$1`, [qA]);
+await expectError('pagos que no suman 100 fallan', () => q(`select submit_quote($1)`, [qA]));
+await q(`update quotes set deposit_pct=30 where id=$1`, [qA]);
+await expectError('fábrica no cambia estado con UPDATE', () => q(`update quotes set status='submitted' where id=$1`, [qA]));
+await q(`select submit_quote($1)`, [qA]);
+check('cotización enviada y solicitud con cotizaciones', (await q(`select (select status from quotes where id=$1) as qs, (select status from rfqs where id=$2) as rs`, [qA, rfq5]))[0].rs === 'quoted');
+await expectError('enviada ya no se edita', () => q(`update quotes set moq=1 where id=$1 returning 1`, [qA]).then((r) => { if (!r.length) throw new Error('0'); }));
+await expectError('no puede cotizar dos veces', () => q(`insert into quotes(rfq_id,factory_company_id,created_by) values ($1,$2,$3)`, [rfq5, cA, facA]));
+await asUser(pend);
+check('otra fábrica no ve la cotización ajena', (await q(`select * from quotes where rfq_id=$1`, [rfq5])).length === 0);
+check('otra fábrica no ve precios ajenos', (await q(`select * from quote_prices where quote_id=$1`, [qA])).length === 0);
+await asUser(buyer);
+check('comprador ve la cotización enviada', (await q(`select * from quotes where rfq_id=$1`, [rfq5])).length === 1);
+await q(`select mark_quotes_reviewed($1)`, [rfq5]);
+check('al verla queda revisada', (await q(`select status from quotes where id=$1`, [qA]))[0].status === 'reviewed');
+await q(`select buyer_quote_action($1,'prefer')`, [qA]);
+check('preferida abre negociación', (await q(`select status from rfqs where id=$1`, [rfq5]))[0].status === 'negotiating');
+await asUser(facA);
+await expectError('fábrica no marca preferida', () => q(`select buyer_quote_action($1,'prefer')`, [qA]));
+await asUser(admin);
+await expectError('ocultar exige motivo', () => q(`select admin_hide_quote($1,true,'')`, [qA]));
+await q(`select admin_hide_quote($1,true,'Incluía datos de contacto en un adjunto')`, [qA]);
+await asUser(buyer);
+check('comprador no ve cotización oculta', (await q(`select * from quotes where id=$1`, [qA])).length === 0);
+check('comparador sin fábricas ocultas', (await q(`select * from get_rfq_factory_profiles($1)`, [rfq5])).length === 0);
+await asUser(facA);
+check('fábrica ve que su cotización fue ocultada', (await q(`select status, hidden_reason from quotes where id=$1`, [qA]))[0]?.status === 'hidden');
 
 console.log(fails ? `\n${fails} FALLOS` : '\nTodo OK');
 process.exit(fails ? 1 : 0);

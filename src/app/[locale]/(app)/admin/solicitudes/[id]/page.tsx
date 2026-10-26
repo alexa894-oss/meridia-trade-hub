@@ -7,6 +7,9 @@ import { loadAdminRfq } from "@/lib/rfqs/load";
 import { Card, DataList, formatDate, StatusBadge } from "@/components/admin/ui";
 import { AssignPanel, RfqActionPanel } from "@/components/admin/rfq-panels";
 import { RfqSummary } from "@/components/rfqs/rfq-summary";
+import { loadAdminQuotes } from "@/lib/quotes/load";
+import { QuoteDetails } from "@/components/quotes/quote-details";
+import { QuoteModeration } from "@/components/admin/quote-moderation";
 
 export const instant = false;
 
@@ -24,6 +27,8 @@ export default async function AdminRfqPage({ params }: PageProps<"/[locale]/admi
     getLocale(),
   ]);
   const { rfq, buyer } = data;
+  const [quotes, tq] = await Promise.all([loadAdminQuotes(rfq.id), getTranslations("Quote")]);
+  const unitLabel = rfq.units ? localized(rfq.units.names as Record<string, string>, locale) : "";
   const canAssign = !["draft", "info_requested", "closed", "order_created"].includes(rfq.status);
 
   return (
@@ -42,6 +47,28 @@ export default async function AdminRfqPage({ params }: PageProps<"/[locale]/admi
         <div className="space-y-5">
           <Card title={t("request")}>
             <RfqSummary rfq={rfq} imageUrl={data.imageUrl} />
+          </Card>
+          <Card title={t("quotes", { count: quotes.length })}>
+            {quotes.length ? (
+              <ul className="space-y-4">
+                {quotes.map(({ quote, factoryName }) => (
+                  <li key={quote.id} className="rounded-(--radius-control) border border-line p-4">
+                    <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                      <p className="font-semibold text-navy-800">{factoryName}</p>
+                      <StatusBadge status={quote.status === "hidden" ? "rejected" : quote.status === "draft" ? "draft" : "validated"} label={tq(`status.${quote.status}`)} />
+                    </div>
+                    {quote.status === "draft" ? (
+                      <p className="text-sm text-ink-muted">{t("quoteDraft")}</p>
+                    ) : (
+                      <QuoteDetails quote={quote} incoterms={rfq.incoterms} unitLabel={unitLabel} />
+                    )}
+                    <QuoteModeration quoteId={quote.id} status={quote.status} hiddenReason={quote.hidden_reason} />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-ink-muted">{t("noQuotes")}</p>
+            )}
           </Card>
           <Card title={t("history")}>
             <ol className="space-y-3">

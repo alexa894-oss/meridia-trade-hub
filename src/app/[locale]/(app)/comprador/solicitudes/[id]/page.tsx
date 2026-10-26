@@ -10,6 +10,9 @@ import { FormAlert } from "@/components/forms";
 import { RfqForm } from "@/components/rfqs/rfq-form";
 import { RfqSummary } from "@/components/rfqs/rfq-summary";
 import { StatusBadge } from "@/components/admin/ui";
+import { loadComparator } from "@/lib/quotes/load";
+import { localized } from "@/lib/registration/load";
+import { Comparator } from "@/components/quotes/comparator";
 
 export const instant = false;
 
@@ -27,9 +30,12 @@ export default async function BuyerRfqPage({ params, searchParams }: PageProps<"
   const { rfq } = data;
   const editable = editableRfqStatuses.includes(rfq.status);
   const showNote = data.note && (rfq.status === "info_requested" || rfq.status === "closed");
+  const hasQuotesStage = ["assigned", "quoted", "negotiating", "order_created", "no_response", "closed"].includes(rfq.status);
+  const [comparator, tq] = hasQuotesStage ? await Promise.all([loadComparator(rfq.id), getTranslations("Quote")]) : [null, null];
+  const unitLabel = rfq.units ? localized(rfq.units.names as Record<string, string>, locale) : "";
 
   return (
-    <div className="mx-auto max-w-2xl space-y-5">
+    <div className={`mx-auto space-y-5 ${comparator ? "max-w-5xl" : "max-w-2xl"}`}>
       <Link href="/comprador/solicitudes" className="text-sm font-semibold text-navy-800 hover:underline">
         ← {t("buyer.back")}
       </Link>
@@ -50,7 +56,15 @@ export default async function BuyerRfqPage({ params, searchParams }: PageProps<"
       ) : null}
       {!editable ? <p className="text-ink-muted">{t(`buyer.statusHelp.${rfq.status}`)}</p> : null}
 
+      {comparator && tq ? (
+        <section className="rounded-2xl border border-line bg-surface p-5 sm:p-7">
+          <h2 className="mb-4 font-display text-xl font-semibold text-navy-800">{tq("comparator.title", { count: comparator.filter((e) => e.quote.status !== "discarded").length })}</h2>
+          <Comparator entries={comparator} incoterms={rfq.incoterms} unitLabel={unitLabel} closed={["closed", "order_created"].includes(rfq.status)} />
+        </section>
+      ) : null}
+
       <section className="rounded-2xl border border-line bg-surface p-5 sm:p-7">
+        {comparator ? <h2 className="mb-4 font-display text-xl font-semibold text-navy-800">{t("buyer.yourRequest")}</h2> : null}
         {editable ? (
           <RfqForm
             initial={rfqToInitial(rfq, null)}

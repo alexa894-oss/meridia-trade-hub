@@ -64,6 +64,12 @@ La app arranca aunque `.env.local` esté vacío; la sesión de Supabase simpleme
 - Administrador (`/admin/solicitudes`): pedir información, cerrar (con mensaje) y asignar fábricas validadas; por defecto se proponen las de la misma categoría.
 - Fábrica (`/fabrica/oportunidades`): solo ve lo asignado. Del comprador ve sector, país y verificación; el nombre solo si el admin lo habilita. Una fábrica suspendida pierde el acceso.
 
+## Cotizaciones y comparador
+
+- Fábrica: una cotización por solicitud, desde su oportunidad. Oferta exacta o alternativa (solo si el comprador la aceptó, con diferencias), un precio unitario por cada término pedido, cantidad mínima, tiempo de producción, puerto, vigencia, condiciones de pago propuestas por la fábrica (anticipo + saldo = 100 %, sin valor por defecto) y muestra. Se valida en `submit_quote()`; enviada ya no se edita.
+- Comprador: comparador con una columna por fábrica (nombre, verificación, precio por término, tiempos, pagos, muestra, marca de alternativa). Al abrirlo las cotizaciones quedan **revisadas**; puede marcar preferida (la solicitud pasa a **en negociación**) o descartar. Vencen solas al pasar la vigencia.
+- Administrador: ve todas las cotizaciones de la solicitud y puede ocultar una (con motivo) o restaurarla.
+
 ### Tipos de la base
 
 `src/lib/supabase/database.types.ts` se genera desde Supabase. Regenéralo después de cada migración (`npx supabase gen types typescript --project-id <ref>` con el CLI enlazado).

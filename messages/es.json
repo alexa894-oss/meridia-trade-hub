@@ -561,6 +561,21 @@
         "notFound": "No se encontró la solicitud.",
         "notAllowed": "Tu cuenta no puede hacer esta acción.",
         "saveFailed": "No pudimos guardar. Inténtalo de nuevo."
+      },
+      "quotes": "{count, plural, =0 {Cotizaciones} one {# cotización} other {# cotizaciones}}",
+      "noQuotes": "Todavía no hay cotizaciones.",
+      "quoteDraft": "La fábrica tiene un borrador sin enviar."
+    },
+    "quotes": {
+      "reason": "Motivo para ocultar",
+      "hide": "Ocultar cotización",
+      "restore": "Restaurar",
+      "hiddenReason": "Oculta: {reason}",
+      "errors": {
+        "reasonRequired": "Escribe el motivo.",
+        "invalidTransition": "No se puede en el estado actual.",
+        "notAllowed": "Tu cuenta no puede hacer esta acción.",
+        "saveFailed": "No pudimos guardar."
       }
     }
   },
@@ -682,7 +697,8 @@
         "closed": "Esta solicitud está cerrada.",
         "draft": "",
         "info_requested": ""
-      }
+      },
+      "yourRequest": "Tu solicitud"
     },
     "factory": {
       "title": "Oportunidades",
@@ -696,8 +712,126 @@
       "verified": "Empresa",
       "verifiedYes": "Verificada por Meridia",
       "verifiedNo": "No verificada",
-      "request": "Solicitud",
-      "quoteSoon": "Pronto podrás enviar tu cotización desde aquí."
+      "request": "Solicitud"
     }
+  },
+  "Quote": {
+    "status": {
+      "draft": "Borrador",
+      "submitted": "Enviada",
+      "reviewed": "Revisada",
+      "preferred": "Preferida",
+      "accepted": "Aceptada",
+      "discarded": "Descartada",
+      "hidden": "Oculta por Meridia",
+      "expired": "Vencida"
+    },
+    "offerTypes": {
+      "exact": "Oferta exacta",
+      "alternative": "Alternativa"
+    },
+    "sampleAvailable": {
+      "yes": "Hay muestra",
+      "no": "Sin muestra"
+    },
+    "sampleShipping": {
+      "free": "Envío gratis",
+      "paid": "Envío con costo"
+    },
+    "shippingCost": "Envío:",
+    "sampleCostValue": "Muestra: {value}",
+    "days": "{count, plural, one {# día} other {# días}}",
+    "paymentSummary": "{deposit} % {depositWhen} · {balance} % {balanceWhen}",
+    "paymentDeposit": "Anticipo {pct} %: {when}",
+    "paymentBalance": "Saldo {pct} %: {when}",
+    "sections": {
+      "offer": "Tipo de oferta",
+      "prices": "Precios",
+      "terms": "Condiciones",
+      "payment": "Condiciones de pago",
+      "sample": "Muestra"
+    },
+    "fields": {
+      "alternativeDifferences": "Diferencias con lo pedido",
+      "currency": "Moneda",
+      "unitPrice": "Precio unitario {term} (por {unit})",
+      "moqWithUnit": "Cantidad mínima ({unit})",
+      "productionTimeDays": "Tiempo de producción (días)",
+      "departurePort": "Puerto de salida",
+      "validUntil": "Vigencia de la cotización",
+      "depositPct": "Anticipo (%)",
+      "depositTiming": "Momento del anticipo",
+      "balancePct": "Saldo (%)",
+      "balanceTiming": "Momento del saldo",
+      "sampleCost": "Costo de la muestra",
+      "sampleShipping": "Envío de la muestra",
+      "sampleShippingCost": "Costo del envío"
+    },
+    "hints": {
+      "noAlternatives": "El comprador no acepta alternativas: solo puedes cotizar exactamente lo pedido.",
+      "alternativeDifferences": "Explica en qué se diferencia de lo que pidió el comprador.",
+      "currency": "Código de 3 letras, por ejemplo USD.",
+      "payment": "Tú propones las condiciones de pago. Anticipo y saldo deben sumar 100 %.",
+      "depositTimingExample": "Ej.: al confirmar la orden",
+      "balanceTimingExample": "Ej.: contra copia del BL",
+      "balanceSuggestion": "Para sumar 100 %: {value} %",
+      "sampleCost": "Escribe 0 si la muestra es gratis.",
+      "noContact": "No incluyas teléfonos, correos ni WeChat: el comprador podrá escribirte por la mensajería de Meridia."
+    },
+    "form": {
+      "submit": "Enviar cotización",
+      "saveDraft": "Guardar borrador",
+      "sending": "Guardando…",
+      "saved": "Borrador guardado."
+    },
+    "errors": {
+      "contactInfo": "El campo «{field}» contiene datos de contacto. Quítalos.",
+      "contactInfoLive": "Parece un dato de contacto («{found}»). Quítalo antes de enviar.",
+      "alternativeNotAccepted": "El comprador no acepta alternativas.",
+      "pricePerTerm": "Indica un precio unitario válido para cada término pedido.",
+      "invalidDays": "El campo «Tiempo de producción» debe ser un número entero de días mayor que 0.",
+      "validityFuture": "La vigencia no puede ser una fecha pasada.",
+      "sumTo100": "Anticipo y saldo deben sumar 100 %."
+    },
+    "formErrors": {
+      "alternativeNotAccepted": "El comprador no acepta alternativas.",
+      "pricesMismatch": "Falta un precio para alguno de los términos pedidos.",
+      "validityPast": "La vigencia ya pasó.",
+      "rfqClosed": "Esta solicitud ya no recibe cotizaciones.",
+      "notEditable": "Tu cotización ya fue enviada y no se puede editar.",
+      "notFound": "No se encontró la solicitud.",
+      "notAllowed": "Tu cuenta no puede hacer esta acción.",
+      "missingFields": "Faltan campos obligatorios para enviar la cotización.",
+      "contactInfo": "La cotización contiene datos de contacto. Quítalos antes de enviarla.",
+      "saveFailed": "No pudimos guardar. Inténtalo de nuevo."
+    },
+    "factory": {
+      "title": "Tu cotización",
+      "sentHelp": "Enviaste esta cotización. Ya no se puede editar; si algo cambia, coméntalo en la conversación con el comprador.",
+      "hidden": "Meridia ocultó esta cotización: {reason}",
+      "closed": "Esta solicitud ya no recibe cotizaciones."
+    },
+    "comparator": {
+      "title": "{count, plural, =0 {Cotizaciones} one {# cotización} other {# cotizaciones}}",
+      "empty": "Todavía no hay cotizaciones. Te avisaremos aquí cuando lleguen.",
+      "offer": "Oferta",
+      "factory": "Fábrica",
+      "verified": "Verificada",
+      "tiers": {
+        "vip": "VIP",
+        "standard": "Estándar"
+      },
+      "foundedVerified": "Fundada en {year} (verificado)",
+      "actions": "Acciones",
+      "prefer": "Marcar preferida",
+      "unprefer": "Quitar preferida",
+      "discard": "Descartar",
+      "openConversation": "Abrir conversación",
+      "createOrder": "Generar orden",
+      "comingSoon": "La conversación y la orden se habilitan en las próximas etapas.",
+      "expired": "Vencida: la vigencia de esta cotización ya pasó.",
+      "discarded": "{count, plural, one {# cotización descartada} other {# cotizaciones descartadas}}"
+    },
+    "sampleFree": "Muestra gratis"
   }
 }

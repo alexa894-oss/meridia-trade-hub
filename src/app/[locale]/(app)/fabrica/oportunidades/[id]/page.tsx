@@ -4,6 +4,11 @@ import { Link } from "@/i18n/navigation";
 import { countryName } from "@/lib/countries";
 import { localized } from "@/lib/registration/load";
 import { loadOpportunity } from "@/lib/rfqs/load";
+import { requireRole } from "@/lib/auth/guard";
+import { loadFactoryQuote } from "@/lib/quotes/load";
+import { QuoteForm } from "@/components/quotes/quote-form";
+import { QuoteDetails } from "@/components/quotes/quote-details";
+import { StatusBadge } from "@/components/admin/ui";
 import { Card, DataList } from "@/components/admin/ui";
 import { RfqSummary } from "@/components/rfqs/rfq-summary";
 
@@ -16,10 +21,20 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export default async function OpportunityPage({ params }: PageProps<"/[locale]/fabrica/oportunidades/[id]">) {
   const { id } = await params;
   if (!UUID.test(id)) notFound();
+  const profile = await requireRole("factory");
   const data = await loadOpportunity(id);
   if (!data) notFound();
-  const [t, locale] = await Promise.all([getTranslations("Rfq"), getLocale()]);
+  const [t, tq, locale, own] = await Promise.all([
+    getTranslations("Rfq"),
+    getTranslations("Quote"),
+    getLocale(),
+    loadFactoryQuote(id, profile.companyId!),
+  ]);
   const { rfq, buyer } = data;
+  const { quote } = own;
+  const unitLabel = rfq.units ? localized(rfq.units.names as Record<string, string>, locale) : "";
+  const canQuote = ["assigned", "quoted", "negotiating"].includes(rfq.status);
+  const str = (n: number | null) => (n === null ? "" : String(n));
 
   return (
     <div className="mx-auto max-w-3xl space-y-5">
@@ -45,7 +60,50 @@ export default async function OpportunityPage({ params }: PageProps<"/[locale]/f
         <RfqSummary rfq={rfq} imageUrl={data.imageUrl} />
       </Card>
 
-      <p className="rounded-xl border border-gold-300 bg-gold-100 p-4 text-sm text-ink">{t("factory.quoteSoon")}</p>
+      <Card
+        title={tq("factory.title")}
+        actions={quote && quote.status !== "draft" ? <StatusBadge status={quote.status === "hidden" ? "rejected" : "validated"} label={tq(`status.${quote.status}`)} /> : undefined}
+      >
+        {quote && quote.status !== "draft" ? (
+          <div className="space-y-4">
+            {quote.status === "hidden" ? (
+              <p role="alert" className="rounded-(--radius-control) border border-danger/30 bg-danger/5 p-3 text-sm text-danger">
+                {tq("factory.hidden", { reason: quote.hidden_reason ?? "" })}
+              </p>
+            ) : (
+              <p className="text-sm text-ink-muted">{tq("factory.sentHelp")}</p>
+            )}
+            <QuoteDetails quote={quote} incoterms={rfq.incoterms} unitLabel={unitLabel} />
+          </div>
+        ) : canQuote ? (
+          <QuoteForm
+            rfqId={rfq.id}
+            incoterms={rfq.incoterms}
+            acceptsAlternatives={rfq.accepts_alternatives}
+            unitLabel={unitLabel}
+            initial={{
+              offerType: quote?.offer_type ?? "exact",
+              alternativeDifferences: quote?.alternative_differences ?? "",
+              currency: quote?.currency ?? "",
+              prices: Object.fromEntries(Object.entries(quote?.prices ?? {}).map(([k, v]) => [k, String(v)])),
+              moq: str(quote?.moq ?? null),
+              productionTimeDays: str(quote?.production_time_days ?? null),
+              departurePort: quote?.departure_port ?? own.defaultPort ?? "",
+              validUntil: quote?.valid_until ?? "",
+              depositPct: str(quote?.deposit_pct ?? null),
+              depositTiming: quote?.deposit_timing ?? "",
+              balancePct: str(quote?.balance_pct ?? null),
+              balanceTiming: quote?.balance_timing ?? "",
+              sampleAvailable: quote?.sample_available === true ? "yes" : quote?.sample_available === false ? "no" : "",
+              sampleCost: str(quote?.sample_cost ?? null),
+              sampleShipping: quote?.sample_shipping_free === true ? "free" : quote?.sample_shipping_free === false ? "paid" : "",
+              sampleShippingCost: str(quote?.sample_shipping_cost ?? null),
+            }}
+          />
+        ) : (
+          <p className="text-ink-muted">{tq("factory.closed")}</p>
+        )}
+      </Card>
     </div>
   );
 }
