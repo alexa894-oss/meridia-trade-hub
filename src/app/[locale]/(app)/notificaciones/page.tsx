@@ -23,6 +23,13 @@ function hrefFor(type: string, payload: Record<string, unknown>, role: Role) {
     case "rfq_status":
     case "quote_received":
       return rfq ? `/comprador/solicitudes/${rfq}` : roleHome[role];
+    case "order_created":
+    case "order_status": {
+      const base = role === "buyer" ? "/comprador/pedidos" : role === "factory" ? "/fabrica/pedidos" : "/admin/pedidos";
+      return `${base}/${payload.order_id}`;
+    }
+    case "commission_missing":
+      return `/admin/empresas/${payload.company_id}`;
     default:
       return roleHome[role];
   }
@@ -39,7 +46,7 @@ export default function NotificationsPage() {
 async function NotificationsList() {
   const profile = await requireProfile();
   const [t, locale, items] = await Promise.all([getTranslations("Notifications"), getLocale(), listNotifications(profile.id)]);
-  const known = ["message", "rfq_assigned", "quote_hidden", "rfq_status", "quote_received", "company_review"];
+  const known = ["message", "rfq_assigned", "quote_hidden", "rfq_status", "quote_received", "company_review", "order_created", "order_status", "commission_missing"];
 
   return (
     <div className="mx-auto max-w-2xl space-y-5">

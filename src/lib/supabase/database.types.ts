@@ -1295,6 +1295,19 @@ export type Database = {
         Args: { p_factories: string[]; p_rfq: string }
         Returns: number
       }
+      admin_close_order: {
+        Args: { p_note?: string; p_order: string }
+        Returns: undefined
+      }
+      admin_commission_action: {
+        Args: {
+          p_action: string
+          p_commission: string
+          p_due_date?: string
+          p_invoiced_on?: string
+        }
+        Returns: undefined
+      }
       admin_hide_quote: {
         Args: { p_hide: boolean; p_quote: string; p_reason: string }
         Returns: undefined
@@ -1315,6 +1328,15 @@ export type Database = {
       admin_unassign_rfq: {
         Args: { p_factory: string; p_rfq: string }
         Returns: undefined
+      }
+      buyer_confirm_receipt: { Args: { p_order: string }; Returns: undefined }
+      buyer_create_order: {
+        Args: {
+          p_incoterm: Database["public"]["Enums"]["incoterm"]
+          p_quantity: number
+          p_quote: string
+        }
+        Returns: string
       }
       buyer_quote_action: {
         Args: { p_action: string; p_quote: string }
@@ -1344,6 +1366,10 @@ export type Database = {
         }
       }
       expire_quotes: { Args: { p_rfq: string }; Returns: undefined }
+      factory_order_action: {
+        Args: { p_action: string; p_order: string; p_reason?: string }
+        Returns: string
+      }
       find_contact_info: { Args: { p_text: string }; Returns: string }
       get_public_settings: { Args: never; Returns: Json }
       get_rfq_buyer_profile: {
@@ -1396,12 +1422,17 @@ export type Database = {
         Args: { p_conversation: string }
         Returns: undefined
       }
+      mark_overdue_commissions: { Args: never; Returns: undefined }
       mark_quotes_reviewed: { Args: { p_rfq: string }; Returns: undefined }
       my_company_editable: { Args: never; Returns: boolean }
       my_company_id: { Args: never; Returns: string }
       my_role: {
         Args: never
         Returns: Database["public"]["Enums"]["user_role"]
+      }
+      notify_company: {
+        Args: { p_company: string; p_payload: Json; p_type: string }
+        Returns: undefined
       }
       open_conversation: {
         Args: { p_factory: string; p_rfq: string }

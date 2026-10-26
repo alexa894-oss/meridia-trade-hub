@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { buyerQuoteAction } from "@/lib/quotes/actions";
 import { openConversation } from "@/lib/messages/actions";
+import { Link } from "@/i18n/navigation";
 import type { loadComparator } from "@/lib/quotes/load";
 import { formatDate, StatusBadge } from "@/components/admin/ui";
 import { money, plainNumber } from "./format";
@@ -149,9 +150,9 @@ export async function Comparator({ entries, incoterms, unitLabel, closed }: { en
                             {t("comparator.openConversation")}
                           </button>
                         </form>
-                        <button type="button" disabled title={t("comparator.orderSoon")} className="inline-flex min-h-10 w-full items-center justify-center rounded-(--radius-control) border border-line px-3 text-sm font-semibold text-ink-muted">
+                        <Link href={`/comprador/pedidos/nuevo?cotizacion=${quote.id}`} className="inline-flex min-h-10 w-full items-center justify-center rounded-(--radius-control) bg-gold-500 px-3 text-sm font-semibold text-navy-900 hover:bg-gold-300">
                           {t("comparator.createOrder")}
-                        </button>
+                        </Link>
                         <ActionButton quoteId={quote.id} action="discard" tone="danger">
                           {t("comparator.discard")}
                         </ActionButton>
@@ -164,7 +165,6 @@ export async function Comparator({ entries, incoterms, unitLabel, closed }: { en
           </tbody>
         </table>
       </div>
-      {!closed ? <p className="text-xs text-ink-muted">{t("comparator.orderSoon")}</p> : null}
       {discarded.length ? (
         <details className="text-sm">
           <summary className="cursor-pointer font-semibold text-navy-800">{t("comparator.discarded", { count: discarded.length })}</summary>

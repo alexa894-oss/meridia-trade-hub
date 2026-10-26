@@ -78,6 +78,13 @@ La app arranca aunque `.env.local` esté vacío; la sesión de Supabase simpleme
 - La base fija quién envía (`sender_kind`); nadie puede firmar como «Meridia» salvo el administrador.
 - Avisos dentro de la plataforma (campana en el encabezado y `/notificaciones`) por mensajes nuevos, cotizaciones, asignaciones y revisiones.
 
+## Pedidos y comisión
+
+- El comprador genera la orden desde una cotización (término y cantidad ≥ mínimo de la fábrica); el precio se copia de la cotización. Una orden activa por solicitud.
+- La fábrica acepta o rechaza (con motivo). Al aceptar se registra la comisión con el porcentaje configurado para esa fábrica; si no hay porcentaje, no puede aceptar y Meridia recibe un aviso.
+- Hitos con fecha (`status_history`): orden enviada → confirmado → en producción → listo para embarque → embarcado (exige factura comercial y BL) → entregado (lo confirma el comprador) → cerrado (Meridia). Sin mapas ni movimiento simulado.
+- Comisiones (admin y fábrica; el comprador no las ve): registrada → facturada → cobrada · vencida. El cobro se marca a mano; una facturada con vencimiento pasado queda vencida.
+
 ### Tipos de la base
 
 `src/lib/supabase/database.types.ts` se genera desde Supabase. Regenéralo después de cada migración (`npx supabase gen types typescript --project-id <ref>` con el CLI enlazado).

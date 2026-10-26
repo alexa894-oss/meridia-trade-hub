@@ -295,7 +295,9 @@
       "plans": "Planes",
       "settings": "Configuración",
       "rfqs": "Solicitudes",
-      "messages": "Mensajes"
+      "messages": "Mensajes",
+      "orders": "Pedidos",
+      "commissions": "Comisiones"
     },
     "status": {
       "registered": "Registrada",
@@ -586,13 +588,16 @@
       "label": "Secciones",
       "home": "Inicio",
       "rfqs": "Solicitudes",
-      "messages": "Mensajes"
+      "messages": "Mensajes",
+      "orders": "Pedidos"
     },
     "factory": {
       "label": "Secciones",
       "home": "Inicio",
       "opportunities": "Oportunidades",
-      "messages": "Mensajes"
+      "messages": "Mensajes",
+      "orders": "Pedidos",
+      "commissions": "Comisiones"
     }
   },
   "Rfq": {
@@ -834,8 +839,7 @@
       "openConversation": "Abrir conversación",
       "createOrder": "Generar orden",
       "expired": "Vencida: la vigencia de esta cotización ya pasó.",
-      "discarded": "{count, plural, one {# cotización descartada} other {# cotizaciones descartadas}}",
-      "orderSoon": "La orden se habilita en la próxima etapa."
+      "discarded": "{count, plural, one {# cotización descartada} other {# cotizaciones descartadas}}"
     },
     "sampleFree": "Muestra gratis"
   },
@@ -891,7 +895,144 @@
       "rfq_status": "Meridia actualizó tu solicitud #{number}.",
       "quote_received": "Recibiste una cotización en tu solicitud #{number}.",
       "company_review": "Meridia actualizó el registro de tu empresa.",
-      "other": "Tienes un aviso nuevo."
+      "other": "Tienes un aviso nuevo.",
+      "order_created": "Recibiste una orden de compra (solicitud #{number}).",
+      "order_status": "Tu pedido cambió de estado.",
+      "commission_missing": "Una fábrica intentó aceptar una orden sin comisión configurada."
+    }
+  },
+  "Orders": {
+    "title": "Pedidos",
+    "all": "Todos",
+    "back": "Volver a pedidos",
+    "backToRequest": "Volver a la solicitud",
+    "optional": "opcional",
+    "open": "Abrir",
+    "pending": "Pendiente",
+    "status": {
+      "sent": "Orden enviada",
+      "confirmed": "Confirmado",
+      "in_production": "En producción",
+      "ready_to_ship": "Listo para embarque",
+      "shipped": "Embarcado",
+      "delivered": "Entregado",
+      "closed": "Cerrado",
+      "rejected": "Rechazado"
+    },
+    "milestones": {
+      "sent": "Orden enviada",
+      "confirmed": "Confirmado",
+      "in_production": "En producción",
+      "ready_to_ship": "Listo para embarque",
+      "shipped": "Embarcado",
+      "delivered": "Entregado",
+      "closed": "Cerrado",
+      "rejected": "Rechazado"
+    },
+    "empty": {
+      "buyer": "Todavía no tienes pedidos. Genera una orden desde el comparador de una solicitud.",
+      "factory": "Todavía no tienes pedidos.",
+      "admin": "No hay pedidos en este estado."
+    },
+    "factory": "Fábrica",
+    "buyer": "Comprador",
+    "parties": "Comprador → fábrica",
+    "request": "Solicitud",
+    "incoterm": "Término",
+    "quantity": "Cantidad",
+    "unitPrice": "Precio unitario",
+    "total": "Total",
+    "createdAt": "Orden generada",
+    "rejectionReason": "Motivo del rechazo",
+    "orderFor": "Pedido de la solicitud #{number}",
+    "summary": "Resumen",
+    "documents": "Documentos de embarque",
+    "tracking": "Seguimiento",
+    "actions": "Acciones",
+    "generated": "Orden enviada a la fábrica. Te avisaremos cuando la acepte.",
+    "newTitle": "Generar orden",
+    "chooseIncoterm": "Elige el término",
+    "moqHint": "Cantidad mínima de la fábrica: {moq}.",
+    "create": "Enviar orden a la fábrica",
+    "createHint": "El precio es el de la cotización. Meridia no procesa pagos: pagas directo a la fábrica según las condiciones de pago acordadas.",
+    "accept": "Aceptar orden",
+    "reject": "Rechazar",
+    "acceptHelp": "Al aceptar, el pedido queda confirmado y se registra la comisión pactada con Meridia.",
+    "rejectReason": "Motivo del rechazo",
+    "rejectReasonHint": "Obligatorio solo si rechazas.",
+    "advance": {
+      "in_production": "Marcar «En producción»",
+      "ready_to_ship": "Marcar «Listo para embarque»",
+      "shipped": "Marcar «Embarcado»"
+    },
+    "shippedNeedsDocs": "Para marcarlo embarcado, sube antes la factura comercial y el conocimiento de embarque (BL).",
+    "factoryHelp": {
+      "shipped": "Esperando que el comprador confirme la recepción.",
+      "delivered": "El comprador confirmó la recepción.",
+      "closed": "Pedido cerrado.",
+      "rejected": "Rechazaste esta orden."
+    },
+    "receiptHelp": "Confirma cuando hayas recibido la mercancía.",
+    "confirmReceipt": "Confirmar recepción",
+    "closeNote": "Nota de cierre",
+    "close": "Cerrar pedido",
+    "done": {
+      "accept": "Orden aceptada.",
+      "reject": "Orden rechazada.",
+      "in_production": "Pedido en producción.",
+      "ready_to_ship": "Pedido listo para embarque.",
+      "shipped": "Pedido embarcado."
+    },
+    "documentKind": "Tipo de documento",
+    "noDocuments": "Todavía no hay documentos.",
+    "documentKinds": {
+      "commercial_invoice": "Factura comercial",
+      "bill_of_lading": "Conocimiento de embarque (BL)",
+      "other": "Otro"
+    },
+    "commissionStatus": {
+      "registered": "Registrada",
+      "invoiced": "Facturada",
+      "paid": "Cobrada",
+      "overdue": "Vencida"
+    },
+    "commission": {
+      "title": "Comisión de Meridia",
+      "pageTitle": "Comisiones",
+      "intro": {
+        "admin": "Comisiones registradas al aceptar cada orden. Meridia no cobra por la plataforma: el estado se marca a mano.",
+        "factory": "Comisiones de tus pedidos según tu contrato con Meridia."
+      },
+      "empty": "No hay comisiones en este estado.",
+      "status": "Estado",
+      "rate": "Porcentaje",
+      "base": "Base (total de la orden)",
+      "amount": "Comisión",
+      "invoicedAt": "Fecha de factura",
+      "dueDate": "Vencimiento",
+      "paidAt": "Cobrada el",
+      "markInvoiced": "Marcar facturada",
+      "markPaid": "Marcar cobrada",
+      "markOverdue": "Marcar vencida",
+      "saved": "Comisión actualizada.",
+      "registeredAt": "Registrada el {date}",
+      "dueOn": "vence el {date}"
+    },
+    "errors": {
+      "belowMoq": "La cantidad es menor que el mínimo de la fábrica ({moq}).",
+      "incotermNotQuoted": "Ese término no está en la cotización.",
+      "invalidQuantity": "El campo «Cantidad» debe ser un número mayor que 0.",
+      "quoteExpired": "La cotización venció. Pide a la fábrica una nueva vigencia por mensaje.",
+      "quoteNotAvailable": "Esta cotización ya no está disponible.",
+      "rfqNotOpen": "La solicitud no admite órdenes en su estado actual.",
+      "orderExists": "Ya hay una orden activa para esta solicitud.",
+      "commissionNotConfigured": "Meridia todavía no configuró la comisión pactada con tu fábrica. Ya le avisamos; podrás aceptar cuando esté configurada.",
+      "reasonRequired": "Escribe el motivo del rechazo.",
+      "documentsRequired": "Sube la factura comercial y el conocimiento de embarque antes de marcarlo embarcado.",
+      "invalidTransition": "Esta acción no es posible en el estado actual.",
+      "notFound": "No se encontró el pedido.",
+      "notAllowed": "Tu cuenta no puede hacer esta acción.",
+      "saveFailed": "No pudimos guardar. Inténtalo de nuevo."
     }
   }
 }
