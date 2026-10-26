@@ -11,7 +11,10 @@
     "db:push": "supabase db push",
     "i18n:check": "node scripts/i18n-check.mjs",
     "typecheck": "tsc --noEmit",
-    "admin:create": "node --env-file=.env.local scripts/create-admin.mjs"
+    "admin:create": "node --env-file=.env.local scripts/create-admin.mjs",
+    "seed": "node scripts/seed.mjs",
+    "test:e2e": "playwright test",
+    "check:config": "node scripts/check-no-hardcoded.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -24,6 +27,7 @@
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.12",
+    "@playwright/test": "^1.64.1",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

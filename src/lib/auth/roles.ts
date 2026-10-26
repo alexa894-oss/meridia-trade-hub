@@ -9,7 +9,7 @@ export const roleHome: Record<Role, string> = {
 };
 
 // Rutas que exigen sesión (sin prefijo de idioma).
-export const protectedPrefixes = ["/panel", "/comprador", "/fabrica", "/admin", "/restablecer", "/notificaciones"];
+export const protectedPrefixes = ["/panel", "/comprador", "/fabrica", "/admin", "/restablecer", "/notificaciones", "/textos-legales"];
 
 // Rutas solo para visitantes: con sesión se redirige al panel.
 export const guestOnlyPrefixes = ["/ingresar", "/crear-cuenta", "/recuperar"];

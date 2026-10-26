@@ -5,15 +5,79 @@ Plataforma B2B que conecta compradores latinoamericanos con fábricas validadas
 
 Stack: Next.js (App Router) · TypeScript · Tailwind CSS · Supabase · Vercel · next-intl.
 
-## Desarrollo local
+## Entornos
+
+| Entorno | Supabase (us-east-1) | Vercel | Datos |
+|---|---|---|---|
+| Desarrollo | `arhfwbrxgddafvszqmbs` | local (`.env.local`) | datos de prueba (`npm run seed`) |
+| Staging | `siqxntltnwzxyxuvwymd` | **Preview** (cada rama, p. ej. `plataforma`) | datos de prueba (`npm run seed -- --env=staging`) |
+| Producción | `sktlxvjmhbdqnwmyxqbb` | **Production** (rama `main`) | solo datos reales; nunca datos de prueba |
+
+Las tres bases tienen el mismo esquema: todo cambio entra como migración en `supabase/migrations/` y se aplica en orden desarrollo → staging → producción.
+
+## Instalación y desarrollo local
+
+Requisitos: Node 24 y npm.
 
 ```bash
 npm install
-cp .env.example .env.local   # completar con las claves de Supabase
-npm run dev
+cp .env.example .env.local   # URL y clave publicable del proyecto de desarrollo
+npm run dev                  # http://localhost:3000
 ```
 
 La app arranca aunque `.env.local` esté vacío; la sesión de Supabase simplemente no existe.
+Las claves públicas están en Supabase → **Project Settings → API Keys**. La clave de servicio (`SUPABASE_SERVICE_ROLE_KEY`) solo va en archivos `.env*.local` (ignorados por git) y nunca en Vercel con prefijo `NEXT_PUBLIC_`.
+
+## Migraciones
+
+```bash
+npx supabase login
+npx supabase link --project-ref <ref>   # desarrollo, staging o producción
+npm run db:push                         # aplica las migraciones pendientes
+```
+
+Antes de aplicar: `npm run db:check` corre todas las migraciones en un Postgres embebido y la prueba de humo de RLS. Después de cada migración, regenera los tipos (`src/lib/supabase/database.types.ts`).
+
+## Primer administrador
+
+```bash
+npm run admin:create -- correo@dominio.com --site=https://url-de-la-app
+```
+
+Imprime un enlace de un solo uso para definir la contraseña. Necesita `SUPABASE_SERVICE_ROLE_KEY` del proyecto en `.env.local`.
+
+## Datos de prueba (solo desarrollo y staging)
+
+```bash
+SEED_PASSWORD='una-clave-larga' npm run seed                    # desarrollo (.env.local)
+SEED_PASSWORD='una-clave-larga' npm run seed -- --env=staging   # staging (.env.staging.local)
+```
+
+Crea un admin, 3 compradores y 4 fábricas ficticias (`@seed.meridia.test`), solicitudes, cotizaciones y una conversación. Se niega a correr contra cualquier proyecto que no sea desarrollo o staging y si `MERIDIA_ENV=production`. No define precios de planes ni porcentajes de comisión: eso lo hace el administrador.
+
+## Pruebas
+
+| Comando | Qué verifica |
+|---|---|
+| `npm run db:check` | Migraciones + RLS en Postgres embebido (sin red): una fábrica no ve solicitudes no asignadas, nadie ve contactos ajenos, transiciones de estado, etc. |
+| `npm run check:config` | Que el código no tenga precios de membresía ni porcentajes de comisión |
+| `npm run test:e2e` | Playwright (escritorio y celular) contra la base sembrada: privacidad de contactos en cada pantalla, RLS por URL y por API, formularios que nombran el campo faltante, «Verificada» solo tras validar, flujo completo solicitud → cotización → pedido, y sin desborde horizontal en celular |
+
+Para `test:e2e`: correr antes `npm run seed` y exportar el mismo `SEED_PASSWORD`. Levanta `next dev` en el puerto 3456 (o reutiliza uno abierto).
+
+GitHub Actions (`.github/workflows/ci.yml`) corre lint, typecheck, i18n, `check:config`, `db:check` y build en cada push y pull request.
+
+## Despliegue (Vercel)
+
+- Proyecto `meridia-trade-hub` (equipo `alexagonzalez88`), conectado a GitHub.
+- Cada push a una rama crea un **Preview** que usa la base de staging. `main` despliega **Production** con la base de producción.
+- Variables por entorno (Vercel → Settings → Environment Variables): `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (Preview → staging, Production → producción). La app no necesita la clave de servicio en Vercel.
+
+### Configuración en el panel de Supabase (cada proyecto)
+
+1. **Authentication → URL Configuration**: *Site URL* con la URL de ese entorno; en *Redirect URLs*: desarrollo `http://localhost:3000/**`, staging `https://*-alexagonzalez88.vercel.app/**`, producción el dominio final.
+2. **Authentication → Emails → SMTP Settings**: SMTP propio (el correo por defecto de Supabase solo llega al equipo y con límite bajo).
+3. **Authentication → Attack Protection**: activar la protección contra contraseñas filtradas.
 
 ## Scripts
 
@@ -24,7 +88,10 @@ La app arranca aunque `.env.local` esté vacío; la sesión de Supabase simpleme
 | `npm run lint` / `npm run typecheck` | ESLint / TypeScript |
 | `npm run db:check` | Aplica todas las migraciones en un Postgres embebido y corre la prueba de humo de RLS |
 | `npm run db:push` | Aplica las migraciones al proyecto de Supabase enlazado (`npx supabase link`) |
-| `npm run i18n:check` | Lista las claves que faltan en cada idioma respecto a `es` |
+| `npm run i18n:check` | Lista las claves que faltan en cada idioma respecto a `es` (falla solo en idiomas activos) |
+| `npm run seed` | Datos de prueba (solo desarrollo y staging) |
+| `npm run test:e2e` | Pruebas de extremo a extremo con Playwright |
+| `npm run check:config` | Verifica que no haya precios ni comisiones en el código |
 | `npm run admin:create -- correo@dominio.com` | Crea el primer administrador (o `ADMIN_EMAIL=… npm run admin:create`). Imprime un enlace de un solo uso para definir la contraseña. `--promote` convierte una cuenta existente; `--site=https://…` cambia la URL del enlace |
 
 ## Cuentas y roles
@@ -78,6 +145,10 @@ La app arranca aunque `.env.local` esté vacío; la sesión de Supabase simpleme
 - La base fija quién envía (`sender_kind`); nadie puede firmar como «Meridia» salvo el administrador.
 - Avisos dentro de la plataforma (campana en el encabezado y `/notificaciones`) por mensajes nuevos, cotizaciones, asignaciones y revisiones.
 
+## Textos legales
+
+- Al publicar una versión nueva de términos o del acuerdo de no elusión, compradores y fábricas deben aceptarla al entrar (`/textos-legales`) antes de seguir usando la plataforma (`pending_legal_documents()`).
+
 ## Pedidos y comisión
 
 - El comprador genera la orden desde una cotización (término y cantidad ≥ mínimo de la fábrica); el precio se copia de la cotización. Una orden activa por solicitud.
@@ -98,4 +169,5 @@ La app arranca aunque `.env.local` esté vacío; la sesión de Supabase simpleme
 - `src/lib/supabase/` — clientes de Supabase para navegador, servidor y proxy
 - `src/app/globals.css` — tokens de marca (navy, dorado, blanco)
 
-La guía completa de despliegue y entornos llega en la Etapa 8.
+- `e2e/` — pruebas de extremo a extremo (Playwright)
+- `scripts/` — administrador, datos de prueba y verificaciones

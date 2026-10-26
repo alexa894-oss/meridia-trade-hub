@@ -334,5 +334,16 @@ check('facturada con vencimiento pasado queda vencida', (await q(`select status 
 await q(`select admin_commission_action($1,'paid')`, [comm]);
 check('cobro marcado a mano', (await q(`select status from commissions where id=$1`, [comm]))[0].status === 'paid');
 
+// --- Etapa 8: re-aceptación de textos legales ---
+await asUser(pend);
+check('sin textos pendientes tras aceptar', (await q(`select * from pending_legal_documents()`)).length === 0);
+await asUser(admin);
+await q(`insert into legal_documents(kind,version,content,is_draft) values ('terms', 2, '{"es":"Términos v2"}', false)`);
+await asUser(pend);
+const pendingNow = await q(`select kind, version from pending_legal_documents()`);
+check('versión nueva queda pendiente', pendingNow.length === 1 && pendingNow[0].version === 2);
+await q(`insert into legal_acceptances(user_id,legal_document_id) select $1, id from pending_legal_documents()`, [pend]);
+check('al aceptarla ya no está pendiente', (await q(`select * from pending_legal_documents()`)).length === 0);
+
 console.log(fails ? `\n${fails} FALLOS` : '\nTodo OK');
 process.exit(fails ? 1 : 0);

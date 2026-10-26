@@ -1439,6 +1439,25 @@ export type Database = {
         Returns: string
       }
       owns_rfq: { Args: { p_rfq: string }; Returns: boolean }
+      pending_legal_documents: {
+        Args: never
+        Returns: {
+          content: Json
+          created_at: string
+          created_by: string | null
+          id: string
+          is_draft: boolean
+          kind: Database["public"]["Enums"]["legal_document_kind"]
+          published_at: string | null
+          version: number
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "legal_documents"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       register_company: { Args: { p_country: string }; Returns: string }
       setting: { Args: { p_key: string }; Returns: Json }
       storage_owner_id: { Args: { p_name: string }; Returns: string }

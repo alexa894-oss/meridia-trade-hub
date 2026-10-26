@@ -1,0 +1,33 @@
+# Meridia Trade Hub · Verificaciones en cada push y pull request.
+# No usa claves de Supabase: la base se prueba en un Postgres embebido (db:check).
+# Las pruebas de extremo a extremo (Playwright) se corren aparte contra staging.
+name: CI
+
+on:
+  push:
+    branches: [plataforma, main]
+  pull_request:
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: ESLint
+        run: npm run lint
+      - name: TypeScript
+        run: npm run typecheck
+      - name: Textos (i18n)
+        run: npm run i18n:check
+      - name: Sin precios ni comisiones en el código
+        run: npm run check:config
+      - name: Migraciones y RLS (Postgres embebido)
+        run: npm run db:check
+      - name: Build
+        run: npm run build

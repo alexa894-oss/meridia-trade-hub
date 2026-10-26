@@ -1034,5 +1034,15 @@
       "notAllowed": "Tu cuenta no puede hacer esta acción.",
       "saveFailed": "No pudimos guardar. Inténtalo de nuevo."
     }
+  },
+  "LegalUpdate": {
+    "title": "Actualizamos nuestros textos legales",
+    "intro": "Para seguir usando Meridia, lee y acepta la versión vigente. Guardamos qué versión aceptaste y cuándo.",
+    "submit": "Aceptar y continuar",
+    "errors": {
+      "mustAcceptAll": "Debes aceptar todos los textos para continuar.",
+      "notAllowed": "Tu cuenta no puede hacer esta acción.",
+      "saveFailed": "No pudimos guardar. Inténtalo de nuevo."
+    }
   }
 }
