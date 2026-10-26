@@ -1,7 +1,7 @@
 -- Meridia Trade Hub · Row Level Security
 -- Regla general: cada tabla con RLS activo; el administrador ve todo;
 -- comprador y fábrica solo ven lo suyo. Lo que cruza entre partes pasa por
--- funciones que exponen columnas seguras (ver 20261026000700).
+-- funciones que exponen columnas seguras (ver 20261026161628_cross_party_storage_realtime).
 
 alter table public.companies enable row level security;
 alter table public.profiles enable row level security;
