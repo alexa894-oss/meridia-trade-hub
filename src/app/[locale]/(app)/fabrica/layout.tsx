@@ -13,6 +13,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           items={[
             { href: "/fabrica", key: "home", exact: true },
             { href: "/fabrica/oportunidades", key: "opportunities" },
+            { href: "/fabrica/mensajes", key: "messages" },
           ]}
         />
         {children}

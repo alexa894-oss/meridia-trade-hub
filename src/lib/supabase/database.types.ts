@@ -1373,12 +1373,39 @@ export type Database = {
       }
       is_admin: { Args: never; Returns: boolean }
       is_assigned: { Args: { p_rfq: string }; Returns: boolean }
+      list_my_conversations: {
+        Args: { p_conversation?: string }
+        Returns: {
+          buyer_country: string
+          buyer_name: string
+          buyer_sector: Json
+          factory_company_id: string
+          factory_name: string
+          id: string
+          last_message: string
+          last_message_at: string
+          last_sender: Database["public"]["Enums"]["message_sender_kind"]
+          rfq_id: string
+          rfq_number: number
+          rfq_product: string
+          rfq_status: Database["public"]["Enums"]["rfq_status"]
+          unread: number
+        }[]
+      }
+      mark_conversation_read: {
+        Args: { p_conversation: string }
+        Returns: undefined
+      }
       mark_quotes_reviewed: { Args: { p_rfq: string }; Returns: undefined }
       my_company_editable: { Args: never; Returns: boolean }
       my_company_id: { Args: never; Returns: string }
       my_role: {
         Args: never
         Returns: Database["public"]["Enums"]["user_role"]
+      }
+      open_conversation: {
+        Args: { p_factory: string; p_rfq: string }
+        Returns: string
       }
       owns_rfq: { Args: { p_rfq: string }; Returns: boolean }
       register_company: { Args: { p_country: string }; Returns: string }

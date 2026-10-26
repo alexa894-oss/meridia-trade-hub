@@ -5,6 +5,8 @@ import { Link } from "@/i18n/navigation";
 import { getCurrentProfile } from "@/lib/auth/session";
 import { roleHome } from "@/lib/auth/roles";
 import { signOut } from "@/app/[locale]/(auth)/actions";
+import { unreadNotificationCount } from "@/lib/messages/load";
+import { NotificationBell } from "@/components/messages/notification-bell";
 
 export function AppHeader() {
   return (
@@ -28,10 +30,12 @@ export function AppHeader() {
 async function UserMenu() {
   const profile = await getCurrentProfile();
   if (!profile) return null;
-  const t = await getTranslations("App");
+  const [t, unread] = await Promise.all([getTranslations("App"), unreadNotificationCount(profile.id)]);
 
   return (
     <div className="flex items-center gap-3">
+      {/* key: al cambiar el conteo del servidor (p. ej. tras leer avisos) la campana se reinicia */}
+      <NotificationBell key={unread} userId={profile.id} initialCount={unread} />
       <Link href={roleHome[profile.role]} className="hidden text-right sm:block">
         <span className="block text-sm font-semibold text-navy-800">{profile.fullName ?? profile.email}</span>
         <span className="block text-xs text-ink-muted">{t(`roles.${profile.role}`)}</span>

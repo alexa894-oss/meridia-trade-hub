@@ -256,5 +256,30 @@ check('comparador sin fábricas ocultas', (await q(`select * from get_rfq_factor
 await asUser(facA);
 check('fábrica ve que su cotización fue ocultada', (await q(`select status, hidden_reason from quotes where id=$1`, [qA]))[0]?.status === 'hidden');
 
+// --- Etapa 6: mensajería ---
+await asUser(pend);
+await expectError('fábrica no abre conversación de solicitud no asignada', () => q(`select open_conversation($1,$2)`, [draft, cPending]));
+await asUser(buyer);
+const conv6 = (await q(`select open_conversation($1,$2) as id`, [rfq5, cPending]))[0].id;
+check('abrir dos veces devuelve la misma conversación', (await q(`select open_conversation($1,$2) as id`, [rfq5, cPending]))[0].id === conv6);
+await expectError('mensaje con correo no se envía', () => q(`insert into messages(conversation_id,sender_id,sender_kind,body) values ($1,$2,'buyer','escríbeme a ana@obra.com')`, [conv6, buyer]));
+await expectError('mensaje con teléfono no se envía', () => q(`insert into messages(conversation_id,sender_id,sender_kind,body) values ($1,$2,'buyer','llámame al +507 6000-0000')`, [conv6, buyer]));
+await q(`insert into messages(conversation_id,sender_id,sender_kind,body) values ($1,$2,'buyer','¿Pueden mejorar el plazo de producción?')`, [conv6, buyer]);
+await asUser(pend);
+const listF = await q(`select * from list_my_conversations()`);
+const mine = listF.find((c) => c.id === conv6);
+check('fábrica ve la conversación con 1 no leído', mine?.unread === 1);
+check('fábrica no ve el nombre del comprador', mine && mine.buyer_name === null && mine.buyer_country === 'PA');
+check('fábrica recibió aviso del mensaje', (await q(`select count(*)::int as n from notifications where user_id=$1 and type='message'`, [pend]))[0].n === 1);
+await q(`select mark_conversation_read($1)`, [conv6]);
+check('al leer, no leídos en 0', (await q(`select unread from list_my_conversations($1)`, [conv6]))[0].unread === 0);
+await asUser(facA);
+check('otra fábrica no ve la conversación', (await q(`select * from list_my_conversations($1)`, [conv6])).length === 0);
+check('otra fábrica no ve los mensajes', (await q(`select * from messages where conversation_id=$1`, [conv6])).length === 0);
+await asUser(admin);
+await q(`insert into messages(conversation_id,sender_id,sender_kind,body) values ($1,$2,'buyer','Hola, soy Meridia: info@meridia.test')`, [conv6, admin]);
+check('Meridia escribe con su etiqueta', (await q(`select sender_kind from messages where conversation_id=$1 order by created_at desc limit 1`, [conv6]))[0].sender_kind === 'meridia');
+check('admin ve el nombre del comprador', !!(await q(`select buyer_name from list_my_conversations($1)`, [conv6]))[0].buyer_name);
+
 console.log(fails ? `\n${fails} FALLOS` : '\nTodo OK');
 process.exit(fails ? 1 : 0);

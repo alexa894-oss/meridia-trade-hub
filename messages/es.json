@@ -294,7 +294,8 @@
       "companies": "Empresas",
       "plans": "Planes",
       "settings": "Configuración",
-      "rfqs": "Solicitudes"
+      "rfqs": "Solicitudes",
+      "messages": "Mensajes"
     },
     "status": {
       "registered": "Registrada",
@@ -564,7 +565,8 @@
       },
       "quotes": "{count, plural, =0 {Cotizaciones} one {# cotización} other {# cotizaciones}}",
       "noQuotes": "Todavía no hay cotizaciones.",
-      "quoteDraft": "La fábrica tiene un borrador sin enviar."
+      "quoteDraft": "La fábrica tiene un borrador sin enviar.",
+      "conversation": "Conversación"
     },
     "quotes": {
       "reason": "Motivo para ocultar",
@@ -583,12 +585,14 @@
     "buyer": {
       "label": "Secciones",
       "home": "Inicio",
-      "rfqs": "Solicitudes"
+      "rfqs": "Solicitudes",
+      "messages": "Mensajes"
     },
     "factory": {
       "label": "Secciones",
       "home": "Inicio",
-      "opportunities": "Oportunidades"
+      "opportunities": "Oportunidades",
+      "messages": "Mensajes"
     }
   },
   "Rfq": {
@@ -809,7 +813,8 @@
       "title": "Tu cotización",
       "sentHelp": "Enviaste esta cotización. Ya no se puede editar; si algo cambia, coméntalo en la conversación con el comprador.",
       "hidden": "Meridia ocultó esta cotización: {reason}",
-      "closed": "Esta solicitud ya no recibe cotizaciones."
+      "closed": "Esta solicitud ya no recibe cotizaciones.",
+      "writeBuyer": "Escribir al comprador"
     },
     "comparator": {
       "title": "{count, plural, =0 {Cotizaciones} one {# cotización} other {# cotizaciones}}",
@@ -828,10 +833,65 @@
       "discard": "Descartar",
       "openConversation": "Abrir conversación",
       "createOrder": "Generar orden",
-      "comingSoon": "La conversación y la orden se habilitan en las próximas etapas.",
       "expired": "Vencida: la vigencia de esta cotización ya pasó.",
-      "discarded": "{count, plural, one {# cotización descartada} other {# cotizaciones descartadas}}"
+      "discarded": "{count, plural, one {# cotización descartada} other {# cotizaciones descartadas}}",
+      "orderSoon": "La orden se habilita en la próxima etapa."
     },
     "sampleFree": "Muestra gratis"
+  },
+  "Messages": {
+    "title": "Mensajes",
+    "back": "Volver a mensajes",
+    "buyer": "Comprador",
+    "factory": "Fábrica",
+    "you": "Tú",
+    "noMessages": "Sin mensajes todavía",
+    "empty": "Todavía no hay mensajes. Escribe el primero.",
+    "unread": "{count, plural, one {# nuevo} other {# nuevos}}",
+    "emptyList": {
+      "buyer": "Aún no tienes conversaciones. Ábrelas desde el comparador de tu solicitud.",
+      "factory": "Aún no tienes conversaciones. Puedes escribir al comprador desde cada oportunidad.",
+      "admin": "Todavía no hay conversaciones."
+    },
+    "participants": {
+      "buyer": "Participan tú, la fábrica y Meridia.",
+      "factory": "Participan tú, el comprador y Meridia.",
+      "admin": "Escribes como «Meridia». Ven el mensaje el comprador y la fábrica."
+    },
+    "placeholder": "Escribe un mensaje",
+    "placeholderMeridia": "Escribe como Meridia",
+    "send": "Enviar",
+    "sending": "Enviando…",
+    "attach": "Adjuntar archivo",
+    "removeFile": "Quitar archivo",
+    "hint": "No compartas teléfonos, correos ni WeChat: toda la comunicación ocurre en Meridia. Adjuntos: PDF, JPG, PNG o WEBP hasta 10 MB.",
+    "hintMeridia": "Tu mensaje aparece con la etiqueta «Meridia».",
+    "errors": {
+      "contactInfo": "El mensaje parece incluir un dato de contacto («{found}»). Quítalo para enviarlo: toda la comunicación ocurre en Meridia.",
+      "invalidType": "Formato no permitido. Usa PDF, JPG, PNG o WEBP.",
+      "tooLarge": "El archivo supera 10 MB.",
+      "uploadFailed": "No pudimos subir el archivo.",
+      "empty": "Escribe un mensaje o adjunta un archivo.",
+      "tooLong": "El mensaje es demasiado largo.",
+      "invalidAttachment": "Adjunto no válido.",
+      "sendFailed": "No pudimos enviar el mensaje. Inténtalo de nuevo.",
+      "notAllowed": "Tu cuenta no puede escribir aquí."
+    }
+  },
+  "Notifications": {
+    "title": "Avisos",
+    "empty": "No tienes avisos.",
+    "bell": "{count, plural, =0 {Avisos} one {# aviso sin leer} other {# avisos sin leer}}",
+    "theFactory": "la fábrica",
+    "theBuyer": "el comprador",
+    "types": {
+      "message": "Nuevo mensaje de {from} en la solicitud #{number}.",
+      "rfq_assigned": "Meridia te asignó la solicitud #{number}.",
+      "quote_hidden": "Meridia ocultó tu cotización en una solicitud.",
+      "rfq_status": "Meridia actualizó tu solicitud #{number}.",
+      "quote_received": "Recibiste una cotización en tu solicitud #{number}.",
+      "company_review": "Meridia actualizó el registro de tu empresa.",
+      "other": "Tienes un aviso nuevo."
+    }
   }
 }

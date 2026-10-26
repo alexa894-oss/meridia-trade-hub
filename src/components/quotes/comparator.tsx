@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { buyerQuoteAction } from "@/lib/quotes/actions";
+import { openConversation } from "@/lib/messages/actions";
 import type { loadComparator } from "@/lib/quotes/load";
 import { formatDate, StatusBadge } from "@/components/admin/ui";
 import { money, plainNumber } from "./format";
@@ -141,10 +142,14 @@ export async function Comparator({ entries, incoterms, unitLabel, closed }: { en
                             {t("comparator.prefer")}
                           </ActionButton>
                         )}
-                        <button type="button" disabled title={t("comparator.comingSoon")} className="inline-flex min-h-10 w-full items-center justify-center rounded-(--radius-control) border border-line px-3 text-sm font-semibold text-ink-muted">
-                          {t("comparator.openConversation")}
-                        </button>
-                        <button type="button" disabled title={t("comparator.comingSoon")} className="inline-flex min-h-10 w-full items-center justify-center rounded-(--radius-control) border border-line px-3 text-sm font-semibold text-ink-muted">
+                        <form action={openConversation}>
+                          <input type="hidden" name="rfqId" value={quote.rfq_id} />
+                          <input type="hidden" name="factoryId" value={quote.factory_company_id} />
+                          <button type="submit" className="inline-flex min-h-10 w-full items-center justify-center rounded-(--radius-control) border border-navy-800 px-3 text-sm font-semibold text-navy-800 hover:bg-navy-50">
+                            {t("comparator.openConversation")}
+                          </button>
+                        </form>
+                        <button type="button" disabled title={t("comparator.orderSoon")} className="inline-flex min-h-10 w-full items-center justify-center rounded-(--radius-control) border border-line px-3 text-sm font-semibold text-ink-muted">
                           {t("comparator.createOrder")}
                         </button>
                         <ActionButton quoteId={quote.id} action="discard" tone="danger">
@@ -159,7 +164,7 @@ export async function Comparator({ entries, incoterms, unitLabel, closed }: { en
           </tbody>
         </table>
       </div>
-      {!closed ? <p className="text-xs text-ink-muted">{t("comparator.comingSoon")}</p> : null}
+      {!closed ? <p className="text-xs text-ink-muted">{t("comparator.orderSoon")}</p> : null}
       {discarded.length ? (
         <details className="text-sm">
           <summary className="cursor-pointer font-semibold text-navy-800">{t("comparator.discarded", { count: discarded.length })}</summary>

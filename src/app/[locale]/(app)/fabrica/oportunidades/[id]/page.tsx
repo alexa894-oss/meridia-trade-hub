@@ -9,6 +9,7 @@ import { loadFactoryQuote } from "@/lib/quotes/load";
 import { QuoteForm } from "@/components/quotes/quote-form";
 import { QuoteDetails } from "@/components/quotes/quote-details";
 import { StatusBadge } from "@/components/admin/ui";
+import { openConversation } from "@/lib/messages/actions";
 import { Card, DataList } from "@/components/admin/ui";
 import { RfqSummary } from "@/components/rfqs/rfq-summary";
 
@@ -41,9 +42,18 @@ export default async function OpportunityPage({ params }: PageProps<"/[locale]/f
       <Link href="/fabrica/oportunidades" className="text-sm font-semibold text-navy-800 hover:underline">
         ← {t("factory.back")}
       </Link>
-      <h1 className="font-display text-2xl font-bold text-navy-800 sm:text-3xl">
-        #{rfq.number} · {rfq.product}
-      </h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="font-display text-2xl font-bold text-navy-800 sm:text-3xl">
+          #{rfq.number} · {rfq.product}
+        </h1>
+        <form action={openConversation}>
+          <input type="hidden" name="rfqId" value={rfq.id} />
+          <input type="hidden" name="factoryId" value={profile.companyId!} />
+          <button type="submit" className="inline-flex min-h-11 items-center rounded-(--radius-control) border border-navy-800 px-4 text-sm font-semibold text-navy-800 hover:bg-navy-50">
+            {tq("factory.writeBuyer")}
+          </button>
+        </form>
+      </div>
 
       <Card title={t("factory.buyer")}>
         <DataList

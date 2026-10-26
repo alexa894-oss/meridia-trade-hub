@@ -8,6 +8,7 @@ export function AdminNav() {
         { href: "/admin", key: "dashboard", exact: true },
         { href: "/admin/empresas", key: "companies" },
         { href: "/admin/solicitudes", key: "rfqs" },
+        { href: "/admin/mensajes", key: "messages" },
         { href: "/admin/planes", key: "plans" },
         { href: "/admin/configuracion", key: "settings" },
       ]}

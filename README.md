@@ -70,6 +70,14 @@ La app arranca aunque `.env.local` esté vacío; la sesión de Supabase simpleme
 - Comprador: comparador con una columna por fábrica (nombre, verificación, precio por término, tiempos, pagos, muestra, marca de alternativa). Al abrirlo las cotizaciones quedan **revisadas**; puede marcar preferida (la solicitud pasa a **en negociación**) o descartar. Vencen solas al pasar la vigencia.
 - Administrador: ve todas las cotizaciones de la solicitud y puede ocultar una (con motivo) o restaurarla.
 
+## Mensajería
+
+- Una conversación por solicitud y fábrica (`open_conversation()`), entre comprador, fábrica y Meridia. Se abre desde el comparador, desde la oportunidad de la fábrica o desde el panel del admin.
+- Tiempo real con Supabase Realtime (respeta RLS) y adjuntos en `message-attachments/<conversación>/…` (PDF o imagen, 10 MB).
+- Teléfonos, correos y WeChat: aviso inmediato y envío bloqueado; la base lo vuelve a rechazar (`check_message_contact`). Meridia está exenta.
+- La base fija quién envía (`sender_kind`); nadie puede firmar como «Meridia» salvo el administrador.
+- Avisos dentro de la plataforma (campana en el encabezado y `/notificaciones`) por mensajes nuevos, cotizaciones, asignaciones y revisiones.
+
 ### Tipos de la base
 
 `src/lib/supabase/database.types.ts` se genera desde Supabase. Regenéralo después de cada migración (`npx supabase gen types typescript --project-id <ref>` con el CLI enlazado).

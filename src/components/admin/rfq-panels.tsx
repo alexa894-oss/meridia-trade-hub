@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { FormAlert, TextareaField, useFieldError } from "@/components/forms";
 import { initialFormState } from "@/lib/forms";
 import { adminRfqAction, assignFactories, unassignFactory } from "@/lib/rfqs/actions";
+import { openConversation } from "@/lib/messages/actions";
 
 type Candidate = {
   id: string;
@@ -51,6 +52,13 @@ export function AssignPanel({ rfqId, candidates, canAssign }: { rfqId: string; c
                   <span className="block font-semibold text-navy-800">{c.name}</span>
                   <span className="text-ink-muted">{c.hasQuote ? t("quoted") : t("waitingQuote")}</span>
                 </span>
+                <form action={openConversation}>
+                  <input type="hidden" name="rfqId" value={rfqId} />
+                  <input type="hidden" name="factoryId" value={c.id} />
+                  <button type="submit" className="text-sm font-semibold text-navy-800 hover:underline">
+                    {t("conversation")}
+                  </button>
+                </form>
                 {!c.hasQuote ? (
                   <form action={unassignFactory}>
                     <input type="hidden" name="rfqId" value={rfqId} />
