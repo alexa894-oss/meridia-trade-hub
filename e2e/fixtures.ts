@@ -1,6 +1,6 @@
 import { expect, type Page } from "@playwright/test";
 
-// Cuentas y datos que crea scripts/seed.mjs (solo desarrollo y staging).
+// Cuentas y datos que crea scripts/seed.mjs (solo desarrollo).
 export const PASSWORD = process.env.SEED_PASSWORD ?? "";
 const D = "seed.meridia.test";
 

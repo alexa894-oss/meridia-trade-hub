@@ -1,6 +1,6 @@
 # Meridia Trade Hub · Verificaciones en cada push y pull request.
 # No usa claves de Supabase: la base se prueba en un Postgres embebido (db:check).
-# Las pruebas de extremo a extremo (Playwright) se corren aparte contra staging.
+# Las pruebas de extremo a extremo (Playwright) se corren aparte contra la base de desarrollo sembrada.
 name: CI
 
 on:

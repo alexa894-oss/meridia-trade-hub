@@ -9,11 +9,10 @@ Stack: Next.js (App Router) · TypeScript · Tailwind CSS · Supabase · Vercel 
 
 | Entorno | Supabase (us-east-1) | Vercel | Datos |
 |---|---|---|---|
-| Desarrollo | `arhfwbrxgddafvszqmbs` | local (`.env.local`) | datos de prueba (`npm run seed`) |
-| Staging | `siqxntltnwzxyxuvwymd` | **Preview** (cada rama, p. ej. `plataforma`) | datos de prueba (`npm run seed -- --env=staging`) |
+| Desarrollo | `arhfwbrxgddafvszqmbs` | local (`.env.local`) y **Preview** (cada rama, p. ej. `plataforma`) | datos de prueba (`npm run seed`) |
 | Producción | `sktlxvjmhbdqnwmyxqbb` | **Production** (rama `main`) | solo datos reales; nunca datos de prueba |
 
-Las tres bases tienen el mismo esquema: todo cambio entra como migración en `supabase/migrations/` y se aplica en orden desarrollo → staging → producción.
+Las dos bases tienen el mismo esquema: todo cambio entra como migración en `supabase/migrations/` y se aplica primero en desarrollo y luego en producción.
 
 ## Instalación y desarrollo local
 
@@ -32,7 +31,7 @@ Las claves públicas están en Supabase → **Project Settings → API Keys**. L
 
 ```bash
 npx supabase login
-npx supabase link --project-ref <ref>   # desarrollo, staging o producción
+npx supabase link --project-ref <ref>   # desarrollo o producción
 npm run db:push                         # aplica las migraciones pendientes
 ```
 
@@ -46,14 +45,13 @@ npm run admin:create -- correo@dominio.com --site=https://url-de-la-app
 
 Imprime un enlace de un solo uso para definir la contraseña. Necesita `SUPABASE_SERVICE_ROLE_KEY` del proyecto en `.env.local`.
 
-## Datos de prueba (solo desarrollo y staging)
+## Datos de prueba (solo desarrollo)
 
 ```bash
-SEED_PASSWORD='una-clave-larga' npm run seed                    # desarrollo (.env.local)
-SEED_PASSWORD='una-clave-larga' npm run seed -- --env=staging   # staging (.env.staging.local)
+SEED_PASSWORD='una-clave-larga' npm run seed   # desarrollo (.env.local)
 ```
 
-Crea un admin, 3 compradores y 4 fábricas ficticias (`@seed.meridia.test`), solicitudes, cotizaciones y una conversación. Se niega a correr contra cualquier proyecto que no sea desarrollo o staging y si `MERIDIA_ENV=production`. No define precios de planes ni porcentajes de comisión: eso lo hace el administrador.
+Crea un admin, 3 compradores y 4 fábricas ficticias (`@seed.meridia.test`), solicitudes, cotizaciones y una conversación. Se niega a correr contra cualquier proyecto que no sea el de desarrollo y si `MERIDIA_ENV=production`. No define precios de planes ni porcentajes de comisión: eso lo hace el administrador.
 
 ## Pruebas
 
@@ -70,12 +68,12 @@ GitHub Actions (`.github/workflows/ci.yml`) corre lint, typecheck, i18n, `check:
 ## Despliegue (Vercel)
 
 - Proyecto `meridia-trade-hub` (equipo `alexagonzalez88`), conectado a GitHub.
-- Cada push a una rama crea un **Preview** que usa la base de staging. `main` despliega **Production** con la base de producción.
-- Variables por entorno (Vercel → Settings → Environment Variables): `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (Preview → staging, Production → producción). La app no necesita la clave de servicio en Vercel.
+- Cada push a una rama crea un **Preview** que usa la base de desarrollo. `main` despliega **Production** con la base de producción.
+- Variables por entorno (Vercel → Settings → Environment Variables): `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (Development y Preview → desarrollo, Production → producción). La app no necesita la clave de servicio en Vercel.
 
 ### Configuración en el panel de Supabase (cada proyecto)
 
-1. **Authentication → URL Configuration**: *Site URL* con la URL de ese entorno; en *Redirect URLs*: desarrollo `http://localhost:3000/**`, staging `https://*-alexagonzalez88.vercel.app/**`, producción el dominio final.
+1. **Authentication → URL Configuration**: *Site URL* con la URL de ese entorno; en *Redirect URLs*: desarrollo `http://localhost:3000/**` y `https://*-alexagonzalez88.vercel.app/**` (previews), producción el dominio final.
 2. **Authentication → Emails → SMTP Settings**: SMTP propio (el correo por defecto de Supabase solo llega al equipo y con límite bajo).
 3. **Authentication → Attack Protection**: activar la protección contra contraseñas filtradas.
 
@@ -89,7 +87,7 @@ GitHub Actions (`.github/workflows/ci.yml`) corre lint, typecheck, i18n, `check:
 | `npm run db:check` | Aplica todas las migraciones en un Postgres embebido y corre la prueba de humo de RLS |
 | `npm run db:push` | Aplica las migraciones al proyecto de Supabase enlazado (`npx supabase link`) |
 | `npm run i18n:check` | Lista las claves que faltan en cada idioma respecto a `es` (falla solo en idiomas activos) |
-| `npm run seed` | Datos de prueba (solo desarrollo y staging) |
+| `npm run seed` | Datos de prueba (solo desarrollo) |
 | `npm run test:e2e` | Pruebas de extremo a extremo con Playwright |
 | `npm run check:config` | Verifica que no haya precios ni comisiones en el código |
 | `npm run admin:create -- correo@dominio.com` | Crea el primer administrador (o `ADMIN_EMAIL=… npm run admin:create`). Imprime un enlace de un solo uso para definir la contraseña. `--promote` convierte una cuenta existente; `--site=https://…` cambia la URL del enlace |

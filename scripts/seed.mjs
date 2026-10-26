@@ -1,14 +1,13 @@
-// Datos de prueba para DESARROLLO y STAGING. Nunca para producción.
+// Datos de prueba solo para DESARROLLO. Nunca para producción.
 //
 // Uso:
-//   SEED_PASSWORD=... npm run seed                     # usa .env.local (desarrollo)
-//   SEED_PASSWORD=... npm run seed -- --env=staging    # usa .env.staging.local
+//   SEED_PASSWORD=... npm run seed     # usa .env.local (desarrollo)
 //
 // Crea empresas ficticias de construcción y acabados (puertas, ventanas, pisos y
 // revestimientos), solicitudes, cotizaciones y una conversación. Todas las cuentas
 // usan correos @seed.meridia.test y la contraseña SEED_PASSWORD.
 //
-// Protecciones: solo corre contra los proyectos de Supabase listados abajo y se
+// Protecciones: solo corre contra el proyecto de Supabase listado abajo y se
 // niega si MERIDIA_ENV=production. No inventa precios de membresía ni comisiones:
 // esos valores los define el administrador.
 
@@ -17,12 +16,10 @@ import { createClient } from "@supabase/supabase-js";
 
 const SEEDABLE_PROJECTS = {
   arhfwbrxgddafvszqmbs: "desarrollo",
-  siqxntltnwzxyxuvwymd: "staging",
 };
 const DOMAIN = "seed.meridia.test";
 
-const envName = (process.argv.find((a) => a.startsWith("--env=")) ?? "--env=development").split("=")[1];
-const envFile = envName === "staging" ? ".env.staging.local" : ".env.local";
+const envFile = ".env.local";
 if (fs.existsSync(envFile)) process.loadEnvFile(envFile);
 
 function fail(msg) {
