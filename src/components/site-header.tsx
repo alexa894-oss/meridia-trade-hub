@@ -9,7 +9,7 @@ export async function SiteHeader() {
     <header className="border-b border-line bg-surface">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <Link href="/" className="flex items-center gap-2.5">
-          <Image src="/brand/meridia-mark.png" alt="" width={40} height={33} priority />
+          <Image src="/brand/meridia-mark.png" alt="" width={40} height={33} priority className="h-[33px] w-auto" />
           <span className="font-display text-lg leading-none font-bold tracking-wide text-navy-700">
             MERIDIA
             <span className="block text-[0.6rem] font-semibold tracking-[0.3em] text-gold-600">

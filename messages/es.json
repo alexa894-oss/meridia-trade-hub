@@ -6,8 +6,7 @@
   "Common": {
     "signIn": "Ingresar a Meridia",
     "signUp": "Crear cuenta",
-    "backHome": "Volver al inicio",
-    "comingSoon": "Esta sección estará disponible pronto."
+    "backHome": "Volver al inicio"
   },
   "Home": {
     "eyebrow": "Materiales de construcción y acabados",
@@ -30,9 +29,95 @@
     "footer": "© Meridia Trade Hub"
   },
   "SignIn": {
-    "title": "Ingresar a Meridia"
+    "title": "Ingresar a Meridia",
+    "subtitle": "Usa el correo y la contraseña de tu cuenta.",
+    "submit": "Ingresar",
+    "forgot": "¿Olvidaste tu contraseña?",
+    "noAccount": "¿Aún no tienes cuenta?",
+    "createAccount": "Crear cuenta"
   },
   "SignUp": {
-    "title": "Crear cuenta"
+    "title": "Crear cuenta",
+    "subtitle": "Elige el tipo de cuenta. Los datos de tu empresa los completarás después.",
+    "submit": "Crear cuenta",
+    "haveAccount": "¿Ya tienes cuenta?",
+    "signIn": "Ingresar a Meridia",
+    "goToSignIn": "Ir a Ingresar a Meridia",
+    "checkEmail": "Te enviamos un correo a {email}. Abre el enlace para confirmar tu cuenta y luego ingresa.",
+    "roles": {
+      "buyer": {
+        "title": "Comprador",
+        "body": "Publico solicitudes y recibo cotizaciones de fábricas."
+      },
+      "factory": {
+        "title": "Fábrica",
+        "body": "Recibo oportunidades asignadas por Meridia y cotizo."
+      }
+    }
+  },
+  "Recover": {
+    "title": "Recuperar contraseña",
+    "subtitle": "Te enviaremos un enlace para definir una contraseña nueva.",
+    "submit": "Enviar enlace",
+    "back": "Volver a Ingresar a Meridia",
+    "sent": "Si existe una cuenta con {email}, recibirás un correo con el enlace. Ábrelo en este mismo navegador."
+  },
+  "NewPassword": {
+    "title": "Nueva contraseña",
+    "subtitle": "Define la contraseña que usarás para ingresar.",
+    "submit": "Guardar contraseña"
+  },
+  "Forms": {
+    "sending": "Enviando…",
+    "passwordHint": "Mínimo {min} caracteres.",
+    "fields": {
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "newPassword": "Contraseña nueva",
+      "passwordConfirm": "Confirmar contraseña",
+      "fullName": "Nombre completo",
+      "accountRole": "Tipo de cuenta"
+    },
+    "errors": {
+      "required": "Completa el campo «{field}».",
+      "invalidEmail": "El campo «{field}» no tiene un correo válido.",
+      "passwordTooShort": "El campo «{field}» debe tener al menos {min} caracteres.",
+      "passwordMismatch": "El campo «{field}» no coincide con la contraseña.",
+      "invalidChoice": "Elige una opción válida en «{field}»."
+    },
+    "formErrors": {
+      "invalidCredentials": "El correo o la contraseña no son correctos.",
+      "emailNotConfirmed": "Todavía no confirmaste tu correo. Revisa tu bandeja de entrada.",
+      "emailTaken": "Ya existe una cuenta con ese correo. Ingresa o recupera tu contraseña.",
+      "weakPassword": "La contraseña es demasiado débil. Usa una más larga o con más variedad.",
+      "samePassword": "La contraseña nueva debe ser distinta de la anterior.",
+      "rateLimited": "Se enviaron demasiados correos. Espera unos minutos e inténtalo de nuevo.",
+      "signUpFailed": "No pudimos crear la cuenta. Inténtalo de nuevo.",
+      "updateFailed": "No pudimos guardar la contraseña. Inténtalo de nuevo.",
+      "linkExpired": "El enlace no es válido o ya venció. Pide uno nuevo.",
+      "notConfigured": "La conexión con el servidor no está configurada.",
+      "emailUndeliverable": "No podemos enviar correos a esa dirección. Revisa que esté bien escrita o usa otra."
+    }
+  },
+  "App": {
+    "signOut": "Salir",
+    "greeting": "Hola, {name}",
+    "roles": {
+      "buyer": "Comprador",
+      "factory": "Fábrica",
+      "admin": "Administrador · Meridia"
+    },
+    "profile": {
+      "title": "Tu perfil",
+      "name": "Nombre",
+      "email": "Correo",
+      "role": "Tipo de cuenta"
+    },
+    "nextStep": {
+      "title": "Siguiente paso",
+      "buyer": "Pronto podrás registrar tu empresa o tus datos como persona natural. Meridia los revisará antes de que puedas publicar solicitudes.",
+      "factory": "Pronto podrás registrar los datos de tu fábrica. Meridia los revisará antes de asignarte oportunidades.",
+      "admin": "Aquí estarán las empresas por validar, la asignación de solicitudes y la configuración de planes y comisiones."
+    }
   }
 }

@@ -2,10 +2,10 @@ import { createServerClient } from "@supabase/ssr";
 import type { NextRequest, NextResponse } from "next/server";
 import { isSupabaseConfigured, supabasePublishableKey, supabaseUrl } from "./env";
 
-// Refresca la sesión de Supabase y escribe las cookies en la respuesta que ya
-// preparó next-intl. La protección por rol se agrega en la Etapa 1.
+// Refresca la sesión de Supabase, escribe las cookies en la respuesta que ya
+// preparó next-intl y devuelve el id del usuario (o null).
 export async function updateSession(request: NextRequest, response: NextResponse) {
-  if (!isSupabaseConfigured) return response;
+  if (!isSupabaseConfigured) return { response, userId: null };
 
   const supabase = createServerClient(supabaseUrl, supabasePublishableKey, {
     cookies: {
@@ -18,6 +18,6 @@ export async function updateSession(request: NextRequest, response: NextResponse
     },
   });
 
-  await supabase.auth.getClaims();
-  return response;
+  const { data } = await supabase.auth.getClaims();
+  return { response, userId: data?.claims?.sub ?? null };
 }
