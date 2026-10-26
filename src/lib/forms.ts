@@ -15,7 +15,13 @@ export type FieldErrorCode =
   | "selectAtLeastOne"
   | "mustAccept"
   | "fileRequired"
-  | "webOrBrochure";
+  | "webOrBrochure"
+  | "invalidPercent"
+  | "endBeforeStart"
+  | "noShowroom"
+  | "invalidAmount"
+  | "invalidCurrency"
+  | "invalidHours";
 
 export type FormState<F extends string = string> = {
   status: "idle" | "error" | "success";

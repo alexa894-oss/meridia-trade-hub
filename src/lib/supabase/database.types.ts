@@ -1250,6 +1250,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_alerts: { Args: never; Returns: Json }
+      admin_review_company: {
+        Args: {
+          p_action: Database["public"]["Enums"]["company_review_action"]
+          p_company: string
+          p_message?: string
+          p_tier?: Database["public"]["Enums"]["factory_tier"]
+        }
+        Returns: undefined
+      }
       can_access_conversation: {
         Args: { p_conversation: string }
         Returns: boolean

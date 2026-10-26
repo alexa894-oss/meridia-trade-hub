@@ -48,6 +48,14 @@ La app arranca aunque `.env.local` esté vacío; la sesión de Supabase simpleme
 - Textos legales: tabla `legal_documents`, versionada. Mientras `is_draft = true` se muestra el aviso de borrador.
 - Sectores y categorías: listas editables (`sectors`, `categories`).
 
+## Panel de administración (`/admin`)
+
+- **Panel**: empresas en revisión y solicitudes sin cotizaciones. Las alertas usan umbrales en horas que define el admin; vacíos = alerta inactiva.
+- **Empresas**: filtros por estado y tipo; ficha con datos, contacto (solo admin), documentos (enlace firmado de 5 min), historial y acciones: validar, pedir información (con mensaje), rechazar (con motivo), suspender y reactivar. Todo pasa por `admin_review_company()`, que deja nota en el historial y una notificación a la empresa.
+- **Fábricas**: tipo VIP o estándar (una estándar validada exige el registro empresarial chino), comisión pactada (sin valor por defecto), notas internas, membresía y verificación de año de fundación y capacidad/ventas.
+- **Planes**: los crea el admin (nombre, precio, moneda, periodicidad). Ningún plan puede mencionar el showroom (validado en la app y en la base).
+- **Configuración**: decisiones abiertas, umbrales, textos legales versionados, sectores y categorías.
+
 ### Tipos de la base
 
 `src/lib/supabase/database.types.ts` se genera desde Supabase. Regenéralo después de cada migración (`npx supabase gen types typescript --project-id <ref>` con el CLI enlazado).

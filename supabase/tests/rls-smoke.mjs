@@ -136,5 +136,33 @@ await expectError('pago que no suma 100 falla', () => q(`update quotes set balan
 const hist = await q(`select entity_type, from_status, to_status from status_history order by id`);
 check('historial de estados registrado', hist.some((h) => h.entity_type === 'quote' && h.from_status === 'draft' && h.to_status === 'submitted'));
 
+// --- Etapa 3: revisión de empresas por el administrador ---
+await asUser(facB);
+await expectError('no admin no puede revisar empresas', () => q(`select admin_review_company($1,'validate')`, [cPending]));
+await expectError('no admin no puede ver alertas', () => q(`select admin_alerts()`));
+await asUser(admin);
+await expectError('pedir información exige mensaje', () => q(`select admin_review_company($1,'request_info','  ')`, [cPending]));
+await expectError('validar fábrica exige tipo', () => q(`select admin_review_company($1,'validate')`, [cPending]));
+await expectError('estándar sin registro empresarial chino falla', () => q(`select admin_review_company($1,'validate',null,'standard')`, [cPending]));
+await q(`select admin_review_company($1,'request_info','Falta el brochure')`, [cPending]);
+check('pedir información cambia el estado', (await q(`select status from companies where id=$1`, [cPending]))[0].status === 'info_requested');
+check('la nota queda en el historial', (await q(`select note from status_history where entity_id=$1 and to_status='info_requested'`, [cPending]))[0]?.note === 'Falta el brochure');
+check('la empresa recibe una notificación', (await q(`select count(*)::int as n from notifications where user_id=$1`, [pend]))[0].n === 1);
+await expectError('no se valida desde información pedida', () => q(`select admin_review_company($1,'validate',null,'vip')`, [cPending]));
+await asUser(pend);
+await q(`select submit_company_for_review()`);
+await asUser(admin);
+await q(`select admin_review_company($1,'validate',null,'vip')`, [cPending]);
+const val = (await q(`select c.status, c.validated_by, fa.tier from companies c join factory_admin fa on fa.company_id=c.id where c.id=$1`, [cPending]))[0];
+check('validar como VIP registra quién validó', val.status === 'validated' && val.validated_by === admin && val.tier === 'vip');
+await expectError('pasar a estándar sin licencia falla', () => q(`update factory_admin set tier='standard' where company_id=$1`, [cPending]));
+const alerts = (await q(`select admin_alerts() as a`))[0].a;
+check('alertas sin umbral quedan inactivas', alerts.companies_overdue === null && alerts.rfqs_overdue === null);
+await q(`update platform_settings set value='24' where key='pending_company_alert_hours'`);
+check('con umbral, la alerta cuenta', typeof (await q(`select admin_alerts() as a`))[0].a.companies_overdue === 'number');
+await expectError('umbral negativo no se acepta', () => q(`update platform_settings set value='-5' where key='unanswered_rfq_alert_hours'`));
+await asUser(pend);
+check('la fábrica no ve su tipo VIP', (await q(`select * from factory_admin`)).length === 0);
+
 console.log(fails ? `\n${fails} FALLOS` : '\nTodo OK');
 process.exit(fails ? 1 : 0);

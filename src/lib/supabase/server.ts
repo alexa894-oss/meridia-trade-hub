@@ -1,10 +1,13 @@
 import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 import { supabasePublishableKey, supabaseUrl } from "./env";
 import type { Database } from "./database.types";
 
 export async function createClient() {
+  // Toda consulta con sesión es dinámica; se marca antes de que el cliente use la hora actual.
+  await connection();
   const cookieStore = await cookies();
 
   return createServerClient<Database>(supabaseUrl, supabasePublishableKey, {

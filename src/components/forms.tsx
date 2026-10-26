@@ -117,7 +117,10 @@ export function SelectField({ label, error, hint, placeholder, options, id, clas
       <label htmlFor={selectId} className="block text-sm font-medium text-ink">
         {label}
       </label>
+      {/* key: tras un error, React reinicia el formulario y un <select> volvería a su
+          opción inicial; al cambiar el valor por defecto se vuelve a montar con el elegido. */}
       <select
+        key={String(select.defaultValue ?? "")}
         id={selectId}
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? `${selectId}-error` : hint ? `${selectId}-hint` : undefined}

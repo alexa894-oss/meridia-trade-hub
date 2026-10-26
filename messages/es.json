@@ -91,7 +91,13 @@
       "selectAtLeastOne": "Elige al menos una opción en «{field}».",
       "mustAccept": "Debes aceptar «{field}» para continuar.",
       "fileRequired": "Sube el archivo de «{field}».",
-      "webOrBrochure": "Indica una web o sube un brochure."
+      "webOrBrochure": "Indica una web o sube un brochure.",
+      "invalidPercent": "El campo «{field}» debe ser un porcentaje entre 0 y 100.",
+      "endBeforeStart": "El campo «{field}» no puede ser anterior al inicio.",
+      "noShowroom": "El campo «{field}» no puede mencionar el showroom.",
+      "invalidAmount": "El campo «{field}» debe ser un monto válido (0 o más).",
+      "invalidCurrency": "El campo «{field}» debe ser un código de moneda de 3 letras, por ejemplo USD.",
+      "invalidHours": "El campo «{field}» debe ser un número de horas mayor que 0, o quedar vacío."
     },
     "formErrors": {
       "invalidCredentials": "El correo o la contraseña no son correctos.",
@@ -279,6 +285,228 @@
     "suspended": {
       "title": "Cuenta suspendida",
       "body": "Tu cuenta está suspendida. Escríbenos si crees que es un error."
+    }
+  },
+  "Admin": {
+    "nav": {
+      "label": "Administración",
+      "dashboard": "Panel",
+      "companies": "Empresas",
+      "plans": "Planes",
+      "settings": "Configuración"
+    },
+    "status": {
+      "registered": "Registrada",
+      "in_review": "En revisión",
+      "validated": "Validada",
+      "info_requested": "Información pedida",
+      "rejected": "Rechazada",
+      "suspended": "Suspendida"
+    },
+    "dashboard": {
+      "title": "Panel de administración",
+      "noThreshold": "Alerta inactiva: no hay umbral configurado.",
+      "setThreshold": "Configurar umbral",
+      "companies": {
+        "title": "Empresas pendientes",
+        "countLabel": "en revisión",
+        "overdue": "{count, plural, =0 {Ninguna} one {# empresa} other {# empresas}} con más de {hours} h sin revisar.",
+        "review": "Revisar empresas"
+      },
+      "rfqs": {
+        "title": "Solicitudes sin respuesta",
+        "countLabel": "asignadas sin cotizaciones",
+        "overdue": "{count, plural, =0 {Ninguna} one {# solicitud} other {# solicitudes}} con más de {hours} h sin cotizaciones.",
+        "toAssignTitle": "Solicitudes por asignar",
+        "toAssign": "{count, plural, =0 {No hay solicitudes} one {# solicitud} other {# solicitudes}} esperando asignación.",
+        "comingSoon": "Las solicitudes de cotización llegan en la siguiente etapa."
+      }
+    },
+    "companies": {
+      "title": "Empresas por validar",
+      "all": "Todas",
+      "empty": "No hay empresas en este estado.",
+      "noName": "(sin datos todavía)",
+      "documents": "{count, plural, =0 {sin documentos} one {# documento} other {# documentos}}",
+      "registeredAt": "Registrada el {date}",
+      "submittedAt": "enviada el {date}",
+      "kinds": {
+        "all": "Todas",
+        "buyer": "Compradores",
+        "factory": "Fábricas"
+      },
+      "kind": {
+        "company": "Comprador · empresa",
+        "individual": "Comprador · persona natural",
+        "factory": "Fábrica"
+      }
+    },
+    "detail": {
+      "back": "Volver a empresas",
+      "noName": "(sin datos todavía)",
+      "registeredAt": "registrada el {date}",
+      "submittedAt": "enviada el {date}",
+      "yes": "Sí",
+      "no": "No",
+      "incomplete": "Todavía no completó este paso.",
+      "kind": {
+        "company": "Comprador · empresa",
+        "individual": "Comprador · persona natural",
+        "factory": "Fábrica"
+      },
+      "sections": {
+        "data": "Datos",
+        "contact": "Contacto",
+        "documents": "Documentos",
+        "verification": "Datos verificados",
+        "history": "Historial de estados",
+        "review": "Revisión",
+        "commercial": "Tipo y comisión",
+        "membership": "Membresía"
+      },
+      "contactPrivate": "Solo visible para Meridia. Nunca se muestra a la otra parte.",
+      "open": "Abrir",
+      "noDocuments": "No hay documentos.",
+      "licensePresent": "Tiene registro empresarial chino.",
+      "licenseMissing": "No subió el registro empresarial chino: no se puede validar como estándar.",
+      "verificationHint": "Solo los datos marcados se muestran a los compradores.",
+      "saveVerification": "Guardar verificación",
+      "noEnd": "sin fecha de fin",
+      "endMembership": "Terminar hoy"
+    },
+    "documentKinds": {
+      "tax_registration": "Documento de verificación",
+      "id_document": "Documento de identidad",
+      "cn_business_license": "Registro empresarial chino",
+      "brochure": "Brochure",
+      "other": "Otro"
+    },
+    "review": {
+      "tier": "Tipo de fábrica",
+      "chooseTier": "Elige VIP o estándar",
+      "tierHint": "Obligatorio para validar una fábrica.",
+      "tierHintNoLicense": "Obligatorio para validar. Sin registro empresarial chino solo puede validarse como VIP.",
+      "tiers": {
+        "vip": "VIP (con contrato)",
+        "standard": "Estándar"
+      },
+      "message": "Mensaje o motivo",
+      "messageHint": "Obligatorio para pedir información, rechazar o suspender. La empresa lo verá en su panel.",
+      "actions": {
+        "validate": "Validar",
+        "reactivate": "Reactivar",
+        "requestInfo": "Pedir información",
+        "reject": "Rechazar",
+        "suspend": "Suspender"
+      },
+      "noActions": {
+        "registered": "La empresa todavía no envió su registro.",
+        "info_requested": "Esperando que la empresa complete la información pedida.",
+        "validated": "",
+        "rejected": "Registro rechazado. No hay acciones disponibles.",
+        "in_review": "",
+        "suspended": ""
+      },
+      "errors": {
+        "tierRequired": "Elige el tipo de fábrica para validarla.",
+        "licenseRequired": "Una fábrica estándar necesita el registro empresarial chino.",
+        "messageRequired": "Escribe el mensaje o motivo.",
+        "invalidTransition": "Esta acción no es posible en el estado actual. Recarga la página.",
+        "notFound": "No se encontró la empresa.",
+        "notAllowed": "Tu cuenta no puede hacer esta acción.",
+        "saveFailed": "No pudimos guardar. Inténtalo de nuevo.",
+        "slugTaken": "Ya existe una opción con ese nombre."
+      },
+      "done": {
+        "validate": "Empresa validada.",
+        "request_info": "Se pidió información a la empresa.",
+        "reject": "Registro rechazado.",
+        "suspend": "Empresa suspendida."
+      }
+    },
+    "commercial": {
+      "tier": "Tipo de fábrica",
+      "noTier": "Sin asignar",
+      "commissionRate": "Comisión pactada (%)",
+      "commissionHint": "La del contrato con esta fábrica. Sin valor por defecto.",
+      "notes": "Notas internas",
+      "save": "Guardar",
+      "saved": "Datos comerciales guardados."
+    },
+    "membership": {
+      "plan": "Plan",
+      "choosePlan": "Elige un plan",
+      "startsAt": "Inicio",
+      "endsAt": "Fin",
+      "optional": "opcional",
+      "assign": "Asignar plan",
+      "saved": "Plan asignado.",
+      "noPlans": "Todavía no hay planes activos. Créalos en «Planes»."
+    },
+    "plans": {
+      "title": "Planes de membresía",
+      "intro": "Los define Meridia: nombre, precio, moneda y periodicidad. No hay valores precargados.",
+      "empty": "Todavía no hay planes.",
+      "newPlan": "Nuevo plan",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "choose": "Elige una opción",
+      "optional": "opcional",
+      "create": "Crear plan",
+      "update": "Guardar cambios",
+      "created": "Plan creado.",
+      "updated": "Plan actualizado.",
+      "benefitsHint": "Un beneficio por línea. No incluyas el showroom: es un proyecto para 2027.",
+      "fields": {
+        "name": "Nombre",
+        "price": "Precio",
+        "currency": "Moneda",
+        "billingPeriod": "Periodicidad",
+        "description": "Descripción",
+        "benefits": "Beneficios",
+        "active": "Plan activo (se puede asignar)"
+      },
+      "periods": {
+        "monthly": "Mensual",
+        "quarterly": "Trimestral",
+        "semiannual": "Semestral",
+        "annual": "Anual",
+        "one_time": "Pago único"
+      }
+    },
+    "settings": {
+      "title": "Configuración",
+      "platform": "Plataforma",
+      "decisions": "Decisiones abiertas",
+      "saved": "Configuración guardada.",
+      "save": "Guardar",
+      "factorySeesBuyerName": "La fábrica ve el nombre del comprador (si no, solo sector y país).",
+      "buyerSeesFactoryTier": "El comprador ve si la fábrica es VIP o estándar.",
+      "allowIndividualBuyers": "Se aceptan compradores persona natural.",
+      "thresholds": "Umbrales de alerta",
+      "thresholdsHint": "En horas. Vacío = alerta inactiva.",
+      "pendingCompanyAlertHours": "Empresa en revisión sin respuesta (horas)",
+      "unansweredRfqAlertHours": "Solicitud asignada sin cotizaciones (horas)",
+      "legal": {
+        "terms": "Términos de uso",
+        "non_circumvention": "Acuerdo de no elusión"
+      },
+      "currentVersion": "Versión vigente: v{version} · {state} · {date}",
+      "draft": "borrador",
+      "published": "definitiva",
+      "legalHint": "Guardar crea una versión nueva; las aceptaciones anteriores conservan la versión que se aceptó.",
+      "legalContent": "Texto (español)",
+      "keepDraft": "Mantener como borrador (se muestra el aviso de borrador)",
+      "publishVersion": "Guardar como nueva versión",
+      "legalSaved": "Nueva versión guardada.",
+      "sectors": "Sectores de compradores",
+      "categories": "Categorías de fábricas",
+      "optionName": "Nombre",
+      "newOption": "Nueva opción",
+      "order": "Orden",
+      "activeOption": "Activa",
+      "saveOption": "Guardar",
+      "addOption": "Agregar"
     }
   }
 }
