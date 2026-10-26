@@ -1,0 +1,38 @@
+{
+  "Metadata": {
+    "title": "Meridia Trade Hub",
+    "description": "Plataforma B2B que conecta compradores latinoamericanos con fábricas validadas de materiales de construcción y acabados."
+  },
+  "Common": {
+    "signIn": "Ingresar a Meridia",
+    "signUp": "Crear cuenta",
+    "backHome": "Volver al inicio",
+    "comingSoon": "Esta sección estará disponible pronto."
+  },
+  "Home": {
+    "eyebrow": "Materiales de construcción y acabados",
+    "title": "Cotiza directo con fábricas validadas por Meridia",
+    "subtitle": "Publica lo que necesitas, recibe cotizaciones de fábricas compatibles y compáralas en un solo lugar.",
+    "features": {
+      "validated": {
+        "title": "Fábricas validadas",
+        "body": "Solo operan en Meridia las fábricas que nuestro equipo revisó."
+      },
+      "compare": {
+        "title": "Cotizaciones comparables",
+        "body": "Precio por término, tiempos, condiciones de pago y muestras, lado a lado."
+      },
+      "messaging": {
+        "title": "Comunicación en la plataforma",
+        "body": "Toda la conversación con la fábrica ocurre en la mensajería de Meridia."
+      }
+    },
+    "footer": "© Meridia Trade Hub"
+  },
+  "SignIn": {
+    "title": "Ingresar a Meridia"
+  },
+  "SignUp": {
+    "title": "Crear cuenta"
+  }
+}

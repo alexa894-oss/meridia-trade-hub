@@ -1,26 +1,54 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Tokens de marca Meridia (extraídos del logo).
+ * Uso en Tailwind: bg-navy-800, text-gold-500, bg-surface, text-ink, etc.
+ */
+@theme {
+  --color-navy-950: #0b1830;
+  --color-navy-900: #0f1f3b;
+  --color-navy-800: #122646; /* globo del logo */
+  --color-navy-700: #192a4a; /* texto del logo */
+  --color-navy-600: #2a3d63;
+  --color-navy-100: #dfe4ee;
+  --color-navy-50: #f1f3f8;
+
+  --color-gold-700: #8a6f24; /* dorado legible sobre blanco (texto pequeño) */
+  --color-gold-600: #a98a35;
+  --color-gold-500: #c8a74a; /* dorado del logo */
+  --color-gold-300: #e2cd8f;
+  --color-gold-100: #f7f0dc;
+
+  --color-white: #ffffff;
+
+  /* Semánticos */
+  --color-brand: var(--color-navy-800);
+  --color-accent: var(--color-gold-500);
+  --color-surface: var(--color-white);
+  --color-surface-muted: var(--color-navy-50);
+  --color-ink: var(--color-navy-700);
+  --color-ink-muted: #55627d;
+  --color-line: var(--color-navy-100);
+  --color-danger: #b42318;
+  --color-success: #1d7a46;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-montserrat), var(--font-inter), ui-sans-serif, sans-serif;
+
+  --radius-control: 0.625rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold-500);
+  outline-offset: 2px;
 }

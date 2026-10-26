@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Meridia Trade Hub
 
-## Getting Started
+Plataforma B2B que conecta compradores latinoamericanos con fábricas validadas
+(materiales de construcción y acabados).
 
-First, run the development server:
+Stack: Next.js (App Router) · TypeScript · Tailwind CSS · Supabase · Vercel · next-intl.
+
+## Desarrollo local
 
 ```bash
+npm install
+cp .env.example .env.local   # completar con las claves de Supabase
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+La app arranca aunque `.env.local` esté vacío; la sesión de Supabase simplemente no existe.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Script | Qué hace |
+|---|---|
+| `npm run dev` | Servidor de desarrollo |
+| `npm run build` | Build de producción |
+| `npm run lint` / `npm run typecheck` | ESLint / TypeScript |
+| `npm run db:check` | Aplica todas las migraciones en un Postgres embebido y corre la prueba de humo de RLS |
+| `npm run db:push` | Aplica las migraciones al proyecto de Supabase enlazado (`npx supabase link`) |
+| `npm run i18n:check` | Lista las claves que faltan en cada idioma respecto a `es` |
 
-## Learn More
+## Estructura
 
-To learn more about Next.js, take a look at the following resources:
+- `supabase/migrations/` — esquema versionado (enums, tablas, RLS, Storage, Realtime)
+- `supabase/tests/` — pruebas de base de datos
+- `messages/` — textos por idioma (`es` completo, `zh-CN` pendiente de traducción)
+- `src/i18n/` — configuración de idiomas; para activar chino, añadir `zh-CN` en `routing.ts`
+- `src/lib/supabase/` — clientes de Supabase para navegador, servidor y proxy
+- `src/app/globals.css` — tokens de marca (navy, dorado, blanco)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+La guía completa de despliegue y entornos llega en la Etapa 8.
