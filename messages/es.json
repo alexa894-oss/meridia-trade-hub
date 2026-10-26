@@ -83,7 +83,15 @@
       "invalidEmail": "El campo «{field}» no tiene un correo válido.",
       "passwordTooShort": "El campo «{field}» debe tener al menos {min} caracteres.",
       "passwordMismatch": "El campo «{field}» no coincide con la contraseña.",
-      "invalidChoice": "Elige una opción válida en «{field}»."
+      "invalidChoice": "Elige una opción válida en «{field}».",
+      "invalidPhone": "El campo «{field}» no tiene un teléfono válido. Incluye el código de país.",
+      "invalidUrl": "El campo «{field}» no tiene una dirección web válida.",
+      "invalidYear": "El campo «{field}» debe ser un año válido.",
+      "tooShort": "El campo «{field}» debe tener al menos {min} caracteres.",
+      "selectAtLeastOne": "Elige al menos una opción en «{field}».",
+      "mustAccept": "Debes aceptar «{field}» para continuar.",
+      "fileRequired": "Sube el archivo de «{field}».",
+      "webOrBrochure": "Indica una web o sube un brochure."
     },
     "formErrors": {
       "invalidCredentials": "El correo o la contraseña no son correctos.",
@@ -115,9 +123,162 @@
     },
     "nextStep": {
       "title": "Siguiente paso",
-      "buyer": "Pronto podrás registrar tu empresa o tus datos como persona natural. Meridia los revisará antes de que puedas publicar solicitudes.",
-      "factory": "Pronto podrás registrar los datos de tu fábrica. Meridia los revisará antes de asignarte oportunidades.",
       "admin": "Aquí estarán las empresas por validar, la asignación de solicitudes y la configuración de planes y comisiones."
+    }
+  },
+  "Registration": {
+    "title": {
+      "buyer": "Registro de comprador",
+      "factory": "Registro de fábrica"
+    },
+    "intro": {
+      "buyer": "Completa los datos para que Meridia valide tu cuenta. Puedes guardar y volver cuando quieras.",
+      "factory": "Completa los datos de tu fábrica para que Meridia la valide. Puedes guardar y volver cuando quieras."
+    },
+    "backToPanel": "Volver a mi panel",
+    "stepsLabel": "Pasos del registro",
+    "steps": {
+      "datos": "Datos",
+      "empresa": "Empresa",
+      "contacto": "Contacto",
+      "produccion": "Producción",
+      "documento": "Documento",
+      "documentos": "Documentos",
+      "enviar": "Enviar"
+    },
+    "saveAndContinue": "Guardar y continuar",
+    "choose": "Elige una opción",
+    "optional": "opcional",
+    "completeFirst": "Para continuar, completa primero el paso:",
+    "infoRequestedTitle": "Meridia pidió más información",
+    "locked": {
+      "in_review": "Tu registro está en revisión. No puedes editarlo mientras Meridia lo revisa.",
+      "validated": "Tu empresa ya fue validada por Meridia.",
+      "rejected": "Tu registro fue rechazado. Revisa el motivo en tu panel.",
+      "suspended": "Tu cuenta está suspendida. Escríbenos si crees que es un error."
+    },
+    "privacyNote": "Estos datos de contacto solo los ve el equipo de Meridia. Nunca se muestran a fábricas ni a compradores.",
+    "documentsNote": "Tus documentos se guardan en un espacio privado. Solo el equipo de Meridia puede verlos.",
+    "webOrBrochure": "Indica una web o sube un brochure (al menos uno).",
+    "fileRequired": "Sube el archivo de «{field}».",
+    "summaryTitle": "Revisa tu registro",
+    "stepDone": "completo",
+    "stepPending": "pendiente",
+    "submit": "Enviar a revisión",
+    "accountTypes": {
+      "company": {
+        "title": "Empresa",
+        "body": "Compro a nombre de una empresa registrada."
+      },
+      "individual": {
+        "title": "Persona natural",
+        "body": "Compro para un proyecto propio, sin empresa."
+      }
+    },
+    "fields": {
+      "accountType": "Tipo de cuenta",
+      "country": "País",
+      "legalName": "Razón social",
+      "taxId": "Identificador tributario",
+      "sector": "Sector",
+      "website": "Sitio web",
+      "fullName": "Nombre completo",
+      "projectDescription": "Descripción del proyecto",
+      "legalNameZh": "Nombre legal en chino",
+      "legalNameEn": "Nombre legal en inglés",
+      "city": "Ciudad",
+      "province": "Provincia",
+      "contactName": "Persona de contacto",
+      "contactTitle": "Cargo",
+      "phone": "Teléfono",
+      "email": "Correo",
+      "wechat": "WeChat",
+      "categories": "Categorías",
+      "capacity": "Capacidad de producción",
+      "departurePort": "Puerto de salida",
+      "brochure": "Brochure",
+      "foundedYear": "Año de fundación",
+      "annualCapacityOrSales": "Capacidad o ventas anuales",
+      "verificationDocument": "Documento de verificación",
+      "idDocument": "Documento de identidad",
+      "businessLicense": "Registro empresarial chino"
+    },
+    "hints": {
+      "taxId": "Por ejemplo RUC, NIT, RFC o el que corresponda en tu país.",
+      "projectDescription": "Cuéntanos qué proyecto tienes y qué materiales buscas (mínimo 50 caracteres).",
+      "phone": "Con código de país, por ejemplo +507 6000-0000.",
+      "categories": "Elige todas las que fabricas.",
+      "capacity": "Por ejemplo: 20.000 m² al mes o 500 puertas al mes.",
+      "departurePort": "Por ejemplo: Ningbo, Shenzhen o Shanghái.",
+      "verifiedOnly": "Estos datos son opcionales. Solo se muestran a los compradores cuando Meridia los verifica.",
+      "verificationDocument": "Registro tributario o documento que acredite la empresa.",
+      "idDocument": "Documento de identidad vigente.",
+      "businessLicense": "Licencia comercial (营业执照). Meridia la pedirá para validar fábricas estándar."
+    },
+    "legal": {
+      "terms": "Términos de uso",
+      "non_circumvention": "Acuerdo de no elusión",
+      "accept": "He leído y acepto: {document}.",
+      "draftNotice": "Borrador: este texto todavía no es la versión definitiva."
+    },
+    "upload": {
+      "choose": "Subir archivo",
+      "addAnother": "Subir otro archivo",
+      "uploading": "Subiendo…",
+      "remove": "Quitar",
+      "file": "Archivo",
+      "optional": "opcional",
+      "formats": "PDF, JPG, PNG o WEBP. Máximo 10 MB.",
+      "invalidType": "Formato no permitido. Usa PDF, JPG, PNG o WEBP.",
+      "tooLarge": "El archivo supera 10 MB.",
+      "failed": "No pudimos subir el archivo. Inténtalo de nuevo."
+    },
+    "formErrors": {
+      "notAllowed": "Tu cuenta no puede hacer este registro.",
+      "notEditable": "Tu registro ya no se puede editar.",
+      "previousStepMissing": "Completa primero los pasos anteriores.",
+      "saveFailed": "No pudimos guardar. Inténtalo de nuevo.",
+      "missingDetails": "Faltan datos en el paso «Datos» o «Empresa».",
+      "missingContact": "Faltan datos en el paso «Contacto».",
+      "missingDocument": "Falta el documento obligatorio.",
+      "missingProduction": "Faltan datos en el paso «Producción».",
+      "missingLegal": "Debes aceptar los textos legales.",
+      "individualsNotAllowed": "Por ahora Meridia no acepta registros de personas naturales."
+    }
+  },
+  "RegistrationStatus": {
+    "label": "Registro de tu empresa",
+    "messageFromMeridia": "Mensaje de Meridia:",
+    "not_started": {
+      "title": "Registro pendiente",
+      "body": "Completa los datos de tu empresa para que Meridia la valide.",
+      "cta": "Completar registro"
+    },
+    "registered": {
+      "title": "Registro sin enviar",
+      "body": "Tienes un registro guardado. Complétalo y envíalo a revisión.",
+      "cta": "Continuar registro"
+    },
+    "in_review": {
+      "title": "En revisión",
+      "body": "Meridia está revisando tu registro. Verás el resultado en este panel."
+    },
+    "info_requested": {
+      "title": "Información pedida",
+      "body": "Meridia necesita que completes o corrijas algunos datos.",
+      "cta": "Actualizar registro"
+    },
+    "validated": {
+      "title": "Empresa verificada",
+      "body": "Meridia validó tu empresa."
+    },
+    "rejected": {
+      "title": "Registro rechazado",
+      "body": "Meridia no pudo validar tu registro."
+    },
+    "suspended": {
+      "title": "Cuenta suspendida",
+      "body": "Tu cuenta está suspendida. Escríbenos si crees que es un error."
     }
   }
 }

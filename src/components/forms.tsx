@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, type InputHTMLAttributes, type ReactNode } from "react";
+import React, { useId, type InputHTMLAttributes, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 import { useTranslations } from "next-intl";
 import type { FieldErrorCode } from "@/lib/forms";
@@ -9,8 +9,8 @@ import { MIN_PASSWORD_LENGTH } from "@/lib/forms";
 // Mensaje de error que nombra el campo: "Completa el campo «Correo electrónico»."
 export function useFieldError() {
   const t = useTranslations("Forms.errors");
-  return (code: FieldErrorCode | undefined, label: string) =>
-    code ? t(code, { field: label, min: MIN_PASSWORD_LENGTH }) : undefined;
+  return (code: FieldErrorCode | undefined, label: string, values?: Record<string, string | number>) =>
+    code ? t(code, { field: label, min: MIN_PASSWORD_LENGTH, ...values }) : undefined;
 }
 
 type FieldProps = InputHTMLAttributes<HTMLInputElement> & {
@@ -76,6 +76,118 @@ export function FormAlert({ tone = "error", children }: { tone?: "error" | "succ
       }`}
     >
       {children}
+    </div>
+  );
+}
+
+const controlClass = (error?: string) =>
+  `mt-1.5 block w-full rounded-(--radius-control) border bg-surface px-3.5 text-base text-ink outline-none transition-colors focus:border-navy-800 ${
+    error ? "border-danger" : "border-line"
+  }`;
+
+function Help({ id, error, hint }: { id: string; error?: string; hint?: string }) {
+  if (error)
+    return (
+      <p id={`${id}-error`} className="mt-1.5 text-sm text-danger">
+        {error}
+      </p>
+    );
+  if (hint)
+    return (
+      <p id={`${id}-hint`} className="mt-1.5 text-sm text-ink-muted">
+        {hint}
+      </p>
+    );
+  return null;
+}
+
+type SelectFieldProps = React.SelectHTMLAttributes<HTMLSelectElement> & {
+  label: string;
+  error?: string;
+  hint?: string;
+  placeholder?: string;
+  options: { value: string; label: string }[];
+};
+
+export function SelectField({ label, error, hint, placeholder, options, id, className = "", ...select }: SelectFieldProps) {
+  const autoId = useId();
+  const selectId = id ?? autoId;
+  return (
+    <div className={className}>
+      <label htmlFor={selectId} className="block text-sm font-medium text-ink">
+        {label}
+      </label>
+      <select
+        id={selectId}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? `${selectId}-error` : hint ? `${selectId}-hint` : undefined}
+        className={`${controlClass(error)} min-h-12`}
+        {...select}
+      >
+        <option value="">{placeholder ?? ""}</option>
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+      <Help id={selectId} error={error} hint={hint} />
+    </div>
+  );
+}
+
+type TextareaFieldProps = React.TextareaHTMLAttributes<HTMLTextAreaElement> & {
+  label: string;
+  error?: string;
+  hint?: string;
+};
+
+export function TextareaField({ label, error, hint, id, className = "", ...textarea }: TextareaFieldProps) {
+  const autoId = useId();
+  const areaId = id ?? autoId;
+  return (
+    <div className={className}>
+      <label htmlFor={areaId} className="block text-sm font-medium text-ink">
+        {label}
+      </label>
+      <textarea
+        id={areaId}
+        rows={4}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? `${areaId}-error` : hint ? `${areaId}-hint` : undefined}
+        className={`${controlClass(error)} py-3`}
+        {...textarea}
+      />
+      <Help id={areaId} error={error} hint={hint} />
+    </div>
+  );
+}
+
+export function CheckboxField({
+  label,
+  error,
+  className = "",
+  ...input
+}: React.InputHTMLAttributes<HTMLInputElement> & { label: React.ReactNode; error?: string }) {
+  const id = useId();
+  return (
+    <div className={className}>
+      <label htmlFor={id} className="flex cursor-pointer items-start gap-3">
+        <input
+          id={id}
+          type="checkbox"
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? `${id}-error` : undefined}
+          className="mt-1 size-5 shrink-0 accent-navy-800"
+          {...input}
+        />
+        <span className="text-ink">{label}</span>
+      </label>
+      {error ? (
+        <p id={`${id}-error`} className="mt-1.5 text-sm text-danger">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }

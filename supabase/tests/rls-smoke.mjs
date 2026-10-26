@@ -8,6 +8,8 @@ import path from 'node:path';
 // Uso: npm run db:check
 const dir = process.argv[2] ?? path.join(import.meta.dirname, '..', 'migrations');
 const db = new PGlite();
+process.on('uncaughtException', (e) => { console.log('FAIL (error inesperado):', e.message, e.query ?? ''); process.exit(1); });
+process.on('unhandledRejection', (e) => { console.log('FAIL (error inesperado):', e.message, e.query ?? ''); process.exit(1); });
 
 await db.exec(`
 create role anon nologin; create role authenticated nologin; create role service_role nologin bypassrls;
@@ -17,7 +19,7 @@ create table auth.users(id uuid primary key default gen_random_uuid(), email tex
 create function auth.uid() returns uuid language sql stable as $$
   select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
 create schema storage;
-create table storage.buckets(id text primary key, name text, public boolean);
+create table storage.buckets(id text primary key, name text, public boolean, file_size_limit bigint, allowed_mime_types text[]);
 create table storage.objects(id uuid primary key default gen_random_uuid(), bucket_id text, name text);
 alter table storage.objects enable row level security;
 create publication supabase_realtime;
@@ -61,7 +63,7 @@ await q(`insert into buyer_details(company_id,account_type,legal_name,tax_id) va
 await q(`insert into factory_details(company_id,legal_name_zh,legal_name_en,city,province,website,founded_year,founded_year_verified) values ($1,'佛山门业','Foshan Doors','Foshan','Guangdong','https://x.test',2005,true)`, [cA]);
 await q(`insert into company_contacts(company_id,contact_name,phone,email,wechat) values ($1,'Ana','+507 6000-0000','ana@istmo.test',null),($2,'Li','+86 138','li@foshan.test','liwx')`, [cBuyer, cA]);
 await q(`insert into factory_admin(company_id,tier) values ($1,'vip')`, [cA]);
-const cat = (await q(`insert into categories(slug,names) values ('doors','{"es":"Puertas"}') returning id`))[0].id;
+const cat = (await q(`select id from categories where slug = 'doors'`))[0].id;
 const rfq = (await q(`insert into rfqs(buyer_company_id,created_by,status,product,category_id,description,quantity,unit,destination_country,deadline,incoterms) values ($1,$2,'submitted','Puertas','${cat}','desc',100,'unidades','PA','2026-12-31','{FOB}') returning id`, [cBuyer, buyer]))[0].id;
 await expectError('asignar a fábrica no validada falla', () => q(`insert into rfq_assignments(rfq_id,factory_company_id,assigned_by) values ($1,$2,$3)`, [rfq, cPending, admin]));
 await q(`insert into rfq_assignments(rfq_id,factory_company_id,assigned_by) values ($1,$2,$3)`, [rfq, cA, admin]);
@@ -85,9 +87,7 @@ check('fábrica A no ve empresa compradora', (await q(`select * from companies w
 check('fábrica A no ve buyer_details', (await q(`select * from buyer_details`)).length === 0);
 const bp = (await q(`select * from get_rfq_buyer_profile($1)`, [rfq]))[0];
 check('fábrica A ve país y sector, sin nombre', bp && bp.country === 'PA' && bp.display_name === null && !('email' in bp) && !('phone' in bp));
-await q(`update factory_details set founded_year_verified=true, annual_figure_verified=true, founded_year=2006 where company_id=$1`, [cA]);
-const fd = (await q(`select founded_year_verified, annual_figure_verified from factory_details where company_id=$1`, [cA]))[0];
-check('fábrica no puede autoverificar datos', fd.founded_year_verified === false && fd.annual_figure_verified === false);
+check('fábrica validada no puede editar sus datos', (await q(`update factory_details set founded_year=2006 where company_id=$1 returning 1`, [cA])).length === 0);
 check('empresa validada no puede editar su estado (0 filas)', (await q(`update companies set status='suspended' where id=$1 returning id`, [cA])).length === 0);
 const m = (await q(`insert into messages(conversation_id,sender_id,sender_kind,body) values ($1,$2,'meridia','hola') returning sender_kind`, [conv, facA]))[0];
 check('mensaje de fábrica no puede firmarse como Meridia', m.sender_kind === 'factory');
@@ -106,18 +106,31 @@ const pend = await mk({ signup_role: 'factory' });
 await q(`update profiles set company_id=$1 where id=$2`, [cPending, pend]);
 await asUser(pend);
 await expectError('empresa registrada no puede autovalidarse', () => q(`update companies set status='validated' where id=$1`, [cPending]));
-check('empresa registrada sí puede enviarse a revisión', (await q(`update companies set status='in_review' where id=$1 returning status`, [cPending]))[0]?.status === 'in_review');
+await expectError('empresa no pasa a revisión con UPDATE directo', () => q(`update companies set status='in_review' where id=$1`, [cPending]));
+await expectError('envío a revisión incompleto falla', () => q(`select submit_company_for_review()`));
+await q(`insert into factory_details(company_id,legal_name_zh,legal_name_en,city,province,website,capacity,departure_port) values ($1,'测试','Test Factory','Ningbo','Zhejiang','https://t.test','10k m2/mes','Ningbo')`, [cPending]);
+await q(`insert into company_contacts(company_id,contact_name,phone,email,wechat) values ($1,'Wang','+86 1','w@t.test','wangwx')`, [cPending]);
+await q(`update factory_details set founded_year=2001, founded_year_verified=true, annual_figure_verified=true where company_id=$1`, [cPending]);
+const fdp = (await q(`select founded_year_verified, annual_figure_verified from factory_details where company_id=$1`, [cPending]))[0];
+check('fábrica no puede autoverificar datos', fdp.founded_year_verified === false && fdp.annual_figure_verified === false);
+await q(`insert into factory_categories(factory_company_id,category_id) values ($1,$2)`, [cPending, cat]);
+await expectError('envío sin aceptar textos legales falla', () => q(`select submit_company_for_review()`));
+await q(`insert into legal_acceptances(user_id,legal_document_id) select $1, id from current_legal_documents()`, [pend]);
+await q(`select submit_company_for_review()`);
+check('empresa completa se envía a revisión', (await q(`select status from companies where id=$1`, [cPending]))[0]?.status === 'in_review');
+await expectError('empresa en revisión no puede editar contacto', () => q(`update company_contacts set phone='x' where company_id=$1 returning 1`, [cPending]).then((r) => { if (!r.length) throw new Error('0 filas'); }));
+check('fábrica no ve sectores inactivos ni datos de otros', (await q(`select * from company_contacts`)).length === 1);
 await asUser(buyer);
 
 await asUser(facA);
 await q(`update quotes set status='submitted', currency='USD', moq=10, production_time_days=30, departure_port='Shenzhen', valid_until='2026-12-31', deposit_pct=30, balance_pct=70, sample_available=false where rfq_id=$1`, [rfq]);
 await asUser(buyer);
 const fp = await q(`select * from get_rfq_factory_profiles($1)`, [rfq]);
-check('comprador ve fábrica cotizante, sin tipo VIP, año verificado oculto tras cambio', fp.length === 1 && fp[0].tier === null && fp[0].founded_year === null && !('email' in fp[0]));
+check('comprador ve fábrica cotizante: año verificado visible, sin tipo VIP ni contacto', fp.length === 1 && fp[0].tier === null && fp[0].founded_year === 2005 && fp[0].annual_capacity_or_sales === null && !('email' in fp[0]));
 check('comprador ve la cotización enviada', (await q(`select * from quotes`)).length === 1);
 
 await asUser(admin);
-check('admin ve todos los contactos', (await q(`select * from company_contacts`)).length === 2);
+check('admin ve todos los contactos', (await q(`select * from company_contacts`)).length === 3);
 await asSuper();
 await expectError('pago que no suma 100 falla', () => q(`update quotes set balance_pct=60 where rfq_id=$1`, [rfq]));
 const hist = await q(`select entity_type, from_status, to_status from status_history order by id`);

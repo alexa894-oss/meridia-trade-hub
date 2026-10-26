@@ -38,6 +38,20 @@ La app arranca aunque `.env.local` esté vacío; la sesión de Supabase simpleme
 1. **Authentication → URL Configuration**: *Site URL* con la URL de la app y, en *Redirect URLs*, `http://localhost:3000/**` y `https://*-alexagonzalez88.vercel.app/**`.
 2. **Correo**: el servidor de correo por defecto de Supabase solo envía a miembros del equipo y con un límite muy bajo. Para que compradores y fábricas reales reciban la confirmación y la recuperación de contraseña, configura un SMTP propio en **Authentication → Emails → SMTP Settings**.
 
+## Registro de empresas
+
+- Comprador: `/comprador/registro` (datos → contacto → documento → enviar). Empresa o persona natural (esta última se puede desactivar con el ajuste `allow_individual_buyers`).
+- Fábrica: `/fabrica/registro` (empresa → contacto → producción → documentos → enviar).
+- Cada paso se guarda; la empresa puede volver más tarde. Al enviar, la base revalida todo en `submit_company_for_review()` y la empresa pasa a **en revisión**; desde ahí ya no puede editar.
+- Teléfono, correo y WeChat se guardan solo en `company_contacts` (la propia empresa y el administrador).
+- Los documentos van al bucket privado `company-docs/<company_id>/…` (PDF, JPG, PNG o WEBP, máximo 10 MB).
+- Textos legales: tabla `legal_documents`, versionada. Mientras `is_draft = true` se muestra el aviso de borrador.
+- Sectores y categorías: listas editables (`sectors`, `categories`).
+
+### Tipos de la base
+
+`src/lib/supabase/database.types.ts` se genera desde Supabase. Regenéralo después de cada migración (`npx supabase gen types typescript --project-id <ref>` con el CLI enlazado).
+
 ## Estructura
 
 - `supabase/migrations/` — esquema versionado (enums, tablas, RLS, Storage, Realtime)

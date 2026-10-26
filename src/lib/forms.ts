@@ -7,7 +7,15 @@ export type FieldErrorCode =
   | "invalidEmail"
   | "passwordTooShort"
   | "passwordMismatch"
-  | "invalidChoice";
+  | "invalidChoice"
+  | "invalidPhone"
+  | "invalidUrl"
+  | "invalidYear"
+  | "tooShort"
+  | "selectAtLeastOne"
+  | "mustAccept"
+  | "fileRequired"
+  | "webOrBrochure";
 
 export type FormState<F extends string = string> = {
   status: "idle" | "error" | "success";
@@ -39,6 +47,32 @@ export function validatePassword(value: string): FieldErrorCode | undefined {
 
 export function validateRequired(value: string): FieldErrorCode | undefined {
   if (!value) return "required";
+}
+
+// Teléfono internacional flexible: +, dígitos, espacios, guiones, puntos, paréntesis.
+export function validatePhone(value: string): FieldErrorCode | undefined {
+  if (!value) return "required";
+  const digits = value.replace(/\D/g, "");
+  if (!/^[+\d][\d\s().-]+$/.test(value) || digits.length < 6 || digits.length > 20) return "invalidPhone";
+}
+
+// Acepta "midominio.com" y le agrega https://. Devuelve el valor normalizado.
+export function normalizeUrl(value: string): { value: string | null; error?: FieldErrorCode } {
+  if (!value) return { value: null };
+  const withProtocol = /^https?:\/\//i.test(value) ? value : `https://${value}`;
+  try {
+    const url = new URL(withProtocol);
+    if (!url.hostname.includes(".")) return { value: null, error: "invalidUrl" };
+    return { value: url.toString() };
+  } catch {
+    return { value: null, error: "invalidUrl" };
+  }
+}
+
+export function validateYear(value: string): FieldErrorCode | undefined {
+  if (!value) return;
+  const year = Number(value);
+  if (!Number.isInteger(year) || year < 1800 || year > new Date().getFullYear()) return "invalidYear";
 }
 
 export function hasErrors(errors: Record<string, FieldErrorCode | undefined>) {

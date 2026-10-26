@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { requireRole } from "@/lib/auth/guard";
 import type { Role } from "@/lib/auth/roles";
+import { RegistrationStatusCard } from "@/components/registration/status-card";
 
 // Inicio de cada rol: perfil con su rol y el siguiente paso.
 // Va dentro del <Suspense> del layout del rol.
@@ -37,10 +38,14 @@ export async function RoleHome({ role }: { role: Role }) {
         </dl>
       </section>
 
-      <section className="rounded-xl border border-gold-300 bg-gold-100 p-6">
-        <h2 className="font-display text-lg font-semibold text-navy-800">{t("nextStep.title")}</h2>
-        <p className="mt-2 text-ink">{t(`nextStep.${role}`)}</p>
-      </section>
+      {role === "admin" ? (
+        <section className="rounded-xl border border-gold-300 bg-gold-100 p-6">
+          <h2 className="font-display text-lg font-semibold text-navy-800">{t("nextStep.title")}</h2>
+          <p className="mt-2 text-ink">{t("nextStep.admin")}</p>
+        </section>
+      ) : (
+        <RegistrationStatusCard profile={profile} role={role} />
+      )}
     </div>
   );
 }
