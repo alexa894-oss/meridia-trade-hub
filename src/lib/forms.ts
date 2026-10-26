@@ -21,7 +21,12 @@ export type FieldErrorCode =
   | "noShowroom"
   | "invalidAmount"
   | "invalidCurrency"
-  | "invalidHours";
+  | "invalidHours"
+  | "invalidQuantity"
+  | "deadlineFuture"
+  | "referenceRequired"
+  | "portRequiredForCif"
+  | "contactInfo";
 
 export type FormState<F extends string = string> = {
   status: "idle" | "error" | "success";

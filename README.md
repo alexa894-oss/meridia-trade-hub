@@ -56,6 +56,14 @@ La app arranca aunque `.env.local` esté vacío; la sesión de Supabase simpleme
 - **Planes**: los crea el admin (nombre, precio, moneda, periodicidad). Ningún plan puede mencionar el showroom (validado en la app y en la base).
 - **Configuración**: decisiones abiertas, umbrales, textos legales versionados, sectores y categorías.
 
+## Solicitudes de cotización
+
+- Comprador (`/comprador/solicitudes`): crea borradores en cualquier momento; **envía** solo con la empresa validada (`submit_rfq()`). En borrador solo se exige el producto; al enviar, todo menos la modalidad de carga. Puerto de destino obligatorio con CIF.
+- Términos de cotización (FOB, CIF, EXW) y modalidad de carga (FCL, LCL, aéreo, muestras, aún no sé) son campos distintos.
+- Teléfonos, correos y WeChat en el texto bloquean el envío (`src/lib/contact-detection.ts` y `find_contact_info()` en la base, con las mismas reglas).
+- Administrador (`/admin/solicitudes`): pedir información, cerrar (con mensaje) y asignar fábricas validadas; por defecto se proponen las de la misma categoría.
+- Fábrica (`/fabrica/oportunidades`): solo ve lo asignado. Del comprador ve sector, país y verificación; el nombre solo si el admin lo habilita. Una fábrica suspendida pierde el acceso.
+
 ### Tipos de la base
 
 `src/lib/supabase/database.types.ts` se genera desde Supabase. Regenéralo después de cada migración (`npx supabase gen types typescript --project-id <ref>` con el CLI enlazado).

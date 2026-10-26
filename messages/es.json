@@ -293,7 +293,8 @@
       "dashboard": "Panel",
       "companies": "Empresas",
       "plans": "Planes",
-      "settings": "Configuración"
+      "settings": "Configuración",
+      "rfqs": "Solicitudes"
     },
     "status": {
       "registered": "Registrada",
@@ -319,7 +320,8 @@
         "overdue": "{count, plural, =0 {Ninguna} one {# solicitud} other {# solicitudes}} con más de {hours} h sin cotizaciones.",
         "toAssignTitle": "Solicitudes por asignar",
         "toAssign": "{count, plural, =0 {No hay solicitudes} one {# solicitud} other {# solicitudes}} esperando asignación.",
-        "comingSoon": "Las solicitudes de cotización llegan en la siguiente etapa."
+        "review": "Ver solicitudes",
+        "assignNow": "Asignar solicitudes"
       }
     },
     "companies": {
@@ -506,7 +508,196 @@
       "order": "Orden",
       "activeOption": "Activa",
       "saveOption": "Guardar",
-      "addOption": "Agregar"
+      "addOption": "Agregar",
+      "units": "Unidades de cantidad"
+    },
+    "rfqs": {
+      "title": "Solicitudes",
+      "all": "Todas",
+      "empty": "No hay solicitudes en este estado.",
+      "factories": "{count, plural, =0 {sin fábricas} one {# fábrica} other {# fábricas}}",
+      "submittedAt": "Enviada el {date}"
+    },
+    "rfq": {
+      "back": "Volver a solicitudes",
+      "request": "Solicitud",
+      "history": "Historial",
+      "buyer": "Comprador",
+      "buyerName": "Empresa",
+      "country": "País",
+      "sector": "Sector",
+      "companyStatus": "Estado de la empresa",
+      "assignment": "Asignación de fábricas",
+      "actions": "Otras acciones",
+      "assigned": "Asignada a",
+      "quoted": "Ya cotizó",
+      "waitingQuote": "Sin cotización todavía",
+      "unassign": "Quitar",
+      "assign": "Asignar seleccionadas",
+      "assignedOk": "{count, plural, one {Se asignó # fábrica.} other {Se asignaron # fábricas.}}",
+      "assignHint": "Solo fábricas validadas. Se marcan por defecto las de la misma categoría.",
+      "sameCategory": "misma categoría",
+      "otherCategory": "otra categoría",
+      "tiers": {
+        "vip": "VIP",
+        "standard": "Estándar"
+      },
+      "noMoreFactories": "No hay más fábricas validadas para asignar.",
+      "cannotAssign": "En este estado no se pueden asignar fábricas.",
+      "noActions": "No hay acciones disponibles en este estado.",
+      "message": "Mensaje",
+      "messageHint": "El comprador lo verá en su solicitud.",
+      "requestInfo": "Pedir información",
+      "close": "Cerrar solicitud",
+      "done": {
+        "infoRequested": "Se pidió información al comprador.",
+        "closed": "Solicitud cerrada."
+      },
+      "errors": {
+        "messageRequired": "Escribe el mensaje.",
+        "invalidTransition": "Esta acción no es posible en el estado actual.",
+        "factoriesRequired": "Elige al menos una fábrica.",
+        "hasQuote": "Esa fábrica ya cotizó.",
+        "notFound": "No se encontró la solicitud.",
+        "notAllowed": "Tu cuenta no puede hacer esta acción.",
+        "saveFailed": "No pudimos guardar. Inténtalo de nuevo."
+      }
+    }
+  },
+  "Nav": {
+    "buyer": {
+      "label": "Secciones",
+      "home": "Inicio",
+      "rfqs": "Solicitudes"
+    },
+    "factory": {
+      "label": "Secciones",
+      "home": "Inicio",
+      "opportunities": "Oportunidades"
+    }
+  },
+  "Rfq": {
+    "status": {
+      "draft": "Borrador",
+      "submitted": "Enviada",
+      "assigned": "Asignada",
+      "quoted": "Con cotizaciones",
+      "negotiating": "En negociación",
+      "order_created": "Orden generada",
+      "info_requested": "Información pedida",
+      "no_response": "Sin respuesta",
+      "closed": "Cerrada"
+    },
+    "choose": "Elige una opción",
+    "optional": "opcional",
+    "yes": "Sí",
+    "no": "No",
+    "notSpecified": "Sin especificar",
+    "openFile": "Abrir archivo",
+    "replaceFile": "Reemplazar archivo",
+    "deadlineOn": "fecha límite {date}",
+    "noDeadline": "sin fecha límite",
+    "shippingModes": {
+      "FCL": "FCL (contenedor completo)",
+      "LCL": "LCL (carga consolidada)",
+      "air": "Aéreo",
+      "samples": "Envío de muestras",
+      "undecided": "Aún no sé"
+    },
+    "fields": {
+      "product": "Producto",
+      "category": "Categoría",
+      "description": "Descripción",
+      "quantity": "Cantidad",
+      "unit": "Unidad",
+      "destinationCountry": "País de destino",
+      "technicalSpecs": "Especificaciones técnicas",
+      "deadline": "Fecha límite",
+      "reference": "Imagen de referencia",
+      "referenceUrl": "Enlace de referencia",
+      "referenceFile": "Archivo de referencia",
+      "incoterms": "Términos de cotización",
+      "destinationPort": "Puerto de destino",
+      "shippingModes": "Modalidad de carga",
+      "acceptsAlternatives": "Acepta alternativas similares",
+      "needsSample": "Necesita muestra",
+      "acceptsAlternativesLong": "Acepto alternativas similares a lo que pido",
+      "needsSampleLong": "Necesito muestra"
+    },
+    "sections": {
+      "product": "Producto",
+      "reference": "Imagen de referencia",
+      "terms": "Términos y entrega",
+      "options": "Opciones"
+    },
+    "hints": {
+      "technicalSpecs": "Medidas, materiales, acabados, normas o certificaciones.",
+      "reference": "Sube una imagen o PDF, o pega un enlace (al menos uno).",
+      "saveToUpload": "Para subir un archivo, guarda primero el borrador. También puedes pegar un enlace.",
+      "incoterms": "Elige al menos uno. La fábrica dará un precio por cada término.",
+      "portIfCif": "obligatorio si eliges CIF",
+      "deadline": "Fecha hasta la que esperas cotizaciones.",
+      "noContact": "No incluyas teléfonos, correos ni WeChat: toda la comunicación ocurre dentro de Meridia."
+    },
+    "form": {
+      "submit": "Enviar a Meridia",
+      "saveDraft": "Guardar borrador",
+      "sending": "Guardando…"
+    },
+    "errors": {
+      "contactInfo": "El campo «{field}» contiene datos de contacto. Quítalos: toda la comunicación ocurre dentro de Meridia.",
+      "contactInfoLive": "Parece un dato de contacto («{found}»). Quítalo antes de enviar.",
+      "portRequiredForCif": "Completa el campo «Puerto de destino»: es obligatorio si eliges CIF.",
+      "referenceRequired": "Sube un archivo o pega un enlace de referencia.",
+      "deadlineFuture": "La fecha límite debe ser posterior a hoy.",
+      "invalidQuantity": "El campo «Cantidad» debe ser un número mayor que 0."
+    },
+    "formErrors": {
+      "companyNotValidated": "Puedes guardar borradores, pero solo podrás enviar solicitudes cuando Meridia valide tu empresa.",
+      "deadlinePast": "La fecha límite ya pasó. Elige una fecha futura.",
+      "missingFields": "Faltan campos obligatorios para enviar la solicitud.",
+      "contactInfo": "La solicitud contiene datos de contacto. Quítalos antes de enviarla.",
+      "notEditable": "Esta solicitud ya no se puede editar.",
+      "notFound": "No se encontró la solicitud.",
+      "notAllowed": "Tu cuenta no puede hacer esta acción.",
+      "saveFailed": "No pudimos guardar. Inténtalo de nuevo."
+    },
+    "buyer": {
+      "title": "Mis solicitudes",
+      "new": "Nueva solicitud",
+      "empty": "Todavía no tienes solicitudes.",
+      "back": "Volver a mis solicitudes",
+      "submitted": "Solicitud enviada. Meridia la revisará y la asignará a fábricas compatibles.",
+      "saved": "Borrador guardado.",
+      "deleteDraft": "Eliminar borrador",
+      "infoNote": "Meridia pidió más información",
+      "closedNote": "Meridia cerró esta solicitud",
+      "statusHelp": {
+        "submitted": "Meridia está revisando tu solicitud.",
+        "assigned": "Meridia asignó tu solicitud a fábricas compatibles. Verás aquí sus cotizaciones.",
+        "quoted": "Ya tienes cotizaciones.",
+        "negotiating": "Estás en negociación.",
+        "order_created": "Generaste una orden.",
+        "no_response": "Todavía no hay cotizaciones.",
+        "closed": "Esta solicitud está cerrada.",
+        "draft": "",
+        "info_requested": ""
+      }
+    },
+    "factory": {
+      "title": "Oportunidades",
+      "empty": "Todavía no tienes oportunidades asignadas.",
+      "back": "Volver a oportunidades",
+      "assignedOn": "Asignada el {date}",
+      "buyer": "Comprador",
+      "buyerName": "Nombre",
+      "sector": "Sector",
+      "country": "País",
+      "verified": "Empresa",
+      "verifiedYes": "Verificada por Meridia",
+      "verifiedNo": "No verificada",
+      "request": "Solicitud",
+      "quoteSoon": "Pronto podrás enviar tu cotización desde aquí."
     }
   }
 }

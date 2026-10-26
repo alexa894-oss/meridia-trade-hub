@@ -133,10 +133,11 @@ export async function listPlans() {
 
 export async function loadSettingsPage() {
   const supabase = await createClient();
-  const [settings, sectors, categories, legal] = await Promise.all([
+  const [settings, sectors, categories, units, legal] = await Promise.all([
     supabase.from("platform_settings").select("key, value"),
     supabase.from("sectors").select("*").order("sort_order"),
     supabase.from("categories").select("*").order("sort_order"),
+    supabase.from("units").select("*").order("sort_order"),
     supabase.from("legal_documents").select("*").order("version", { ascending: false }),
   ]);
   const map = Object.fromEntries((settings.data ?? []).map((s) => [s.key, s.value]));
@@ -150,6 +151,7 @@ export async function loadSettingsPage() {
     },
     sectors: sectors.data ?? [],
     categories: categories.data ?? [],
+    units: units.data ?? [],
     legal: legal.data ?? [],
   };
 }

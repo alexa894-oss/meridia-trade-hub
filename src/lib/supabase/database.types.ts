@@ -1109,6 +1109,7 @@ export type Database = {
           id: string
           incoterms: Database["public"]["Enums"]["incoterm"][]
           needs_sample: boolean
+          number: number
           product: string | null
           quantity: number | null
           reference_image_path: string | null
@@ -1117,7 +1118,7 @@ export type Database = {
           status: Database["public"]["Enums"]["rfq_status"]
           submitted_at: string | null
           technical_specs: string | null
-          unit: string | null
+          unit_id: string | null
           updated_at: string
         }
         Insert: {
@@ -1133,6 +1134,7 @@ export type Database = {
           id?: string
           incoterms?: Database["public"]["Enums"]["incoterm"][]
           needs_sample?: boolean
+          number?: never
           product?: string | null
           quantity?: number | null
           reference_image_path?: string | null
@@ -1141,7 +1143,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["rfq_status"]
           submitted_at?: string | null
           technical_specs?: string | null
-          unit?: string | null
+          unit_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -1157,6 +1159,7 @@ export type Database = {
           id?: string
           incoterms?: Database["public"]["Enums"]["incoterm"][]
           needs_sample?: boolean
+          number?: never
           product?: string | null
           quantity?: number | null
           reference_image_path?: string | null
@@ -1165,7 +1168,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["rfq_status"]
           submitted_at?: string | null
           technical_specs?: string | null
-          unit?: string | null
+          unit_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -1181,6 +1184,13 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rfqs_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
             referencedColumns: ["id"]
           },
         ]
@@ -1245,12 +1255,43 @@ export type Database = {
         }
         Relationships: []
       }
+      units: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          names: Json
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          names: Json
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          names?: Json
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
       admin_alerts: { Args: never; Returns: Json }
+      admin_assign_rfq: {
+        Args: { p_factories: string[]; p_rfq: string }
+        Returns: number
+      }
       admin_review_company: {
         Args: {
           p_action: Database["public"]["Enums"]["company_review_action"]
@@ -1258,6 +1299,14 @@ export type Database = {
           p_message?: string
           p_tier?: Database["public"]["Enums"]["factory_tier"]
         }
+        Returns: undefined
+      }
+      admin_rfq_action: {
+        Args: { p_action: string; p_message: string; p_rfq: string }
+        Returns: undefined
+      }
+      admin_unassign_rfq: {
+        Args: { p_factory: string; p_rfq: string }
         Returns: undefined
       }
       can_access_conversation: {
@@ -1283,6 +1332,7 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      find_contact_info: { Args: { p_text: string }; Returns: string }
       get_public_settings: { Args: never; Returns: Json }
       get_rfq_buyer_profile: {
         Args: { p_rfq: string }
@@ -1322,6 +1372,7 @@ export type Database = {
       setting: { Args: { p_key: string }; Returns: Json }
       storage_owner_id: { Args: { p_name: string }; Returns: string }
       submit_company_for_review: { Args: never; Returns: undefined }
+      submit_rfq: { Args: { p_rfq: string }; Returns: undefined }
     }
     Enums: {
       audited_entity: "company" | "rfq" | "quote" | "order" | "commission"

@@ -272,7 +272,7 @@ export async function saveSettings(
 type OptionField = "nameEs" | "slug";
 
 export async function saveOption(
-  table: "sectors" | "categories",
+  table: "sectors" | "categories" | "units",
   _prev: FormState<OptionField>,
   formData: FormData,
 ): Promise<FormState<OptionField>> {

@@ -64,7 +64,8 @@ await q(`insert into factory_details(company_id,legal_name_zh,legal_name_en,city
 await q(`insert into company_contacts(company_id,contact_name,phone,email,wechat) values ($1,'Ana','+507 6000-0000','ana@istmo.test',null),($2,'Li','+86 138','li@foshan.test','liwx')`, [cBuyer, cA]);
 await q(`insert into factory_admin(company_id,tier) values ($1,'vip')`, [cA]);
 const cat = (await q(`select id from categories where slug = 'doors'`))[0].id;
-const rfq = (await q(`insert into rfqs(buyer_company_id,created_by,status,product,category_id,description,quantity,unit,destination_country,deadline,incoterms) values ($1,$2,'submitted','Puertas','${cat}','desc',100,'unidades','PA','2026-12-31','{FOB}') returning id`, [cBuyer, buyer]))[0].id;
+const unit = (await q(`select id from units where slug = 'units'`))[0].id;
+const rfq = (await q(`insert into rfqs(buyer_company_id,created_by,status,product,category_id,description,quantity,unit_id,destination_country,deadline,incoterms) values ($1,$2,'submitted','Puertas','${cat}','desc',100,'${unit}','PA','2026-12-31','{FOB}') returning id`, [cBuyer, buyer]))[0].id;
 await expectError('asignar a fábrica no validada falla', () => q(`insert into rfq_assignments(rfq_id,factory_company_id,assigned_by) values ($1,$2,$3)`, [rfq, cPending, admin]));
 await q(`insert into rfq_assignments(rfq_id,factory_company_id,assigned_by) values ($1,$2,$3)`, [rfq, cA, admin]);
 await expectError('CIF sin puerto falla', () => q(`update rfqs set incoterms='{CIF}' where id=$1`, [rfq]));
@@ -163,6 +164,54 @@ check('con umbral, la alerta cuenta', typeof (await q(`select admin_alerts() as 
 await expectError('umbral negativo no se acepta', () => q(`update platform_settings set value='-5' where key='unanswered_rfq_alert_hours'`));
 await asUser(pend);
 check('la fábrica no ve su tipo VIP', (await q(`select * from factory_admin`)).length === 0);
+
+// --- Etapa 4: solicitudes ---
+await asSuper();
+const fc = async (t) => (await q(`select find_contact_info($1) as f`, [t]))[0].f;
+check('detecta correo', (await fc('escribe a ventas@obra.com')) === 'ventas@obra.com');
+check('detecta teléfono', !!(await fc('llama al +507 6000-0000')));
+check('detecta teléfono sin +', !!(await fc('tel 6000-0000 oficina')));
+check('detecta WeChat', !!(await fc('mi 微信 es abc123')));
+check('no confunde medidas, fechas ni cantidades', (await fc('Puerta 1200x2100 mm, entrega 2026-12-31, 1.200.000 unidades, 600 x 600')) === null);
+
+await asUser(buyer);
+const draft = (await q(`insert into rfqs(buyer_company_id,created_by,product) values ($1,$2,'Ventanas de aluminio') returning id`, [cBuyer, buyer]))[0].id;
+await expectError('comprador no cambia estado con UPDATE', () => q(`update rfqs set status='submitted' where id=$1`, [draft]));
+await expectError('borrador incompleto no se envía', () => q(`select submit_rfq($1)`, [draft]));
+await q(`update rfqs set category_id=$2, description='Ventanas corredizas, contacto ventas@obra.com', quantity=50, unit_id=$3, destination_country='PA', deadline=current_date + 30, incoterms='{FOB}' where id=$1`, [draft, cat, unit]);
+await expectError('texto con datos de contacto no se envía', () => q(`select submit_rfq($1)`, [draft]));
+await q(`update rfqs set description='Ventanas corredizas de aluminio' where id=$1`, [draft]);
+await expectError('sin especificaciones ni imagen no se envía', () => q(`select submit_rfq($1)`, [draft]));
+await q(`update rfqs set technical_specs='Perfil 6063, vidrio 6 mm', reference_url='https://ejemplo.test/ventana.jpg' where id=$1`, [draft]);
+await asSuper();
+await q(`update companies set status='in_review' where id=$1`, [cBuyer]);
+await asUser(buyer);
+await expectError('comprador no validado no envía', () => q(`select submit_rfq($1)`, [draft]));
+await asSuper();
+await q(`update companies set status='validated' where id=$1`, [cBuyer]);
+await asUser(buyer);
+await q(`select submit_rfq($1)`, [draft]);
+check('solicitud enviada', (await q(`select status from rfqs where id=$1`, [draft]))[0].status === 'submitted');
+await expectError('enviada ya no se edita', () => q(`update rfqs set product='x' where id=$1 returning 1`, [draft]).then((r) => { if (!r.length) throw new Error('0'); }));
+await asUser(facA);
+check('fábrica no ve solicitud enviada sin asignar', (await q(`select id from rfqs where id=$1`, [draft])).length === 0);
+await expectError('fábrica no puede asignarse', () => q(`select admin_assign_rfq($1, array[$2]::uuid[])`, [draft, cA]));
+await asUser(admin);
+check('admin asigna fábricas', (await q(`select admin_assign_rfq($1, array[$2]::uuid[]) as n`, [draft, cA]))[0].n === 1);
+check('solicitud pasa a asignada', (await q(`select status from rfqs where id=$1`, [draft]))[0].status === 'assigned');
+check('fábrica recibe aviso', (await q(`select count(*)::int as n from notifications where user_id=$1 and type='rfq_assigned'`, [facA]))[0].n === 1);
+await asUser(facA);
+check('fábrica asignada ve la solicitud', (await q(`select id from rfqs where id=$1`, [draft])).length === 1);
+await asSuper();
+await q(`update companies set status='suspended' where id=$1`, [cA]);
+await asUser(facA);
+check('fábrica suspendida pierde acceso', (await q(`select id from rfqs where id=$1`, [draft])).length === 0);
+await asSuper();
+await q(`update companies set status='validated' where id=$1`, [cA]);
+await asUser(admin);
+await expectError('cerrar exige mensaje', () => q(`select admin_rfq_action($1,'close','')`, [draft]));
+await q(`select admin_rfq_action($1,'close','Proyecto cancelado')`, [draft]);
+check('cerrada con nota en historial', (await q(`select note from status_history where entity_id=$1 and to_status='closed'`, [draft]))[0]?.note === 'Proyecto cancelado');
 
 console.log(fails ? `\n${fails} FALLOS` : '\nTodo OK');
 process.exit(fails ? 1 : 0);

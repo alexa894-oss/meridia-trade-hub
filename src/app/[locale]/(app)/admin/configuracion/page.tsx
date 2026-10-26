@@ -45,6 +45,9 @@ export default async function SettingsPage() {
       <Card title={t("categories")}>
         <OptionsEditor table="categories" rows={asRows(data.categories)} />
       </Card>
+      <Card title={t("units")}>
+        <OptionsEditor table="units" rows={asRows(data.units)} />
+      </Card>
     </div>
   );
 }

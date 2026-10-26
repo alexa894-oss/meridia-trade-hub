@@ -21,7 +21,7 @@ export default async function AdminDashboard() {
     },
     {
       key: "rfqs",
-      href: "/admin",
+      href: "/admin/solicitudes?estado=assigned",
       count: alerts.rfqs_awaiting_quotes,
       overdue: alerts.rfqs_overdue,
       hours: alerts.unanswered_rfq_hours,
@@ -49,11 +49,9 @@ export default async function AdminDashboard() {
                   : t(`${tile.key}.overdue`, { count: tile.overdue ?? 0, hours: tile.hours })}
               </p>
               <div className="mt-4 flex flex-wrap gap-3 text-sm font-semibold">
-                {tile.key === "companies" ? (
-                  <Link href={tile.href} className="text-navy-800 underline-offset-4 hover:underline">
-                    {t("companies.review")}
-                  </Link>
-                ) : null}
+                <Link href={tile.href} className="text-navy-800 underline-offset-4 hover:underline">
+                  {t(`${tile.key}.review`)}
+                </Link>
                 {tile.hours === null ? (
                   <Link href="/admin/configuracion" className="text-navy-800 underline-offset-4 hover:underline">
                     {t("setThreshold")}
@@ -69,7 +67,9 @@ export default async function AdminDashboard() {
         <p className="text-ink">
           {t("rfqs.toAssign", { count: alerts.rfqs_to_assign })}
         </p>
-        <p className="mt-1 text-sm text-ink-muted">{t("rfqs.comingSoon")}</p>
+        <Link href="/admin/solicitudes?estado=submitted" className="mt-2 inline-block text-sm font-semibold text-navy-800 underline-offset-4 hover:underline">
+          {t("rfqs.assignNow")}
+        </Link>
       </Card>
     </div>
   );

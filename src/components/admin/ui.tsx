@@ -21,6 +21,15 @@ const statusTone: Record<string, string> = {
   registered: "bg-navy-50 text-ink-muted",
   rejected: "bg-danger/10 text-danger",
   suspended: "bg-danger/10 text-danger",
+  // Solicitudes
+  draft: "bg-navy-50 text-ink-muted",
+  submitted: "bg-gold-100 text-gold-700",
+  assigned: "bg-navy-100 text-navy-800",
+  quoted: "bg-success/10 text-success",
+  negotiating: "bg-success/10 text-success",
+  order_created: "bg-success/10 text-success",
+  no_response: "bg-danger/10 text-danger",
+  closed: "bg-navy-50 text-ink-muted",
 };
 
 export function StatusBadge({ status, label }: { status: string; label: string }) {

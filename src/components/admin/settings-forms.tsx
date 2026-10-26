@@ -65,7 +65,7 @@ export function SettingsForm({
 
 type OptionRow = { id: string; slug: string; names: Record<string, string>; active: boolean; sort_order: number };
 
-function OptionRowForm({ table, row }: { table: "sectors" | "categories"; row?: OptionRow }) {
+function OptionRowForm({ table, row }: { table: "sectors" | "categories" | "units"; row?: OptionRow }) {
   const t = useTranslations("Admin.settings");
   const tr = useTranslations("Admin.review");
   const fieldError = useFieldError();
@@ -89,7 +89,7 @@ function OptionRowForm({ table, row }: { table: "sectors" | "categories"; row?: 
   );
 }
 
-export function OptionsEditor({ table, rows }: { table: "sectors" | "categories"; rows: OptionRow[] }) {
+export function OptionsEditor({ table, rows }: { table: "sectors" | "categories" | "units"; rows: OptionRow[] }) {
   return (
     <div className="space-y-2">
       {rows.map((row) => (
