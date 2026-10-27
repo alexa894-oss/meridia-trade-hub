@@ -57,7 +57,7 @@ export default async function FactoriesPage() {
                       <StatusBadge status={f.status} label={t(`status.${f.status}`)} />
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <Link href={`/admin/fabricantes/${f.id}`} className="inline-flex min-h-9 items-center rounded-(--radius-control) border border-navy-800 px-3 font-semibold text-navy-800 hover:bg-navy-50">
+                      <Link href={`/admin/fabricantes/${f.id}`} className="inline-flex min-h-9 items-center rounded-(--radius-control) border border-navy-800 px-3 font-semibold whitespace-nowrap text-navy-800 hover:bg-navy-50">
                         {t("open")}
                       </Link>
                     </td>
