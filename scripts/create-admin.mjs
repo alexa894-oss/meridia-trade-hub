@@ -7,6 +7,7 @@
 // Opciones:
 //   --site=https://...   URL de la app para el enlace (por defecto NEXT_PUBLIC_SITE_URL o http://localhost:3000)
 //   --promote            Convierte en administrador una cuenta que ya existe
+//   --open               Abre el enlace directamente en el navegador (macOS) en vez de imprimirlo
 //
 // Requiere SUPABASE_SERVICE_ROLE_KEY en .env.local. El rol "admin" se guarda en
 // app_metadata, que solo la clave de servicio puede escribir; el trigger
@@ -15,6 +16,7 @@
 // No se imprime ni se pide contraseña: el script genera un enlace de un solo uso
 // para que la persona defina la suya en /restablecer.
 
+import { execFileSync } from "node:child_process";
 import { createClient } from "@supabase/supabase-js";
 
 const args = process.argv.slice(2);
@@ -64,13 +66,21 @@ if (existing) {
     console.log(`✓ ${email} ahora es administrador.`);
   }
 } else {
-  const { error } = await supabase.auth.admin.createUser({
+  // Auth inserta el usuario antes de guardar app_metadata, así que el trigger
+  // handle_new_user no ve todavía el rol "admin": la cuenta nace con un perfil
+  // provisorio y se promueve enseguida (solo la clave de servicio puede hacerlo).
+  const { data: created, error } = await supabase.auth.admin.createUser({
     email,
     email_confirm: true,
     app_metadata: { role: "admin" },
-    user_metadata: { full_name: "Meridia" },
+    user_metadata: { full_name: "Meridia", signup_role: "buyer" },
   });
   if (error) fail(`No se pudo crear la cuenta: ${error.message}`);
+  const { error: roleError } = await supabase.from("profiles").update({ role: "admin", company_id: null }).eq("id", created.user.id);
+  if (roleError) {
+    await supabase.auth.admin.deleteUser(created.user.id);
+    fail(`No se pudo asignar el rol de administrador: ${roleError.message}`);
+  }
   console.log(`✓ Administrador creado: ${email}`);
 }
 
@@ -79,6 +89,11 @@ const { data: link, error: linkError } = await supabase.auth.admin.generateLink(
 if (linkError) fail(`No se pudo generar el enlace: ${linkError.message}`);
 
 const setPasswordUrl = `${site}/auth/confirm?token_hash=${link.properties.hashed_token}&type=recovery&next=/restablecer`;
-console.log("\nAbre este enlace (un solo uso) para definir la contraseña:");
-console.log(setPasswordUrl);
+if (flag("open")) {
+  execFileSync("open", [setPasswordUrl]);
+  console.log("\n✓ Se abrió el navegador en la página para definir la contraseña (enlace de un solo uso).");
+} else {
+  console.log("\nAbre este enlace (un solo uso) para definir la contraseña:");
+  console.log(setPasswordUrl);
+}
 console.log("\nTambién puedes usar «¿Olvidaste tu contraseña?» en /ingresar.");
