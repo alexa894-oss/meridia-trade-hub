@@ -1,6 +1,6 @@
 # Correos de Meridia (Supabase → Authentication → Emails → Templates)
 
-Pegar en cada proyecto (desarrollo y producción). `{{ .ConfirmationURL }}` lo completa Supabase.
+Pegar en cada proyecto (desarrollo y producción). Los enlaces usan `token_hash` (no `{{ .ConfirmationURL }}`): así funcionan aunque el correo se abra en otro navegador o dispositivo. `{{ .RedirectTo }}` ya trae `/auth/confirm?next=…` desde la app.
 
 | Plantilla en Supabase | Asunto | Cuerpo |
 |---|---|---|

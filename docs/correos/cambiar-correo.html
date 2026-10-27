@@ -4,7 +4,7 @@
   <h1 style="font-size:20px;color:#14284b">Confirma tu nuevo correo</h1>
   <p>Pediste cambiar el correo de tu cuenta en Meridia Trade Hub de {{ .Email }} a {{ .NewEmail }}.</p>
   <p style="margin:28px 0">
-    <a href="{{ .ConfirmationURL }}" style="background:#14284b;color:#ffffff;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:bold">Confirmar el cambio</a>
+    <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&amp;type=email_change&amp;next=/panel" style="background:#14284b;color:#ffffff;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:bold">Confirmar el cambio</a>
   </p>
   <p style="font-size:13px;color:#6b7280">Si no lo pediste t&uacute;, escr&iacute;benos a info@meridiatradehub.com.</p>
   <p style="font-size:13px;color:#6b7280">&mdash; Equipo de Meridia Trade Hub</p>
