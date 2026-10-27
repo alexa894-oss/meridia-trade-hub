@@ -42,3 +42,7 @@ next-env.d.ts
 
 !.env.example
 capturas/
+
+# Resultados de Playwright
+/test-results/
+/playwright-report/
