@@ -1,7 +1,7 @@
 {
   "Metadata": {
     "title": "Meridia Trade Hub",
-    "description": "Red comercial B2B privada que conecta empresas con fabricantes internacionales verificados."
+    "description": "Plataforma B2B que conecta a tu empresa con fabricantes internacionales verificados: explora industrias, solicita cotizaciones y compáralas en un solo lugar."
   },
   "Common": {
     "signIn": "Ingresar a Meridia",
@@ -1328,7 +1328,8 @@
       "missingLegal": "Debes aceptar los textos legales.",
       "individualsNotAllowed": "Por ahora Meridia no acepta solicitudes de personas naturales."
     },
-    "demoFill": "Llenar con datos de ejemplo (solo en desarrollo)"
+    "demoFill": "Llenar con datos de ejemplo (solo en desarrollo)",
+    "prefilled": "Tu solicitud: {items}"
   },
   "Invitation": {
     "title": "Invitación a Meridia",
@@ -1344,6 +1345,243 @@
       "weakPassword": "La contraseña es demasiado débil. Usa una más larga o con más variedad.",
       "rateLimited": "Se enviaron demasiados correos. Espera unos minutos e inténtalo de nuevo.",
       "failed": "No pudimos crear tu cuenta. Inténtalo de nuevo."
+    }
+  },
+  "Portal": {
+    "nav": {
+      "label": "Principal",
+      "home": "Inicio",
+      "industries": "Industrias",
+      "how": "Cómo funciona",
+      "about": "Sobre Meridia",
+      "signIn": "Ingresar",
+      "quote": "Solicitar cotización",
+      "openMenu": "Abrir menú",
+      "closeMenu": "Cerrar menú"
+    },
+    "hero": {
+      "eyebrow": "Abastecimiento y fabricación internacional",
+      "titleStart": "Lo que tu empresa necesita, conectado con ",
+      "titleAccent": "quien puede fabricarlo.",
+      "subtitle": "Explora soluciones de abastecimiento internacional y conecta tus necesidades comerciales con una red seleccionada de fabricantes. Meridia facilita la búsqueda, las cotizaciones y el seguimiento de tus oportunidades.",
+      "searchLabel": "Producto que necesitas",
+      "placeholder": "¿Qué producto necesitas importar o fabricar?",
+      "searchButton": "Buscar soluciones",
+      "try": "Prueba:",
+      "examples": [
+        "Puertas de aluminio",
+        "Pisos laminados",
+        "Ventanas arquitectónicas",
+        "Porcelanato",
+        "Materiales de construcción"
+      ],
+      "exploreIndustries": "Explorar industrias →",
+      "howItWorks": "Cómo funciona Meridia →"
+    },
+    "search": {
+      "related": "Industrias relacionadas",
+      "see": "Ver →",
+      "quoteFor": "Solicitar cotización para «{query}»",
+      "noneTitle": "¿No encuentras lo que necesitas? Cuéntanos tu requerimiento.",
+      "noneBody": "«{query}» no está entre nuestras industrias, pero podemos evaluarlo.",
+      "noneButton": "Contar mi requerimiento"
+    },
+    "industriesSection": {
+      "eyebrow": "Industrias",
+      "title": "Explora soluciones por industria",
+      "subtitle": "Descubre las categorías de productos que podemos ayudarte a cotizar y abastecer.",
+      "open": "Ver industria"
+    },
+    "industries": {
+      "construccion-y-acabados": {
+        "name": "Construcción y acabados",
+        "description": "Materiales y acabados para obras residenciales, comerciales y hoteleras.",
+        "sub": [
+          "Cerámica y porcelanato",
+          "Sanitarios y grifería",
+          "Iluminación",
+          "Gabinetes y muebles de cocina"
+        ],
+        "products": [
+          "Porcelanato 60 × 60",
+          "Grifería para baño",
+          "Luminarias LED",
+          "Gabinetes de cocina"
+        ],
+        "applications": [
+          "Proyectos residenciales",
+          "Hoteles y oficinas",
+          "Remodelaciones",
+          "Distribución y ferretería"
+        ]
+      },
+      "puertas-y-ventanas": {
+        "name": "Puertas y ventanas",
+        "description": "Carpintería de aluminio, madera y PVC para todo tipo de proyecto.",
+        "sub": [
+          "Puertas de aluminio",
+          "Puertas de madera",
+          "Ventanas corredizas",
+          "Ventanas arquitectónicas"
+        ],
+        "products": [
+          "Puertas interiores de madera",
+          "Puertas de aluminio",
+          "Ventanas de aluminio serie 80",
+          "Fachadas de vidrio"
+        ],
+        "applications": [
+          "Edificios de apartamentos",
+          "Hoteles",
+          "Oficinas",
+          "Vivienda unifamiliar"
+        ]
+      },
+      "pisos-y-revestimientos": {
+        "name": "Pisos y revestimientos",
+        "description": "Pisos y revestimientos para interiores y exteriores.",
+        "sub": [
+          "Pisos SPC",
+          "Pisos laminados",
+          "Porcelanato",
+          "Revestimientos de piedra"
+        ],
+        "products": [
+          "Pisos SPC",
+          "Pisos laminados",
+          "Porcelanato rectificado",
+          "Revestimientos de pared"
+        ],
+        "applications": [
+          "Vivienda",
+          "Comercio",
+          "Hotelería",
+          "Áreas exteriores"
+        ]
+      }
+    },
+    "industryPage": {
+      "back": "← Todas las industrias",
+      "sub": "Subcategorías",
+      "products": "Productos de ejemplo",
+      "applications": "Aplicaciones comerciales",
+      "howTitle": "Cómo la atendemos",
+      "howBody": "Meridia ya gestiona solicitudes en esta categoría. No mostramos precios ni disponibilidad: cada cotización se prepara para tu solicitud.",
+      "quote": "Solicitar cotización",
+      "other": "¿Buscas otra industria? Cuéntanos tu requerimiento."
+    },
+    "about": {
+      "eyebrow": "¿Qué es Meridia?",
+      "title": "Una nueva forma de conectar empresas con fabricantes internacionales.",
+      "body": "Meridia Trade Hub es una plataforma de conexión comercial B2B que facilita el abastecimiento internacional. Ayudamos a empresas a transformar sus necesidades de compra en solicitudes comerciales estructuradas y a recibir propuestas de fabricantes compatibles a través de un proceso coordinado y transparente.",
+      "pillars": {
+        "access": {
+          "title": "Acceso comercial",
+          "body": "Facilitamos la conexión con fabricantes y capacidades productivas."
+        },
+        "quotes": {
+          "title": "Cotizaciones estructuradas",
+          "body": "Organizamos las propuestas para facilitar su evaluación."
+        },
+        "support": {
+          "title": "Acompañamiento",
+          "body": "Ayudamos a gestionar las etapas comerciales de la operación."
+        }
+      }
+    },
+    "how": {
+      "eyebrow": "Cómo funciona",
+      "title": "Compra directo con fabricantes verificados por Meridia",
+      "subtitle": "De tu necesidad a propuestas comparables, en cuatro pasos.",
+      "perks": [
+        "Compra directa con el fabricante",
+        "Fabricantes verificados por Meridia",
+        "Comunicación 24 h dentro de la plataforma"
+      ],
+      "stepLabel": "Paso {n}",
+      "steps": [
+        {
+          "title": "Cuéntanos qué necesitas",
+          "body": "Describes el producto, las cantidades, las especificaciones y el destino."
+        },
+        {
+          "title": "Meridia revisa tu solicitud",
+          "body": "Nuestro equipo analiza la información y determina qué fabricantes podrían atender el requerimiento."
+        },
+        {
+          "title": "Recibe y compara propuestas",
+          "body": "Recibes cotizaciones organizadas, con condiciones comerciales comparables."
+        },
+        {
+          "title": "Avanza con acompañamiento",
+          "body": "Meridia facilita la coordinación comercial y el seguimiento de la oportunidad."
+        }
+      ],
+      "cta": "Iniciar mi solicitud"
+    },
+    "final": {
+      "title": "Tu próxima oportunidad comercial comienza con una necesidad.",
+      "body": "Cuéntanos qué necesita tu empresa. Meridia te ayudará a explorar alternativas de abastecimiento internacional.",
+      "primary": "Solicitar una cotización",
+      "secondary": "Explorar industrias"
+    },
+    "faq": {
+      "title": "Preguntas frecuentes",
+      "hint": "Toca para ver las respuestas",
+      "items": [
+        {
+          "q": "¿Qué es Meridia Trade Hub?",
+          "a": "Una plataforma B2B que conecta las necesidades de compra de empresas con fabricantes internacionales seleccionados, y organiza las cotizaciones y el seguimiento comercial."
+        },
+        {
+          "q": "¿Cómo puedo solicitar una cotización?",
+          "a": "Haz clic en «Solicitar cotización», elige si eres empresa o persona natural y cuéntanos qué necesitas. Meridia revisa tu solicitud antes de presentarla a fabricantes."
+        },
+        {
+          "q": "¿Necesito una cuenta para explorar?",
+          "a": "No. Puedes ver las industrias y cómo funciona Meridia sin crear una cuenta. La cuenta se crea al enviar tu primera solicitud."
+        },
+        {
+          "q": "¿Puedo cotizar si soy persona natural?",
+          "a": "Sí. Meridia está orientada principalmente a operaciones comerciales y compras de volumen, por eso las solicitudes están sujetas a evaluación."
+        },
+        {
+          "q": "¿Cómo selecciona Meridia a los fabricantes?",
+          "a": "Evaluamos su identidad legal, su capacidad productiva y su historial comercial, y proponemos los que son compatibles con cada solicitud."
+        },
+        {
+          "q": "¿Puedo solicitar productos que no aparecen en la página?",
+          "a": "Sí. Describe lo que necesitas y lo evaluamos."
+        },
+        {
+          "q": "¿Cuánto cuesta utilizar Meridia?",
+          "a": "Las condiciones de cualquier servicio se informan antes de contratarlo."
+        },
+        {
+          "q": "¿Meridia realiza los pagos o las importaciones?",
+          "a": "Meridia no procesa pagos. Las condiciones de pago se acuerdan con el fabricante dentro de la plataforma. Los servicios logísticos o aduaneros dependen de terceros y se informan cuando estén disponibles."
+        }
+      ]
+    },
+    "footer": {
+      "description": "Plataforma de conexión comercial B2B entre empresas y fabricantes internacionales seleccionados.",
+      "explore": "Explorar",
+      "meridia": "Meridia",
+      "legal": "Legal",
+      "contact": "Contacto",
+      "contactEmail": "info@meridiatradehub.com",
+      "platform": "Acceso a la plataforma",
+      "faq": "Preguntas frecuentes",
+      "terms": "Términos y condiciones",
+      "privacy": "Política de privacidad",
+      "nonCircumvention": "Acuerdo de no elusión",
+      "rights": "© Meridia Trade Hub"
+    },
+    "legalPage": {
+      "back": "← Volver al inicio",
+      "version": "Versión {version}",
+      "draft": "Borrador: este texto todavía no es la versión definitiva.",
+      "missing": "Este texto todavía no está publicado."
     }
   }
 }

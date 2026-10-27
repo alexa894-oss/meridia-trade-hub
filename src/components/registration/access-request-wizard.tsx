@@ -24,6 +24,8 @@ export function AccessRequestWizard({
   legalDocuments,
   allowIndividual,
   demo = false,
+  initialValues = {},
+  prefilled = [],
 }: {
   countries: Option[];
   sectors: Option[];
@@ -33,6 +35,9 @@ export function AccessRequestWizard({
   allowIndividual: boolean;
   /** Solo en desarrollo: botón para rellenar con una empresa ficticia. */
   demo?: boolean;
+  /** Lo que el visitante eligió en el portal (industria, producto): se precarga en el formulario. */
+  initialValues?: Record<string, string>;
+  prefilled?: string[];
 }) {
   const t = useTranslations("Registration");
   const tf = useTranslations("Registration.fields");
@@ -40,7 +45,7 @@ export function AccessRequestWizard({
   const tforms = useTranslations("Forms");
   const fieldError = useFieldError();
   const router = useRouter();
-  const [values, setValues] = useState<Record<string, string>>({ accountType: allowIndividual ? "" : "company" });
+  const [values, setValues] = useState<Record<string, string>>({ accountType: allowIndividual ? "" : "company", ...initialValues });
   const [stepIndex, setStepIndex] = useState(0);
   const [errors, setErrors] = useState<Partial<Record<string, FieldErrorCode>>>({});
   const [formError, setFormError] = useState<string | null>(null);
@@ -154,6 +159,11 @@ export function AccessRequestWizard({
 
   return (
     <div className="space-y-6">
+      {prefilled.length ? (
+        <p className="rounded-(--radius-control) bg-gold-100 px-4 py-3 font-display text-sm font-semibold text-navy-800">
+          {ta("prefilled", { items: prefilled.join(" · ") })}
+        </p>
+      ) : null}
       {demo ? (
         <button
           type="button"

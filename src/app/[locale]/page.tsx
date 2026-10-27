@@ -1,71 +1,176 @@
-import Image from "next/image";
-import { useTranslations } from "next-intl";
-import { setRequestLocale } from "next-intl/server";
-import { use } from "react";
-import { ButtonLink } from "@/components/button-link";
-import { SiteHeader } from "@/components/site-header";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
+import { industries } from "@/lib/public/industries";
+import { Illustration } from "@/components/public/illustration";
+import { PortalSearch } from "@/components/public/portal-search";
+import { PublicFooter } from "@/components/public/public-footer";
+import { PublicHeader } from "@/components/public/public-header";
 
-const features = ["validated", "compare", "messaging"] as const;
-
-export default function HomePage({ params }: PageProps<"/[locale]">) {
-  const { locale } = use(params);
+// Portada pública: portal de descubrimiento. Explorar no requiere cuenta; "Solicitar cotización"
+// lleva al formulario de solicitud de acceso que ya existe.
+export default async function HomePage({ params }: PageProps<"/[locale]">) {
+  const { locale } = await params;
   setRequestLocale(locale);
-  const t = useTranslations("Home");
-  const common = useTranslations("Common");
+  const t = await getTranslations("Portal");
+  const steps = t.raw("how.steps") as { title: string; body: string }[];
+  const perks = t.raw("how.perks") as string[];
+  const faq = t.raw("faq.items") as { q: string; a: string }[];
+  const eyebrow = "font-display text-xs font-semibold tracking-[0.18em] text-gold-700 uppercase";
+  const h2 = "font-display text-3xl font-bold text-balance text-navy-800 sm:text-4xl";
 
   return (
     <>
-      <SiteHeader />
+      <PublicHeader />
       <main className="flex-1">
-        <section className="bg-surface">
-          <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1.2fr_1fr] md:py-20">
-            <div>
-              <p className="font-display text-sm font-semibold tracking-widest text-gold-700 uppercase">
-                {t("eyebrow")}
-              </p>
-              <h1 className="mt-3 font-display text-3xl leading-tight font-bold text-navy-800 sm:text-5xl">
-                {t("title")}
-              </h1>
-              <p className="mt-5 max-w-xl text-lg text-ink-muted">{t("subtitle")}</p>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <ButtonLink href="/solicitar-acceso" variant="accent">
-                  {common("requestAccess")}
-                </ButtonLink>
-                <ButtonLink href="/ingresar">{common("signIn")}</ButtonLink>
-              </div>
-            </div>
-            <div className="mx-auto w-56 sm:w-72 md:w-full md:max-w-sm">
-              <Image
-                src="/brand/meridia-logo.png"
-                alt="Meridia Trade Hub"
-                width={796}
-                height={702}
-                priority
-                className="h-auto w-full"
-              />
+        {/* Hero con buscador */}
+        <section id="inicio" className="relative scroll-mt-20 overflow-hidden bg-navy-800 text-white">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 bg-[url('/brand/meridianos.svg')] bg-[length:720px] bg-[position:right_-140px_center] bg-no-repeat opacity-100"
+          />
+          <div className="relative mx-auto grid max-w-6xl gap-7 px-4 pt-14 pb-12 sm:px-6 md:pt-24 md:pb-18">
+            <p className="font-display text-xs font-semibold tracking-[0.18em] text-gold-500 uppercase">{t("hero.eyebrow")}</p>
+            <h1 className="max-w-[18ch] font-display text-4xl leading-tight font-bold text-balance sm:text-5xl lg:text-6xl">
+              {t("hero.titleStart")}
+              <span className="text-gold-500">{t("hero.titleAccent")}</span>
+            </h1>
+            <p className="max-w-2xl text-lg text-navy-100">{t("hero.subtitle")}</p>
+            <PortalSearch />
+            <div className="flex flex-wrap gap-5 font-display text-sm font-semibold">
+              <Link href="/#industrias" className="underline-offset-4 hover:underline">{t("hero.exploreIndustries")}</Link>
+              <Link href="/#como-funciona" className="underline-offset-4 hover:underline">{t("hero.howItWorks")}</Link>
             </div>
           </div>
         </section>
 
-        <section className="border-t border-line bg-surface-muted">
-          <ul className="mx-auto grid max-w-6xl gap-4 px-4 py-12 sm:px-6 md:grid-cols-3">
-            {features.map((key) => (
-              <li key={key} className="rounded-xl border border-line bg-surface p-6">
-                <span aria-hidden className="block h-1 w-10 rounded-full bg-gold-500" />
-                <h2 className="mt-4 font-display text-lg font-semibold text-navy-800">
-                  {t(`features.${key}.title`)}
-                </h2>
-                <p className="mt-2 text-ink-muted">{t(`features.${key}.body`)}</p>
-              </li>
-            ))}
-          </ul>
+        {/* Industrias */}
+        <section id="industrias" className="scroll-mt-20 bg-surface py-16 sm:py-24">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <div className="mb-8 grid gap-3">
+              <p className={eyebrow}>{t("industriesSection.eyebrow")}</p>
+              <h2 className={h2}>{t("industriesSection.title")}</h2>
+              <p className="max-w-2xl text-ink-muted">{t("industriesSection.subtitle")}</p>
+            </div>
+            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {industries.map((ind) => (
+                <li key={ind.slug}>
+                  <Link
+                    href={`/industrias/${ind.slug}`}
+                    className="group flex h-full flex-col overflow-hidden rounded-xl border border-line bg-surface transition hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(18,38,70,0.12)] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+                  >
+                    <Illustration name={ind.icon} className="aspect-[16/10]" />
+                    <span className="grid flex-1 content-start gap-2 p-5">
+                      <span className="font-display text-lg font-semibold text-navy-800">{t(`industries.${ind.slug}.name`)}</span>
+                      <span className="text-sm text-ink-muted">{t(`industries.${ind.slug}.description`)}</span>
+                      <span className="mt-1 font-display text-sm font-semibold text-navy-800 underline underline-offset-4">{t("industriesSection.open")}</span>
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {/* ¿Qué es Meridia? */}
+        <section id="sobre" className="scroll-mt-20 bg-surface-muted py-16 sm:py-24">
+          <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 md:grid-cols-[1.1fr_1fr] md:gap-16">
+            <div className="grid content-start gap-3">
+              <p className={eyebrow}>{t("about.eyebrow")}</p>
+              <h2 className={h2}>{t("about.title")}</h2>
+              <p className="max-w-2xl text-ink-muted">{t("about.body")}</p>
+            </div>
+            <ul className="grid content-start gap-5">
+              {(["access", "quotes", "support"] as const).map((key, i) => (
+                <li key={key} className="grid grid-cols-[44px_1fr] items-start gap-4">
+                  <span aria-hidden className="grid size-11 place-items-center rounded-(--radius-control) bg-gold-100 text-gold-700">
+                    {["⟷", "▤", "✓"][i]}
+                  </span>
+                  <span>
+                    <span className="block font-display text-lg font-semibold text-navy-800">{t(`about.pillars.${key}.title`)}</span>
+                    <span className="block text-ink-muted">{t(`about.pillars.${key}.body`)}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {/* Cómo funciona */}
+        <section id="como-funciona" className="scroll-mt-20 bg-surface py-16 sm:py-24">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <div className="mb-8 grid gap-3">
+              <p className={eyebrow}>{t("how.eyebrow")}</p>
+              <h2 className={h2}>{t("how.title")}</h2>
+              <p className="max-w-2xl text-ink-muted">{t("how.subtitle")}</p>
+              <ul className="mt-1 flex flex-wrap gap-2.5">
+                {perks.map((p) => (
+                  <li key={p} className="inline-flex items-center gap-2 rounded-full bg-gold-100 px-3.5 py-2 font-display text-sm font-semibold text-navy-800">
+                    <span aria-hidden className="text-gold-700">✓</span>
+                    {p}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {steps.map((s, i) => (
+                <li key={s.title} className="grid content-start gap-2 rounded-b-xl border-t-[3px] border-gold-500 bg-surface-muted p-5">
+                  <span className="font-display text-xs font-bold tracking-[0.1em] text-gold-700 uppercase">{t("how.stepLabel", { n: i + 1 })}</span>
+                  <span className="font-display text-lg font-semibold text-navy-800">{s.title}</span>
+                  <span className="text-sm text-ink-muted">{s.body}</span>
+                </li>
+              ))}
+            </ol>
+            <Link
+              href="/solicitar-acceso"
+              className="mt-8 inline-flex min-h-12 items-center rounded-(--radius-control) bg-navy-800 px-6 font-display font-semibold text-white hover:bg-navy-900"
+            >
+              {t("how.cta")}
+            </Link>
+          </div>
+        </section>
+
+        {/* Llamado final */}
+        <section className="bg-navy-800 text-white">
+          <div className="mx-auto grid max-w-6xl justify-items-start gap-5 px-4 py-16 sm:px-6 sm:py-20">
+            <h2 className="max-w-[22ch] font-display text-3xl font-bold text-balance sm:text-4xl">{t("final.title")}</h2>
+            <p className="max-w-2xl text-navy-100">{t("final.body")}</p>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/solicitar-acceso" className="inline-flex min-h-12 items-center rounded-(--radius-control) bg-gold-500 px-6 font-display font-semibold text-navy-900 hover:bg-gold-300">
+                {t("final.primary")}
+              </Link>
+              <Link href="/#industrias" className="inline-flex min-h-12 items-center rounded-(--radius-control) border border-white px-6 font-display font-semibold text-white hover:bg-white/10">
+                {t("final.secondary")}
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Preguntas frecuentes, plegadas al final */}
+        <section id="preguntas" className="scroll-mt-20 border-t border-line bg-surface-muted py-5">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <details className="group">
+              <summary className="flex cursor-pointer list-none items-baseline gap-3 py-2.5 font-display text-xl font-bold text-navy-800 [&::-webkit-details-marker]:hidden">
+                {t("faq.title")}
+                <span className="text-sm font-normal text-ink-muted group-open:hidden">{t("faq.hint")}</span>
+                <span aria-hidden className="ml-auto text-2xl text-gold-700 group-open:hidden">+</span>
+                <span aria-hidden className="ml-auto hidden text-2xl text-gold-700 group-open:inline">–</span>
+              </summary>
+              <div className="grid max-w-3xl gap-2.5 pt-2 pb-5">
+                {faq.map((item) => (
+                  <details key={item.q} className="group/q rounded-xl border border-line bg-surface">
+                    <summary className="flex cursor-pointer list-none justify-between gap-3 px-4 py-4 font-display font-semibold text-navy-800 [&::-webkit-details-marker]:hidden">
+                      {item.q}
+                      <span aria-hidden className="text-xl leading-none text-gold-700 group-open/q:rotate-45">+</span>
+                    </summary>
+                    <p className="px-4 pb-4 text-ink-muted">{item.a}</p>
+                  </details>
+                ))}
+              </div>
+            </details>
+          </div>
         </section>
       </main>
-      <footer className="bg-navy-800 text-navy-100">
-        <div className="mx-auto max-w-6xl px-4 py-6 text-sm sm:px-6">
-          {t("footer")}
-        </div>
-      </footer>
+      <PublicFooter />
     </>
   );
 }
