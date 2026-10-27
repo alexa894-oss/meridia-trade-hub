@@ -24,7 +24,7 @@ test("solicitar acceso: no hay opción pública para registrar fábricas", async
 test("solicitante pendiente no entra a solicitudes de cotización, ni cambiando la URL", async ({ page }) => {
   await login(page, accounts.buyerPending, "/comprador/solicitudes/nueva");
   await expect(page).toHaveURL(/\/comprador\/solicitud$/);
-  await expect(page.getByRole("link", { name: "Solicitudes" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Solicitudes de cotización" })).toHaveCount(0);
 });
 
 test("solicitud: al enviar sin datos se nombran los campos que faltan", async ({ page }) => {

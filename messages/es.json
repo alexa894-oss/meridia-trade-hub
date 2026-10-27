@@ -298,7 +298,7 @@
   },
   "RegistrationStatus": {
     "label": "Solicitud de acceso",
-    "pageTitle": "Mi solicitud de acceso",
+    "pageTitle": "Mi registro en Meridia",
     "messageFromMeridia": "Mensaje de Meridia:",
     "timeline": "Seguimiento",
     "pending": "Pendiente",
@@ -357,7 +357,7 @@
       "dashboard": "Panel",
       "plans": "Planes",
       "settings": "Configuración",
-      "rfqs": "Solicitudes",
+      "rfqs": "Solicitudes de cotización",
       "messages": "Mensajes",
       "orders": "Pedidos",
       "commissions": "Comisiones",
@@ -586,14 +586,14 @@
       "units": "Unidades de cantidad"
     },
     "rfqs": {
-      "title": "Solicitudes",
+      "title": "Solicitudes de cotización",
       "all": "Todas",
       "empty": "No hay solicitudes en este estado.",
       "factories": "{count, plural, =0 {sin fábricas} one {# fábrica} other {# fábricas}}",
       "submittedAt": "Enviada el {date}"
     },
     "rfq": {
-      "back": "Volver a solicitudes",
+      "back": "Volver a solicitudes de cotización",
       "request": "Solicitud",
       "history": "Historial",
       "buyer": "Comprador",
@@ -701,10 +701,10 @@
     "buyer": {
       "label": "Secciones",
       "home": "Inicio",
-      "rfqs": "Solicitudes",
+      "rfqs": "Solicitudes de cotización",
       "messages": "Mensajes",
       "orders": "Pedidos",
-      "access": "Mi solicitud"
+      "access": "Mi registro"
     },
     "factory": {
       "label": "Secciones",
@@ -802,10 +802,10 @@
       "saveFailed": "No pudimos guardar. Inténtalo de nuevo."
     },
     "buyer": {
-      "title": "Mis solicitudes",
-      "new": "Nueva solicitud",
+      "title": "Mis solicitudes de cotización",
+      "new": "Nueva solicitud de cotización",
       "empty": "Todavía no tienes solicitudes.",
-      "back": "Volver a mis solicitudes",
+      "back": "Volver a mis solicitudes de cotización",
       "submitted": "Solicitud enviada. Meridia la revisará y la asignará a fábricas compatibles.",
       "saved": "Borrador guardado.",
       "deleteDraft": "Eliminar borrador",
