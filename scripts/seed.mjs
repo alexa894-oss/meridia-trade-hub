@@ -49,10 +49,12 @@ if (existing.users.some((u) => u.email?.endsWith(`@${DOMAIN}`))) {
 }
 
 // Administrador de prueba (rol desde app_metadata, nunca desde el registro público).
-must(
+const seedAdmin = must(
   await db.auth.admin.createUser({ email: `admin@${DOMAIN}`, password, email_confirm: true, app_metadata: { role: "admin" }, user_metadata: { full_name: "Admin de prueba" } }),
   "crear admin de prueba",
 );
+// Auth guarda app_metadata después de crear el usuario: el perfil nace como solicitante y se promueve aquí.
+must(await db.from("profiles").update({ role: "admin", company_id: null }).eq("id", seedAdmin.user.id), "rol de admin de prueba");
 
 const lookup = async (table) => Object.fromEntries(must(await db.from(table).select("id, slug"), table).map((r) => [r.slug, r.id]));
 const categories = await lookup("categories");

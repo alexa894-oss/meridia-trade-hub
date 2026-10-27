@@ -6,7 +6,8 @@ import { accounts, login } from "./fixtures";
 // está configurada (no hay valores por defecto: la define el administrador).
 test("solicitud de punta a punta hasta la orden", async ({ page }) => {
   test.setTimeout(240_000);
-  const product = `Ventanas de prueba ${Date.now()}`;
+  // Sin números largos: el detector de teléfonos los bloquearía (con razón).
+  const product = `Ventanas de prueba ${Date.now().toString(36)}`;
   const inDays = (n: number) => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
 
   // 1. El comprador crea y envía la solicitud.
