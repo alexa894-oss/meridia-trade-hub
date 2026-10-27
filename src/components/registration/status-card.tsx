@@ -113,7 +113,12 @@ export async function RequestTracker({ profile, justSubmitted = false }: { profi
                     <p className={`font-semibold ${reached || isInfo ? "text-navy-800" : "text-ink-muted"}`}>
                       {isInfo ? t("info_requested.title") : t(`milestones.${m}`)}
                     </p>
-                    <p className="text-sm text-ink-muted">{at && (reached || isInfo) ? formatDate(at, locale, true) : t("pending")}</p>
+                    {/* Un paso superado sin fecha propia (p. ej. aprobada directo desde recibida) no muestra "Pendiente". */}
+                    {at && (reached || isInfo) ? (
+                      <p className="text-sm text-ink-muted">{formatDate(at, locale, true)}</p>
+                    ) : !reached ? (
+                      <p className="text-sm text-ink-muted">{t("pending")}</p>
+                    ) : null}
                   </div>
                 </li>
               );
