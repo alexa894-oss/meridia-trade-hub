@@ -1194,6 +1194,8 @@ export type Database = {
       quotes: {
         Row: {
           alternative_differences: string | null
+          approved_at: string | null
+          approved_by: string | null
           balance_pct: number | null
           balance_timing: string | null
           created_at: string
@@ -1223,6 +1225,8 @@ export type Database = {
         }
         Insert: {
           alternative_differences?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
           balance_pct?: number | null
           balance_timing?: string | null
           created_at?: string
@@ -1252,6 +1256,8 @@ export type Database = {
         }
         Update: {
           alternative_differences?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
           balance_pct?: number | null
           balance_timing?: string | null
           created_at?: string
@@ -1532,6 +1538,10 @@ export type Database = {
         Returns: string
       }
       admin_alerts: { Args: never; Returns: Json }
+      admin_approve_quote: {
+        Args: { p_note?: string; p_quote: string }
+        Returns: undefined
+      }
       admin_assign_rfq: {
         Args: { p_factories: string[]; p_rfq: string }
         Returns: number
@@ -1786,6 +1796,7 @@ export type Database = {
         | "rejected"
       quote_status:
         | "draft"
+        | "pending_approval"
         | "submitted"
         | "reviewed"
         | "preferred"
@@ -1999,6 +2010,7 @@ export const Constants = {
       ],
       quote_status: [
         "draft",
+        "pending_approval",
         "submitted",
         "reviewed",
         "preferred",

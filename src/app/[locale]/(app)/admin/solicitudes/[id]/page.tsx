@@ -55,7 +55,7 @@ export default async function AdminRfqPage({ params }: PageProps<"/[locale]/admi
                   <li key={quote.id} className="rounded-(--radius-control) border border-line p-4">
                     <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                       <p className="font-semibold text-navy-800">{factoryName}</p>
-                      <StatusBadge status={quote.status === "hidden" ? "rejected" : quote.status === "draft" ? "draft" : "validated"} label={tq(`status.${quote.status}`)} />
+                      <StatusBadge status={quote.status === "hidden" ? "rejected" : quote.status === "draft" ? "draft" : quote.status === "pending_approval" ? "in_review" : "validated"} label={tq(`status.${quote.status}`)} />
                     </div>
                     {quote.status === "draft" ? (
                       <p className="text-sm text-ink-muted">{t("quoteDraft")}</p>

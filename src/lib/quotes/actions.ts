@@ -183,6 +183,20 @@ export async function buyerQuoteAction(formData: FormData) {
 }
 
 // Administrador: ocultar (con motivo) o restaurar una cotización.
+// Meridia aprueba la cotización: recién ahí la ve el comprador.
+export async function adminApproveQuote(_prev: FormState, formData: FormData): Promise<FormState> {
+  const profile = await getCurrentProfile();
+  if (!profile || profile.role !== "admin") return { status: "error", formError: "notAllowed" };
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_approve_quote", { p_quote: readString(formData, "quoteId") });
+  if (error) {
+    const formError = error.message === "invalid_transition" ? "invalidTransition" : error.message === "rfq_closed" ? "rfqClosed" : "saveFailed";
+    return { status: "error", formError };
+  }
+  refresh();
+  return { status: "success", message: "approved" };
+}
+
 export async function adminHideQuote(_prev: FormState<"reason">, formData: FormData): Promise<FormState<"reason">> {
   const profile = await getCurrentProfile();
   if (!profile || profile.role !== "admin") return { status: "error", formError: "notAllowed" };

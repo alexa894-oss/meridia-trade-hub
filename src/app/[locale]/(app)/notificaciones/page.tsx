@@ -19,6 +19,7 @@ function hrefFor(type: string, payload: Record<string, unknown>, role: Role) {
       return `${messagesBase[role]}/${payload.conversation_id}`;
     case "rfq_assigned":
     case "quote_hidden":
+    case "quote_approved":
       return rfq ? `/fabrica/oportunidades/${rfq}` : roleHome[role];
     case "rfq_status":
     case "quote_received":
@@ -31,6 +32,8 @@ function hrefFor(type: string, payload: Record<string, unknown>, role: Role) {
     case "commission_missing":
     case "factory_joined":
       return `/admin/fabricantes/${payload.company_id}`;
+    case "quote_pending":
+      return rfq ? `/admin/solicitudes/${rfq}` : roleHome[role];
     case "access_request":
       return `/admin/accesos/${payload.company_id}`;
     case "company_review":
@@ -51,7 +54,7 @@ export default function NotificationsPage() {
 async function NotificationsList() {
   const profile = await requireProfile();
   const [t, locale, items] = await Promise.all([getTranslations("Notifications"), getLocale(), listNotifications(profile.id)]);
-  const known = ["message", "rfq_assigned", "quote_hidden", "rfq_status", "quote_received", "company_review", "order_created", "order_status", "commission_missing", "access_request", "factory_joined"];
+  const known = ["message", "rfq_assigned", "quote_hidden", "rfq_status", "quote_received", "company_review", "order_created", "order_status", "commission_missing", "access_request", "factory_joined", "quote_pending", "quote_approved"];
 
   return (
     <div className="mx-auto max-w-2xl space-y-5">

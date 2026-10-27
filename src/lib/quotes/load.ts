@@ -46,11 +46,33 @@ export async function loadAdminQuotes(rfqId: string) {
   await supabase.rpc("expire_quotes", { p_rfq: rfqId });
   const { data } = await supabase
     .from("quotes")
-    .select("*, quote_prices(incoterm, unit_price), companies!quotes_factory_company_id_fkey(factory_details(legal_name_en, legal_name_zh))")
+    .select("*, quote_prices(incoterm, unit_price), companies!quotes_factory_company_id_fkey(factory_details(legal_name_en, legal_name_zh, trade_name))")
     .eq("rfq_id", rfqId)
     .order("submitted_at");
-  return (data ?? []).map(({ companies, ...q }) => ({
-    quote: withPrices(q),
-    factoryName: companies?.factory_details ? `${companies.factory_details.legal_name_en} · ${companies.factory_details.legal_name_zh}` : "",
+  return (data ?? []).map(({ companies, ...q }) => {
+    const f = companies?.factory_details;
+    return {
+      quote: withPrices(q),
+      factoryName: f ? [f.trade_name ?? f.legal_name_en, f.legal_name_zh].filter(Boolean).join(" · ") : "",
+    };
+  });
+}
+
+// Cotizaciones que esperan la revisión de Meridia (panel del administrador).
+export async function listPendingQuotes() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("quotes")
+    .select("id, submitted_at, rfqs(id, number, product), companies!quotes_factory_company_id_fkey(factory_details(legal_name_en, trade_name))")
+    .eq("status", "pending_approval")
+    .order("submitted_at")
+    .limit(50);
+  return (data ?? []).map((q) => ({
+    id: q.id,
+    submittedAt: q.submitted_at,
+    rfqId: q.rfqs?.id ?? "",
+    rfqNumber: q.rfqs?.number ?? null,
+    product: q.rfqs?.product ?? "",
+    factoryName: q.companies?.factory_details?.trade_name ?? q.companies?.factory_details?.legal_name_en ?? "",
   }));
 }

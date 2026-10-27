@@ -391,6 +391,12 @@
         "toAssign": "{count, plural, =0 {No hay solicitudes} one {# solicitud} other {# solicitudes}} esperando asignación.",
         "review": "Ver solicitudes",
         "assignNow": "Asignar solicitudes"
+      },
+      "quotes": {
+        "title": "Cotizaciones por aprobar",
+        "empty": "No hay cotizaciones esperando revisión.",
+        "item": "#{number} · {product} — {factory}",
+        "review": "Revisar"
       }
     },
     "detail": {
@@ -632,8 +638,12 @@
         "reasonRequired": "Escribe el motivo.",
         "invalidTransition": "No se puede en el estado actual.",
         "notAllowed": "Tu cuenta no puede hacer esta acción.",
-        "saveFailed": "No pudimos guardar."
-      }
+        "saveFailed": "No pudimos guardar.",
+        "rfqClosed": "La solicitud ya está cerrada."
+      },
+      "pendingHelp": "Esta cotización todavía no la ve el comprador. Revísala y apruébala, u ocúltala con un motivo.",
+      "approve": "Aprobar y enviar al comprador",
+      "approved": "Cotización aprobada: el comprador ya puede verla."
     },
     "access": {
       "title": "Solicitudes de acceso",
@@ -955,13 +965,14 @@
   "Quote": {
     "status": {
       "draft": "Borrador",
-      "submitted": "Enviada",
+      "submitted": "Aprobada por Meridia",
       "reviewed": "Revisada",
       "preferred": "Preferida",
       "accepted": "Aceptada",
       "discarded": "Descartada",
       "hidden": "Oculta por Meridia",
-      "expired": "Vencida"
+      "expired": "Vencida",
+      "pending_approval": "En revisión de Meridia"
     },
     "offerTypes": {
       "exact": "Oferta exacta",
@@ -1047,7 +1058,8 @@
       "sentHelp": "Enviaste esta cotización. Ya no se puede editar; si algo cambia, coméntalo en la conversación con el comprador.",
       "hidden": "Meridia ocultó esta cotización: {reason}",
       "closed": "Esta solicitud ya no recibe cotizaciones.",
-      "writeBuyer": "Escribir al comprador"
+      "writeBuyer": "Escribir al comprador",
+      "pendingHelp": "Enviaste esta cotización. Meridia la revisará antes de presentarla al comprador; te avisaremos cuando esté aprobada. Ya no se puede editar."
     },
     "comparator": {
       "title": "{count, plural, =0 {Cotizaciones} one {# cotización} other {# cotizaciones}}",
@@ -1128,7 +1140,9 @@
       "order_status": "Tu pedido cambió de estado.",
       "commission_missing": "Una fábrica intentó aceptar una orden sin comisión configurada.",
       "access_request": "Nueva solicitud de acceso para revisar.",
-      "factory_joined": "Un fabricante invitado creó su cuenta."
+      "factory_joined": "Un fabricante invitado creó su cuenta.",
+      "quote_pending": "Una fábrica envió una cotización en la solicitud #{number}: revísala.",
+      "quote_approved": "Meridia aprobó tu cotización de la solicitud #{number}."
     }
   },
   "Orders": {

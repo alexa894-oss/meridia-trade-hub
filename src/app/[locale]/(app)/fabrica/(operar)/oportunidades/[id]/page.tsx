@@ -72,7 +72,7 @@ export default async function OpportunityPage({ params }: PageProps<"/[locale]/f
 
       <Card
         title={tq("factory.title")}
-        actions={quote && quote.status !== "draft" ? <StatusBadge status={quote.status === "hidden" ? "rejected" : "validated"} label={tq(`status.${quote.status}`)} /> : undefined}
+        actions={quote && quote.status !== "draft" ? <StatusBadge status={quote.status === "hidden" ? "rejected" : quote.status === "pending_approval" ? "in_review" : "validated"} label={tq(`status.${quote.status}`)} /> : undefined}
       >
         {quote && quote.status !== "draft" ? (
           <div className="space-y-4">
@@ -80,6 +80,8 @@ export default async function OpportunityPage({ params }: PageProps<"/[locale]/f
               <p role="alert" className="rounded-(--radius-control) border border-danger/30 bg-danger/5 p-3 text-sm text-danger">
                 {tq("factory.hidden", { reason: quote.hidden_reason ?? "" })}
               </p>
+            ) : quote.status === "pending_approval" ? (
+              <p className="rounded-(--radius-control) border border-gold-300 bg-gold-100 p-3 text-sm text-ink">{tq("factory.pendingHelp")}</p>
             ) : (
               <p className="text-sm text-ink-muted">{tq("factory.sentHelp")}</p>
             )}

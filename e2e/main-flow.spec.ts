@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { accounts, login } from "./fixtures";
 
-// Flujo principal: solicitud → asignación → cotización → comparador → orden.
+// Flujo principal: solicitud → asignación → cotización → aprobación de Meridia → comparador → orden.
 // Termina en la aceptación de la fábrica, que se bloquea porque la comisión no
 // está configurada (no hay valores por defecto: la define el administrador).
 test("solicitud de punta a punta hasta la orden", async ({ page }) => {
@@ -44,7 +44,16 @@ test("solicitud de punta a punta hasta la orden", async ({ page }) => {
   await page.getByLabel("Momento del saldo").fill("Antes del embarque");
   await page.getByText("Sin muestra", { exact: true }).click();
   await page.getByRole("button", { name: "Enviar cotización" }).click();
-  await expect(page.getByText(/Enviaste esta cotización/)).toBeVisible();
+  await expect(page.getByText(/Meridia la revisará antes de presentarla al comprador/)).toBeVisible();
+
+  // 3b. El comprador todavía no la ve: Meridia la revisa y la aprueba.
+  await login(page, accounts.buyerIstmo, "/comprador/solicitudes");
+  await page.getByRole("link", { name: new RegExp(product) }).click();
+  await expect(page.locator("body")).not.toContainText("95,00");
+  await login(page, accounts.admin, "/admin/solicitudes?estado=assigned");
+  await page.getByRole("link", { name: new RegExp(product) }).click();
+  await page.getByRole("button", { name: "Aprobar y enviar al comprador" }).click();
+  await expect(page.getByText("Cotización aprobada: el comprador ya puede verla.")).toBeVisible();
 
   // 4. El comprador compara, marca preferida y genera la orden.
   await login(page, accounts.buyerIstmo, "/comprador/solicitudes");

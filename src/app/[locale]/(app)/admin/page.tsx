@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { loadAlerts } from "@/lib/admin/load";
+import { listPendingQuotes } from "@/lib/quotes/load";
 import { Card } from "@/components/admin/ui";
 
 export const instant = false;
@@ -8,7 +9,7 @@ export const instant = false;
 // Panel del administrador: alertas con umbral configurable (sin plazo fijo).
 export default async function AdminDashboard() {
   const t = await getTranslations("Admin.dashboard");
-  const alerts = await loadAlerts();
+  const [alerts, pendingQuotes] = await Promise.all([loadAlerts(), listPendingQuotes()]);
   if (!alerts) return null;
 
   const tiles = [
@@ -62,6 +63,25 @@ export default async function AdminDashboard() {
           );
         })}
       </div>
+
+      <Card title={`${t("quotes.title")} · ${pendingQuotes.length}`}>
+        {pendingQuotes.length ? (
+          <ul className="divide-y divide-line">
+            {pendingQuotes.map((q) => (
+              <li key={q.id} className="flex flex-wrap items-center justify-between gap-2 py-2">
+                <span className="min-w-0 text-sm text-ink">
+                  {t("quotes.item", { number: q.rfqNumber ?? "", product: q.product, factory: q.factoryName })}
+                </span>
+                <Link href={`/admin/solicitudes/${q.rfqId}`} className="text-sm font-semibold text-navy-800 underline-offset-4 hover:underline">
+                  {t("quotes.review")}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-ink-muted">{t("quotes.empty")}</p>
+        )}
+      </Card>
 
       <Card title={t("rfqs.toAssignTitle")}>
         <p className="text-ink">
