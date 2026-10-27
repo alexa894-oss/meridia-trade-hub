@@ -1,4 +1,4 @@
-// Generado desde Supabase (MCP generate_typescript_types). No editar a mano.
+// Generado desde Supabase (npx supabase gen types typescript --linked). No editar a mano.
 export type Json =
   | string
   | number
@@ -15,34 +15,98 @@ export type Database = {
   }
   public: {
     Tables: {
+      buyer_categories: {
+        Row: {
+          buyer_company_id: string
+          category_id: string
+        }
+        Insert: {
+          buyer_company_id: string
+          category_id: string
+        }
+        Update: {
+          buyer_company_id?: string
+          category_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "buyer_categories_buyer_company_id_fkey"
+            columns: ["buyer_company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "buyer_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       buyer_details: {
         Row: {
           account_type: Database["public"]["Enums"]["buyer_account_type"]
           company_id: string
+          company_type: Database["public"]["Enums"]["buyer_company_type"] | null
+          destination_country: string | null
+          economic_activity: string | null
           full_name: string | null
+          id_number: string | null
+          id_type: Database["public"]["Enums"]["id_document_type"] | null
           legal_name: string | null
           project_description: string | null
+          purchase_frequency_id: string | null
+          purchase_purpose: string | null
+          purchase_volume: string | null
+          representative_authorized: boolean
           tax_id: string | null
+          trade_name: string | null
           updated_at: string
           website: string | null
         }
         Insert: {
           account_type: Database["public"]["Enums"]["buyer_account_type"]
           company_id: string
+          company_type?:
+            | Database["public"]["Enums"]["buyer_company_type"]
+            | null
+          destination_country?: string | null
+          economic_activity?: string | null
           full_name?: string | null
+          id_number?: string | null
+          id_type?: Database["public"]["Enums"]["id_document_type"] | null
           legal_name?: string | null
           project_description?: string | null
+          purchase_frequency_id?: string | null
+          purchase_purpose?: string | null
+          purchase_volume?: string | null
+          representative_authorized?: boolean
           tax_id?: string | null
+          trade_name?: string | null
           updated_at?: string
           website?: string | null
         }
         Update: {
           account_type?: Database["public"]["Enums"]["buyer_account_type"]
           company_id?: string
+          company_type?:
+            | Database["public"]["Enums"]["buyer_company_type"]
+            | null
+          destination_country?: string | null
+          economic_activity?: string | null
           full_name?: string | null
+          id_number?: string | null
+          id_type?: Database["public"]["Enums"]["id_document_type"] | null
           legal_name?: string | null
           project_description?: string | null
+          purchase_frequency_id?: string | null
+          purchase_purpose?: string | null
+          purchase_volume?: string | null
+          representative_authorized?: boolean
           tax_id?: string | null
+          trade_name?: string | null
           updated_at?: string
           website?: string | null
         }
@@ -52,6 +116,13 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: true
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "buyer_details_purchase_frequency_id_fkey"
+            columns: ["purchase_frequency_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_frequencies"
             referencedColumns: ["id"]
           },
         ]
@@ -198,31 +269,40 @@ export type Database = {
       }
       company_contacts: {
         Row: {
+          city: string | null
           company_id: string
           contact_name: string
           contact_title: string | null
+          country: string | null
           email: string | null
           phone: string | null
           updated_at: string
           wechat: string | null
+          whatsapp: string | null
         }
         Insert: {
+          city?: string | null
           company_id: string
           contact_name: string
           contact_title?: string | null
+          country?: string | null
           email?: string | null
           phone?: string | null
           updated_at?: string
           wechat?: string | null
+          whatsapp?: string | null
         }
         Update: {
+          city?: string | null
           company_id?: string
           contact_name?: string
           contact_title?: string | null
+          country?: string | null
           email?: string | null
           phone?: string | null
           updated_at?: string
           wechat?: string | null
+          whatsapp?: string | null
         }
         Relationships: [
           {
@@ -265,6 +345,38 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "company_documents_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_notes: {
+        Row: {
+          author_id: string
+          body: string
+          company_id: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          company_id: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          company_id?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_notes_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
@@ -928,6 +1040,33 @@ export type Database = {
           },
         ]
       }
+      purchase_frequencies: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          names: Json
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          names: Json
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          names?: Json
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
       quote_prices: {
         Row: {
           incoterm: Database["public"]["Enums"]["incoterm"]
@@ -1426,6 +1565,7 @@ export type Database = {
       mark_quotes_reviewed: { Args: { p_rfq: string }; Returns: undefined }
       my_company_editable: { Args: never; Returns: boolean }
       my_company_id: { Args: never; Returns: string }
+      my_company_validated: { Args: never; Returns: boolean }
       my_role: {
         Args: never
         Returns: Database["public"]["Enums"]["user_role"]
@@ -1474,6 +1614,13 @@ export type Database = {
         | "annual"
         | "one_time"
       buyer_account_type: "company" | "individual"
+      buyer_company_type:
+        | "construction"
+        | "importer"
+        | "distributor"
+        | "retail"
+        | "manufacturer"
+        | "other"
       commission_status: "registered" | "invoiced" | "paid" | "overdue"
       company_document_kind:
         | "tax_registration"
@@ -1481,18 +1628,30 @@ export type Database = {
         | "cn_business_license"
         | "brochure"
         | "other"
+        | "representation"
       company_kind: "buyer" | "factory"
-      company_review_action: "validate" | "request_info" | "reject" | "suspend"
+      company_review_action:
+        | "validate"
+        | "request_info"
+        | "reject"
+        | "suspend"
+        | "start_review"
       company_status:
         | "registered"
         | "in_review"
+        | "reviewing"
         | "validated"
         | "info_requested"
         | "rejected"
         | "suspended"
       factory_tier: "vip" | "standard"
+      id_document_type:
+        | "national_id"
+        | "passport"
+        | "residence_permit"
+        | "other"
       incoterm: "FOB" | "CIF" | "EXW"
-      legal_document_kind: "terms" | "non_circumvention"
+      legal_document_kind: "terms" | "non_circumvention" | "privacy"
       message_sender_kind: "buyer" | "factory" | "meridia"
       offer_type: "exact" | "alternative"
       order_document_kind: "commercial_invoice" | "bill_of_lading" | "other"
@@ -1662,6 +1821,14 @@ export const Constants = {
         "one_time",
       ],
       buyer_account_type: ["company", "individual"],
+      buyer_company_type: [
+        "construction",
+        "importer",
+        "distributor",
+        "retail",
+        "manufacturer",
+        "other",
+      ],
       commission_status: ["registered", "invoiced", "paid", "overdue"],
       company_document_kind: [
         "tax_registration",
@@ -1669,20 +1836,34 @@ export const Constants = {
         "cn_business_license",
         "brochure",
         "other",
+        "representation",
       ],
       company_kind: ["buyer", "factory"],
-      company_review_action: ["validate", "request_info", "reject", "suspend"],
+      company_review_action: [
+        "validate",
+        "request_info",
+        "reject",
+        "suspend",
+        "start_review",
+      ],
       company_status: [
         "registered",
         "in_review",
+        "reviewing",
         "validated",
         "info_requested",
         "rejected",
         "suspended",
       ],
       factory_tier: ["vip", "standard"],
+      id_document_type: [
+        "national_id",
+        "passport",
+        "residence_permit",
+        "other",
+      ],
       incoterm: ["FOB", "CIF", "EXW"],
-      legal_document_kind: ["terms", "non_circumvention"],
+      legal_document_kind: ["terms", "non_circumvention", "privacy"],
       message_sender_kind: ["buyer", "factory", "meridia"],
       offer_type: ["exact", "alternative"],
       order_document_kind: ["commercial_invoice", "bill_of_lading", "other"],

@@ -14,7 +14,7 @@ export function SectionNav({ items, namespace }: { items: SectionNavItem[]; name
     <nav aria-label={t("label")} className="-mx-4 mb-6 overflow-x-auto px-4 sm:mx-0 sm:px-0">
       <ul className="flex gap-2">
         {items.map((item) => {
-          const active = item.exact ? pathname === item.href : pathname.startsWith(item.href);
+          const active = item.exact ? pathname === item.href : pathname === item.href || pathname.startsWith(`${item.href}/`);
           return (
             <li key={item.href} className="shrink-0">
               <Link

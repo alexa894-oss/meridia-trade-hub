@@ -51,21 +51,22 @@ export async function signIn(_prev: FormState<SignInField>, formData: FormData):
 }
 
 // ---------------------------------------------------------------------------
-// Crear cuenta (comprador o fábrica; el administrador nunca se crea aquí)
+// Solicitar acceso: cuenta de solicitante (empresa o persona natural).
+// Las fábricas las incorpora Meridia y el administrador nunca se crea aquí.
 // ---------------------------------------------------------------------------
-type SignUpField = "accountRole" | "fullName" | "email" | "password" | "passwordConfirm";
+type SignUpField = "accountType" | "fullName" | "email" | "password" | "passwordConfirm";
 
 export async function signUp(_prev: FormState<SignUpField>, formData: FormData): Promise<FormState<SignUpField>> {
-  const accountRole = readString(formData, "accountRole");
+  const accountType = readString(formData, "accountType");
   const fullName = readString(formData, "fullName");
   const email = readString(formData, "email").toLowerCase();
   const password = String(formData.get("password") ?? "");
   const passwordConfirm = String(formData.get("passwordConfirm") ?? "");
 
   const errors = {
-    accountRole: !accountRole
+    accountType: !accountType
       ? ("required" as const)
-      : accountRole === "buyer" || accountRole === "factory"
+      : accountType === "company" || accountType === "individual"
         ? undefined
         : ("invalidChoice" as const),
     fullName: validateRequired(fullName),
@@ -77,18 +78,20 @@ export async function signUp(_prev: FormState<SignUpField>, formData: FormData):
         ? ("passwordMismatch" as const)
         : undefined,
   };
-  const values = { accountRole, fullName, email };
+  const values = { accountType, fullName, email };
   if (hasErrors(errors)) return { status: "error", fieldErrors: compact(errors), values };
   if (!isSupabaseConfigured) return notConfigured();
 
   const locale = await getLocale();
   const supabase = await createClient();
+  // Tras confirmar el correo, sigue directo al formulario de la solicitud.
+  const firstStep = `/comprador/solicitud/datos?tipo=${accountType}`;
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      emailRedirectTo: `${await siteOrigin()}/auth/confirm?next=/panel`,
-      data: { signup_role: accountRole, full_name: fullName, locale },
+      emailRedirectTo: `${await siteOrigin()}/auth/confirm?next=${encodeURIComponent(firstStep)}`,
+      data: { full_name: fullName, locale },
     },
   });
 
@@ -107,7 +110,7 @@ export async function signUp(_prev: FormState<SignUpField>, formData: FormData):
   }
 
   // Con confirmación de correo desactivada, Supabase ya abre la sesión.
-  if (data.session) redirect({ href: "/panel", locale });
+  if (data.session) redirect({ href: firstStep, locale });
 
   return { status: "success", message: "checkEmail", values: { email } };
 }

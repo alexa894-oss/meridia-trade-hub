@@ -3,7 +3,6 @@
 import { getLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentProfile, type CurrentProfile } from "@/lib/auth/session";
-import { roleHome } from "@/lib/auth/roles";
 import { isCountryCode } from "@/lib/countries";
 import {
   compact,
@@ -13,20 +12,25 @@ import {
   validateEmail,
   validatePhone,
   validateRequired,
-  validateYear,
   type FieldErrorCode,
   type FormState,
 } from "@/lib/forms";
 import { createClient } from "@/lib/supabase/server";
-import { ALLOWED_UPLOAD_TYPES, documentKinds, nextStepPath, type DocumentKind, type RegistrationStep } from "./steps";
+import {
+  ALLOWED_UPLOAD_TYPES,
+  applicantDocumentKinds,
+  companyTypes,
+  idTypes,
+  nextStepPath,
+  REQUEST_BASE,
+  type DocumentKind,
+  type RegistrationStep,
+} from "./steps";
 
-const MIN_PROJECT_DESCRIPTION = 50;
-type Party = Extract<CurrentProfile["role"], "buyer" | "factory">;
-
-// Sesión + rol + empresa editable. Cada acción se autoriza sola.
-async function editableContext(role: Party) {
+// Sesión de solicitante + solicitud editable. Cada acción se autoriza sola.
+async function editableContext() {
   const profile = await getCurrentProfile();
-  if (!profile || profile.role !== role) return { error: "notAllowed" as const };
+  if (!profile || profile.role !== "buyer") return { error: "notAllowed" as const };
   const supabase = await createClient();
 
   if (profile.companyId) {
@@ -36,46 +40,66 @@ async function editableContext(role: Party) {
   return { profile, supabase };
 }
 
-async function goTo(role: Party, step: RegistrationStep) {
-  redirect({ href: nextStepPath(role, step), locale: await getLocale() });
+type Ctx = { profile: CurrentProfile; supabase: Awaited<ReturnType<typeof createClient>> };
+
+async function goTo(step: RegistrationStep) {
+  redirect({ href: nextStepPath(step), locale: await getLocale() });
 }
 
-async function ensureCompany(ctx: { profile: CurrentProfile; supabase: Awaited<ReturnType<typeof createClient>> }, country: string) {
+async function ensureCompany(ctx: Ctx, country: string) {
   if (ctx.profile.companyId) return ctx.profile.companyId;
   const { data, error } = await ctx.supabase.rpc("register_company", { p_country: country });
   if (error || !data) throw new Error("register_company failed");
   return data;
 }
 
+async function currentAccountType(ctx: Ctx) {
+  if (!ctx.profile.companyId) return null;
+  const { data } = await ctx.supabase
+    .from("buyer_details")
+    .select("account_type")
+    .eq("company_id", ctx.profile.companyId)
+    .maybeSingle();
+  return data?.account_type ?? null;
+}
+
+const choice = (value: string, options: readonly string[]): FieldErrorCode | undefined =>
+  !value ? "required" : options.includes(value) ? undefined : "invalidChoice";
+const country = (value: string): FieldErrorCode | undefined =>
+  !value ? "required" : isCountryCode(value) ? undefined : "invalidChoice";
+
 // ---------------------------------------------------------------------------
-// Comprador · Paso "datos": tipo de cuenta, país y datos de empresa o persona
+// Paso 1 · Empresa: información empresarial · Persona natural: datos personales
 // ---------------------------------------------------------------------------
-type BuyerDetailsField =
+type DetailsField =
   | "accountType"
   | "country"
   | "legalName"
+  | "tradeName"
   | "taxId"
+  | "economicActivity"
   | "sectorId"
   | "website"
   | "fullName"
-  | "projectDescription";
+  | "idType"
+  | "idNumber";
 
-export async function saveBuyerDetails(
-  _prev: FormState<BuyerDetailsField>,
-  formData: FormData,
-): Promise<FormState<BuyerDetailsField>> {
-  const ctx = await editableContext("buyer");
+export async function saveBuyerDetails(_prev: FormState<DetailsField>, formData: FormData): Promise<FormState<DetailsField>> {
+  const ctx = await editableContext();
   if ("error" in ctx) return { status: "error", formError: ctx.error };
 
   const v = {
     accountType: readString(formData, "accountType"),
     country: readString(formData, "country"),
     legalName: readString(formData, "legalName"),
+    tradeName: readString(formData, "tradeName"),
     taxId: readString(formData, "taxId"),
+    economicActivity: readString(formData, "economicActivity"),
     sectorId: readString(formData, "sectorId"),
     website: readString(formData, "website"),
     fullName: readString(formData, "fullName"),
-    projectDescription: readString(formData, "projectDescription"),
+    idType: readString(formData, "idType"),
+    idNumber: readString(formData, "idNumber"),
   };
 
   const { data: settings } = await ctx.supabase.rpc("get_public_settings");
@@ -83,25 +107,18 @@ export async function saveBuyerDetails(
   const isCompany = v.accountType === "company";
   const url = normalizeUrl(v.website);
 
-  const errors: Record<BuyerDetailsField, FieldErrorCode | undefined> = {
-    accountType: !v.accountType
-      ? "required"
-      : isCompany || (v.accountType === "individual" && allowIndividual)
-        ? undefined
-        : "invalidChoice",
-    country: !v.country ? "required" : isCountryCode(v.country) ? undefined : "invalidChoice",
+  const errors: Record<DetailsField, FieldErrorCode | undefined> = {
+    accountType: choice(v.accountType, allowIndividual ? ["company", "individual"] : ["company"]),
+    country: country(v.country),
     legalName: isCompany ? validateRequired(v.legalName) : undefined,
+    tradeName: isCompany ? validateRequired(v.tradeName) : undefined,
     taxId: isCompany ? validateRequired(v.taxId) : undefined,
+    economicActivity: validateRequired(v.economicActivity),
     sectorId: isCompany ? validateRequired(v.sectorId) : undefined,
     website: isCompany ? url.error : undefined,
     fullName: !isCompany ? validateRequired(v.fullName) : undefined,
-    projectDescription: !isCompany
-      ? !v.projectDescription
-        ? "required"
-        : v.projectDescription.length < MIN_PROJECT_DESCRIPTION
-          ? "tooShort"
-          : undefined
-      : undefined,
+    idType: !isCompany ? choice(v.idType, idTypes) : undefined,
+    idNumber: !isCompany ? validateRequired(v.idNumber) : undefined,
   };
   if (hasErrors(errors)) return { status: "error", fieldErrors: compact(errors), values: v };
 
@@ -114,186 +131,152 @@ export async function saveBuyerDetails(
     company_id: companyId,
     account_type: isCompany ? "company" : "individual",
     legal_name: isCompany ? v.legalName : null,
+    trade_name: isCompany ? v.tradeName : null,
     tax_id: isCompany ? v.taxId : null,
     website: isCompany ? url.value : null,
+    economic_activity: v.economicActivity,
     full_name: isCompany ? null : v.fullName,
-    project_description: isCompany ? null : v.projectDescription,
+    id_type: isCompany ? null : (v.idType as (typeof idTypes)[number]),
+    id_number: isCompany ? null : v.idNumber,
+    // Un cambio de tipo deja sin efecto la confirmación de representación.
+    ...(isCompany ? {} : { representative_authorized: false, company_type: null }),
   });
   if (companyError || detailsError) return { status: "error", formError: "saveFailed", values: v };
 
-  await goTo("buyer", "datos");
+  await goTo("datos");
   return { status: "success" };
 }
 
 // ---------------------------------------------------------------------------
-// Fábrica · Paso "empresa": nombres legales y ubicación
+// Paso 2 · Representante y contacto (privado: solo lo ve Meridia)
 // ---------------------------------------------------------------------------
-type FactoryCompanyField = "legalNameZh" | "legalNameEn" | "city" | "province";
+type ContactField =
+  | "contactName"
+  | "contactTitle"
+  | "email"
+  | "phone"
+  | "whatsapp"
+  | "contactCountry"
+  | "city"
+  | "authorized";
 
-export async function saveFactoryCompany(
-  _prev: FormState<FactoryCompanyField>,
-  formData: FormData,
-): Promise<FormState<FactoryCompanyField>> {
-  const ctx = await editableContext("factory");
+export async function saveContact(_prev: FormState<ContactField>, formData: FormData): Promise<FormState<ContactField>> {
+  const ctx = await editableContext();
   if ("error" in ctx) return { status: "error", formError: ctx.error };
-
-  const v = {
-    legalNameZh: readString(formData, "legalNameZh"),
-    legalNameEn: readString(formData, "legalNameEn"),
-    city: readString(formData, "city"),
-    province: readString(formData, "province"),
-  };
-  const errors = {
-    legalNameZh: validateRequired(v.legalNameZh),
-    legalNameEn: validateRequired(v.legalNameEn),
-    city: validateRequired(v.city),
-    province: validateRequired(v.province),
-  };
-  if (hasErrors(errors)) return { status: "error", fieldErrors: compact(errors), values: v };
-
-  // Fase 1: fábricas chinas.
-  const companyId = await ensureCompany(ctx, "CN");
-  const { error } = await ctx.supabase.from("factory_details").upsert({
-    company_id: companyId,
-    legal_name_zh: v.legalNameZh,
-    legal_name_en: v.legalNameEn,
-    city: v.city,
-    province: v.province,
-  });
-  if (error) return { status: "error", formError: "saveFailed", values: v };
-
-  await goTo("factory", "empresa");
-  return { status: "success" };
-}
-
-// ---------------------------------------------------------------------------
-// Contacto (privado: solo lo ve la propia empresa y el administrador)
-// ---------------------------------------------------------------------------
-type ContactField = "contactName" | "contactTitle" | "phone" | "email" | "wechat";
-
-export async function saveContact(
-  role: Party,
-  _prev: FormState<ContactField>,
-  formData: FormData,
-): Promise<FormState<ContactField>> {
-  const ctx = await editableContext(role);
-  if ("error" in ctx) return { status: "error", formError: ctx.error };
-  if (!ctx.profile.companyId) return { status: "error", formError: "previousStepMissing" };
-
-  // Persona natural: el contacto es la propia persona; no hay cargo.
-  let individualName: string | null = null;
-  if (role === "buyer") {
-    const { data } = await ctx.supabase
-      .from("buyer_details")
-      .select("account_type, full_name")
-      .eq("company_id", ctx.profile.companyId)
-      .maybeSingle();
-    if (!data) return { status: "error", formError: "previousStepMissing" };
-    if (data.account_type === "individual") individualName = data.full_name;
-  }
-  const isIndividual = individualName !== null;
+  const companyId = ctx.profile.companyId;
+  const accountType = await currentAccountType(ctx);
+  if (!companyId || !accountType) return { status: "error", formError: "previousStepMissing" };
+  const isCompany = accountType === "company";
 
   const v = {
     contactName: readString(formData, "contactName"),
     contactTitle: readString(formData, "contactTitle"),
-    phone: readString(formData, "phone"),
     email: readString(formData, "email").toLowerCase(),
-    wechat: readString(formData, "wechat"),
+    phone: readString(formData, "phone"),
+    whatsapp: readString(formData, "whatsapp"),
+    contactCountry: readString(formData, "contactCountry"),
+    city: readString(formData, "city"),
+    authorized: formData.get("authorized") === "on" ? "on" : "",
   };
-  const errors = {
-    contactName: isIndividual ? undefined : validateRequired(v.contactName),
-    contactTitle: isIndividual ? undefined : validateRequired(v.contactTitle),
-    phone: validatePhone(v.phone),
+  const errors: Record<ContactField, FieldErrorCode | undefined> = {
+    contactName: isCompany ? validateRequired(v.contactName) : undefined,
+    contactTitle: isCompany ? validateRequired(v.contactTitle) : undefined,
     email: validateEmail(v.email),
-    wechat: role === "factory" ? validateRequired(v.wechat) : undefined,
+    phone: validatePhone(v.phone),
+    whatsapp: validatePhone(v.whatsapp),
+    contactCountry: isCompany ? country(v.contactCountry) : undefined,
+    city: isCompany ? validateRequired(v.city) : undefined,
+    authorized: isCompany && !v.authorized ? "mustAccept" : undefined,
   };
   if (hasErrors(errors)) return { status: "error", fieldErrors: compact(errors), values: v };
 
-  const { error } = await ctx.supabase.from("company_contacts").upsert({
-    company_id: ctx.profile.companyId,
-    contact_name: isIndividual ? individualName! : v.contactName,
-    contact_title: isIndividual ? null : v.contactTitle,
-    phone: v.phone,
-    email: v.email,
-    wechat: role === "factory" ? v.wechat : null,
-  });
-  if (error) return { status: "error", formError: "saveFailed", values: v };
+  // Persona natural: el contacto es la propia persona.
+  let name = v.contactName;
+  if (!isCompany) {
+    const { data } = await ctx.supabase.from("buyer_details").select("full_name").eq("company_id", companyId).maybeSingle();
+    name = data?.full_name ?? ctx.profile.fullName ?? "";
+  }
 
-  await goTo(role, "contacto");
+  const { error: contactError } = await ctx.supabase.from("company_contacts").upsert({
+    company_id: companyId,
+    contact_name: name,
+    contact_title: isCompany ? v.contactTitle : null,
+    email: v.email,
+    phone: v.phone,
+    whatsapp: v.whatsapp,
+    country: isCompany ? v.contactCountry : null,
+    city: isCompany ? v.city : null,
+  });
+  const { error: detailsError } = isCompany
+    ? await ctx.supabase.from("buyer_details").update({ representative_authorized: true }).eq("company_id", companyId)
+    : { error: null };
+  if (contactError || detailsError) return { status: "error", formError: "saveFailed", values: v };
+
+  await goTo("contacto");
   return { status: "success" };
 }
 
 // ---------------------------------------------------------------------------
-// Fábrica · Paso "producción": categorías, capacidad, puerto, web o brochure
+// Paso 3 · Perfil de compra
 // ---------------------------------------------------------------------------
-type ProductionField =
+type ProfileField =
+  | "companyType"
   | "categoryIds"
-  | "capacity"
-  | "departurePort"
-  | "website"
-  | "foundedYear"
-  | "annualCapacityOrSales";
+  | "destinationCountry"
+  | "purchaseVolume"
+  | "purchaseFrequencyId"
+  | "purchasePurpose"
+  | "needsDescription";
 
-export async function saveFactoryProduction(
-  _prev: FormState<ProductionField>,
-  formData: FormData,
-): Promise<FormState<ProductionField>> {
-  const ctx = await editableContext("factory");
+export async function saveBuyerProfile(_prev: FormState<ProfileField>, formData: FormData): Promise<FormState<ProfileField>> {
+  const ctx = await editableContext();
   if ("error" in ctx) return { status: "error", formError: ctx.error };
   const companyId = ctx.profile.companyId;
-  if (!companyId) return { status: "error", formError: "previousStepMissing" };
+  const accountType = await currentAccountType(ctx);
+  if (!companyId || !accountType) return { status: "error", formError: "previousStepMissing" };
+  const isCompany = accountType === "company";
 
   const categoryIds = formData.getAll("categoryIds").filter((x): x is string => typeof x === "string" && !!x);
   const v = {
-    capacity: readString(formData, "capacity"),
-    departurePort: readString(formData, "departurePort"),
-    website: readString(formData, "website"),
-    foundedYear: readString(formData, "foundedYear"),
-    annualCapacityOrSales: readString(formData, "annualCapacityOrSales"),
+    companyType: readString(formData, "companyType"),
+    destinationCountry: readString(formData, "destinationCountry"),
+    purchaseVolume: readString(formData, "purchaseVolume"),
+    purchaseFrequencyId: readString(formData, "purchaseFrequencyId"),
+    purchasePurpose: readString(formData, "purchasePurpose"),
+    needsDescription: readString(formData, "needsDescription"),
   };
-  const url = normalizeUrl(v.website);
-
-  const { count: brochures } = await ctx.supabase
-    .from("company_documents")
-    .select("id", { count: "exact", head: true })
-    .eq("company_id", companyId)
-    .eq("kind", "brochure");
-
-  const errors: Record<ProductionField, FieldErrorCode | undefined> = {
+  const errors: Record<ProfileField, FieldErrorCode | undefined> = {
+    companyType: isCompany ? choice(v.companyType, companyTypes) : undefined,
     categoryIds: categoryIds.length ? undefined : "selectAtLeastOne",
-    capacity: validateRequired(v.capacity),
-    departurePort: validateRequired(v.departurePort),
-    // Web o brochure: al menos uno.
-    website: url.error ?? (!url.value && !brochures ? "webOrBrochure" as FieldErrorCode : undefined),
-    foundedYear: validateYear(v.foundedYear),
-    annualCapacityOrSales: undefined,
+    destinationCountry: country(v.destinationCountry),
+    purchaseVolume: validateRequired(v.purchaseVolume),
+    purchaseFrequencyId: isCompany ? validateRequired(v.purchaseFrequencyId) : undefined,
+    purchasePurpose: !isCompany ? validateRequired(v.purchasePurpose) : undefined,
+    needsDescription: undefined,
   };
   const values = { ...v, categoryIds: categoryIds.join(",") };
   if (hasErrors(errors)) return { status: "error", fieldErrors: compact(errors), values };
 
   const { error: detailsError } = await ctx.supabase
-    .from("factory_details")
+    .from("buyer_details")
     .update({
-      capacity: v.capacity,
-      departure_port: v.departurePort,
-      website: url.value,
-      founded_year: v.foundedYear ? Number(v.foundedYear) : null,
-      annual_capacity_or_sales: v.annualCapacityOrSales || null,
+      company_type: isCompany ? (v.companyType as (typeof companyTypes)[number]) : null,
+      destination_country: v.destinationCountry,
+      purchase_volume: v.purchaseVolume,
+      purchase_frequency_id: v.purchaseFrequencyId || null,
+      purchase_purpose: isCompany ? null : v.purchasePurpose,
+      project_description: v.needsDescription || null,
     })
     .eq("company_id", companyId);
 
-  // Reemplaza las categorías elegidas.
-  const { error: deleteError } = await ctx.supabase
-    .from("factory_categories")
-    .delete()
-    .eq("factory_company_id", companyId);
+  // Reemplaza las categorías de interés.
+  const { error: deleteError } = await ctx.supabase.from("buyer_categories").delete().eq("buyer_company_id", companyId);
   const { error: insertError } = await ctx.supabase
-    .from("factory_categories")
-    .insert(categoryIds.map((category_id) => ({ factory_company_id: companyId, category_id })));
-
+    .from("buyer_categories")
+    .insert(categoryIds.map((category_id) => ({ buyer_company_id: companyId, category_id })));
   if (detailsError || deleteError || insertError) return { status: "error", formError: "saveFailed", values };
 
-  await goTo("factory", "produccion");
+  await goTo("perfil");
   return { status: "success" };
 }
 
@@ -301,19 +284,14 @@ export async function saveFactoryProduction(
 // Documentos: el archivo ya se subió desde el navegador a Storage (RLS por
 // carpeta de la empresa); aquí solo se registra.
 // ---------------------------------------------------------------------------
-const allowedKinds: Record<Party, DocumentKind[]> = {
-  buyer: ["tax_registration", "id_document", "other"],
-  factory: ["cn_business_license", "brochure", "other"],
-};
-
-export async function registerDocument(role: Party, input: { kind: string; storagePath: string; fileName: string; mimeType: string }) {
-  const ctx = await editableContext(role);
+export async function registerDocument(input: { kind: string; storagePath: string; fileName: string; mimeType: string }) {
+  const ctx = await editableContext();
   if ("error" in ctx) return { ok: false as const, error: ctx.error };
   const companyId = ctx.profile.companyId;
   if (!companyId) return { ok: false as const, error: "previousStepMissing" };
 
   const kind = input.kind as DocumentKind;
-  if (!documentKinds.includes(kind) || !allowedKinds[role].includes(kind)) return { ok: false as const, error: "invalidKind" };
+  if (!applicantDocumentKinds.includes(kind)) return { ok: false as const, error: "invalidKind" };
   if (!input.storagePath.startsWith(`${companyId}/`) || input.storagePath.includes("..")) {
     return { ok: false as const, error: "invalidPath" };
   }
@@ -326,110 +304,55 @@ export async function registerDocument(role: Party, input: { kind: string; stora
     file_name: input.fileName.slice(0, 200),
     uploaded_by: ctx.profile.id,
   });
-  if (error) return { ok: false as const, error: "saveFailed" };
-
-  if (kind === "brochure") {
-    await ctx.supabase.from("factory_details").update({ brochure_path: input.storagePath }).eq("company_id", companyId);
-  }
-  return { ok: true as const };
+  return error ? { ok: false as const, error: "saveFailed" } : { ok: true as const };
 }
 
-export async function removeDocument(role: Party, documentId: string) {
-  const ctx = await editableContext(role);
+export async function removeDocument(documentId: string) {
+  const ctx = await editableContext();
   if ("error" in ctx) return { ok: false as const, error: ctx.error };
 
-  const { data: doc } = await ctx.supabase
-    .from("company_documents")
-    .select("id, kind, storage_path")
-    .eq("id", documentId)
-    .maybeSingle();
+  const { data: doc } = await ctx.supabase.from("company_documents").select("id, storage_path").eq("id", documentId).maybeSingle();
   if (!doc) return { ok: false as const, error: "notFound" };
 
   await ctx.supabase.storage.from("company-docs").remove([doc.storage_path]);
   const { error } = await ctx.supabase.from("company_documents").delete().eq("id", doc.id);
-  if (error) return { ok: false as const, error: "saveFailed" };
-
-  if (doc.kind === "brochure" && ctx.profile.companyId) {
-    const { data: rest } = await ctx.supabase
-      .from("company_documents")
-      .select("storage_path")
-      .eq("company_id", ctx.profile.companyId)
-      .eq("kind", "brochure")
-      .limit(1);
-    await ctx.supabase
-      .from("factory_details")
-      .update({ brochure_path: rest?.[0]?.storage_path ?? null })
-      .eq("company_id", ctx.profile.companyId);
-  }
-  return { ok: true as const };
-}
-
-// Paso de documentos: comprueba lo obligatorio antes de avanzar.
-export async function continueAfterDocuments(role: Party): Promise<FormState<"document">> {
-  const ctx = await editableContext(role);
-  if ("error" in ctx) return { status: "error", formError: ctx.error };
-  const companyId = ctx.profile.companyId;
-  if (!companyId) return { status: "error", formError: "previousStepMissing" };
-
-  if (role === "buyer") {
-    const { data: details } = await ctx.supabase
-      .from("buyer_details")
-      .select("account_type")
-      .eq("company_id", companyId)
-      .maybeSingle();
-    if (!details) return { status: "error", formError: "previousStepMissing" };
-    const kind = details.account_type === "company" ? "tax_registration" : "id_document";
-    const { count } = await ctx.supabase
-      .from("company_documents")
-      .select("id", { count: "exact", head: true })
-      .eq("company_id", companyId)
-      .eq("kind", kind);
-    if (!count) return { status: "error", fieldErrors: { document: "fileRequired" } };
-    await goTo("buyer", "documento");
-  } else {
-    // El registro empresarial chino es opcional al registrarse (se exige al validar como estándar).
-    await goTo("factory", "documentos");
-  }
-  return { status: "success" };
+  return error ? { ok: false as const, error: "saveFailed" } : { ok: true as const };
 }
 
 // ---------------------------------------------------------------------------
-// Aceptación de textos legales y envío a revisión
+// Paso 4 · Aceptación de textos legales y envío de la solicitud
 // ---------------------------------------------------------------------------
-type SubmitField = "acceptTerms" | "acceptNonCircumvention";
+type SubmitField = "acceptTerms" | "acceptPrivacy" | "acceptNonCircumvention";
 
 const submitErrorMap: Record<string, string> = {
   "missing:company": "missingDetails",
   "missing:details": "missingDetails",
-  "missing:sector": "missingDetails",
   "missing:contact": "missingContact",
-  "missing:wechat": "missingContact",
-  "missing:document": "missingDocument",
-  "missing:production": "missingProduction",
-  "missing:categories": "missingProduction",
-  "missing:web_or_brochure": "missingProduction",
+  "missing:profile": "missingProfile",
   "missing:legal": "missingLegal",
   individuals_not_allowed: "individualsNotAllowed",
   not_editable: "notEditable",
+  not_allowed: "notAllowed",
 };
 
-export async function submitRegistration(
-  role: Party,
-  _prev: FormState<SubmitField>,
-  formData: FormData,
-): Promise<FormState<SubmitField>> {
-  const ctx = await editableContext(role);
+export async function submitRegistration(_prev: FormState<SubmitField>, formData: FormData): Promise<FormState<SubmitField>> {
+  const ctx = await editableContext();
   if ("error" in ctx) return { status: "error", formError: ctx.error };
   if (!ctx.profile.companyId) return { status: "error", formError: "missingDetails" };
 
+  // Solo se exige lo que existe como texto vigente.
+  const { data: docs } = await ctx.supabase.rpc("current_legal_documents");
+  const kinds = new Set((docs ?? []).map((d) => d.kind));
+  const accepted = (name: string) => formData.get(name) === "on";
   const errors = {
-    acceptTerms: formData.get("acceptTerms") === "on" ? undefined : ("mustAccept" as const),
-    acceptNonCircumvention: formData.get("acceptNonCircumvention") === "on" ? undefined : ("mustAccept" as const),
+    acceptTerms: kinds.has("terms") && !accepted("acceptTerms") ? ("mustAccept" as const) : undefined,
+    acceptPrivacy: kinds.has("privacy") && !accepted("acceptPrivacy") ? ("mustAccept" as const) : undefined,
+    acceptNonCircumvention:
+      kinds.has("non_circumvention") && !accepted("acceptNonCircumvention") ? ("mustAccept" as const) : undefined,
   };
   if (hasErrors(errors)) return { status: "error", fieldErrors: compact(errors) };
 
   // Registra la aceptación de la versión vigente de cada texto (con fecha).
-  const { data: docs } = await ctx.supabase.rpc("current_legal_documents");
   const rows = (docs ?? []).map((d) => ({ user_id: ctx.profile.id, legal_document_id: d.id }));
   if (rows.length) {
     const { error } = await ctx.supabase
@@ -441,6 +364,6 @@ export async function submitRegistration(
   const { error } = await ctx.supabase.rpc("submit_company_for_review");
   if (error) return { status: "error", formError: submitErrorMap[error.message] ?? "saveFailed" };
 
-  redirect({ href: roleHome[role], locale: await getLocale() });
+  redirect({ href: `${REQUEST_BASE}?enviada=1`, locale: await getLocale() });
   return { status: "success" };
 }

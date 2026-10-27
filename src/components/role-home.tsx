@@ -1,7 +1,9 @@
 import { getTranslations } from "next-intl/server";
 import { requireRole } from "@/lib/auth/guard";
 import type { Role } from "@/lib/auth/roles";
-import { RegistrationStatusCard } from "@/components/registration/status-card";
+import { ButtonLink } from "@/components/button-link";
+import { RequestTracker } from "@/components/registration/status-card";
+import { loadCompanyStatus } from "@/lib/registration/load";
 
 // Inicio de cada rol: perfil con su rol y el siguiente paso.
 // Va dentro del <Suspense> del layout del rol.
@@ -43,9 +45,28 @@ export async function RoleHome({ role }: { role: Role }) {
           <h2 className="font-display text-lg font-semibold text-navy-800">{t("nextStep.title")}</h2>
           <p className="mt-2 text-ink">{t("nextStep.admin")}</p>
         </section>
+      ) : role === "buyer" ? (
+        <RequestTracker profile={profile} />
       ) : (
-        <RegistrationStatusCard profile={profile} role={role} />
+        <FactoryAccessCard companyId={profile.companyId} />
       )}
     </div>
+  );
+}
+
+// Fábrica: la incorpora e invita Meridia; opera solo cuando está habilitada.
+async function FactoryAccessCard({ companyId }: { companyId: string | null }) {
+  const t = await getTranslations("FactoryAccess");
+  const enabled = (await loadCompanyStatus(companyId)) === "validated";
+  return (
+    <section className={`rounded-xl border p-6 ${enabled ? "border-success/30 bg-success/5" : "border-gold-300 bg-gold-100"}`}>
+      <h2 className="font-display text-lg font-semibold text-navy-800">{t(enabled ? "enabled.title" : "pending.title")}</h2>
+      <p className="mt-2 text-ink">{t(enabled ? "enabled.body" : "pending.body")}</p>
+      {enabled ? (
+        <ButtonLink href="/fabrica/oportunidades" className="mt-4">
+          {t("enabled.cta")}
+        </ButtonLink>
+      ) : null}
+    </section>
   );
 }

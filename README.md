@@ -103,6 +103,14 @@ GitHub Actions (`.github/workflows/ci.yml`) corre lint, typecheck, i18n, `check:
 1. **Authentication → URL Configuration**: *Site URL* con la URL de la app y, en *Redirect URLs*, `http://localhost:3000/**` y `https://*-alexagonzalez88.vercel.app/**`.
 2. **Correo**: el servidor de correo por defecto de Supabase solo envía a miembros del equipo y con un límite muy bajo. Para que compradores y fábricas reales reciban la confirmación y la recuperación de contraseña, configura un SMTP propio en **Authentication → Emails → SMTP Settings**.
 
+## Acceso privado (Etapa 9)
+
+- El registro público es **Solicitar acceso** (`/solicitar-acceso`): empresa / persona jurídica o persona natural. No existe registro público de fábricas.
+- La solicitud se completa en `/comprador/solicitud/<paso>` (datos → contacto → perfil de compra → verificación) y se sigue en `/comprador/solicitud`: recibida → en revisión → aprobada · información adicional requerida · rechazada.
+- Mientras no esté aprobada, la cuenta solo ve su seguimiento: solicitudes de cotización, pedidos y mensajes quedan bloqueados (en la interfaz y en la base: `rfqs_buyer_insert` exige empresa aprobada).
+- Admin → **Solicitudes de acceso** (`/admin/accesos`): tabla, expediente completo, observaciones internas (`company_notes`, solo admin) y acciones: marcar en revisión, solicitar documentos o información, aprobar, rechazar.
+- Los documentos del solicitante son opcionales ("cuando corresponda"); Meridia los pide si hacen falta.
+
 ## Registro de empresas
 
 - Comprador: `/comprador/registro` (datos → contacto → documento → enviar). Empresa o persona natural (esta última se puede desactivar con el ajuste `allow_individual_buyers`).

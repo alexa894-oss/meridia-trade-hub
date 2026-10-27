@@ -7,6 +7,7 @@ type CompanyKind = Database["public"]["Enums"]["company_kind"];
 
 export const companyStatuses: CompanyStatus[] = [
   "in_review",
+  "reviewing",
   "info_requested",
   "registered",
   "validated",
@@ -64,9 +65,11 @@ export async function listCompanies(filter: { status?: CompanyStatus | "all"; ki
   }));
 }
 
-export async function countCompaniesByStatus() {
+export async function countCompaniesByStatus(kind?: CompanyKind) {
   const supabase = await createClient();
-  const { data } = await supabase.from("companies").select("status");
+  let query = supabase.from("companies").select("status");
+  if (kind) query = query.eq("kind", kind);
+  const { data } = await query;
   const counts: Partial<Record<CompanyStatus, number>> = {};
   for (const row of data ?? []) counts[row.status] = (counts[row.status] ?? 0) + 1;
   return counts;
@@ -78,13 +81,13 @@ export async function loadCompanyForReview(id: string) {
   const { data: company } = await supabase
     .from("companies")
     .select(
-      "*, sectors(names), buyer_details(*), factory_details(*), company_contacts(*), factory_admin(*), factory_categories(categories(names)), company_documents(id, kind, file_name, storage_path, created_at)",
+      "*, sectors(names), buyer_details(*, purchase_frequencies(names)), buyer_categories(categories(names)), factory_details(*), company_contacts(*), factory_admin(*), factory_categories(categories(names)), company_documents(id, kind, file_name, storage_path, created_at)",
     )
     .eq("id", id)
     .maybeSingle();
   if (!company) return null;
 
-  const [reviews, history, memberships, plans, accounts] = await Promise.all([
+  const [reviews, history, memberships, plans, accounts, notes] = await Promise.all([
     supabase
       .from("company_reviews")
       .select("id, action, message, created_at")
@@ -103,7 +106,14 @@ export async function loadCompanyForReview(id: string) {
       .order("starts_at", { ascending: false }),
     supabase.from("membership_plans").select("id, name, active").order("name"),
     supabase.from("profiles").select("id, full_name, role").eq("company_id", id),
+    supabase.from("company_notes").select("id, body, author_id, created_at").eq("company_id", id).order("created_at", { ascending: false }),
   ]);
+  // Autor de cada observación interna (siempre un administrador).
+  const authorIds = [...new Set((notes.data ?? []).map((n) => n.author_id))];
+  const { data: authors } = authorIds.length
+    ? await supabase.from("profiles").select("id, full_name").in("id", authorIds)
+    : { data: [] as { id: string; full_name: string | null }[] };
+  const authorName = new Map((authors ?? []).map((a) => [a.id, a.full_name]));
 
   // Enlaces firmados de corta duración para abrir los documentos privados.
   const documents = await Promise.all(
@@ -122,7 +132,40 @@ export async function loadCompanyForReview(id: string) {
     memberships: memberships.data ?? [],
     plans: plans.data ?? [],
     accounts: accounts.data ?? [],
+    notes: (notes.data ?? []).map((n) => ({ ...n, authorName: authorName.get(n.author_id) ?? null })),
   };
+}
+
+// "Solicitudes de acceso": empresas y personas que pidieron entrar a Meridia.
+export async function listAccessRequests(status: CompanyStatus | "pending" | "all") {
+  const supabase = await createClient();
+  let query = supabase
+    .from("companies")
+    .select("id, status, country, created_at, submitted_at, sectors(names), buyer_details(account_type, legal_name, trade_name, full_name)")
+    .eq("kind", "buyer")
+    .order("submitted_at", { ascending: true, nullsFirst: false })
+    .order("created_at", { ascending: false });
+  if (status === "pending") query = query.in("status", ["in_review", "reviewing"]);
+  else if (status !== "all") query = query.eq("status", status);
+  const { data } = await query.limit(300);
+  return (data ?? []).map((c) => ({
+    id: c.id,
+    status: c.status,
+    country: c.country,
+    createdAt: c.created_at,
+    submittedAt: c.submitted_at,
+    sector: (c.sectors?.names ?? null) as Record<string, string> | null,
+    accountType: c.buyer_details?.account_type ?? null,
+    name: c.buyer_details?.trade_name ?? c.buyer_details?.legal_name ?? c.buyer_details?.full_name ?? null,
+  }));
+}
+
+export async function countAccessRequestsByStatus() {
+  const supabase = await createClient();
+  const { data } = await supabase.from("companies").select("status").eq("kind", "buyer");
+  const counts: Partial<Record<CompanyStatus, number>> = {};
+  for (const row of data ?? []) counts[row.status] = (counts[row.status] ?? 0) + 1;
+  return counts;
 }
 
 export async function listPlans() {

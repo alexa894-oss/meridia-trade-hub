@@ -2,21 +2,26 @@
 
 import { useActionState, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Field, FormAlert, SelectField, SubmitButton, TextareaField, useFieldError } from "@/components/forms";
+import { Field, FormAlert, SelectField, SubmitButton, useFieldError } from "@/components/forms";
 import { initialFormState } from "@/lib/forms";
 import { saveBuyerDetails } from "@/lib/registration/actions";
+import { idTypes } from "@/lib/registration/steps";
 
 type Initial = {
   accountType: "company" | "individual" | null;
   country: string | null;
   legalName: string | null;
+  tradeName: string | null;
   taxId: string | null;
+  economicActivity: string | null;
   sectorId: string | null;
   website: string | null;
   fullName: string | null;
-  projectDescription: string | null;
+  idType: string | null;
+  idNumber: string | null;
 };
 
+// Paso 1: "¿Cómo deseas registrarte?" y el formulario se adapta a la opción.
 export function BuyerDetailsForm({
   initial,
   countries,
@@ -34,18 +39,18 @@ export function BuyerDetailsForm({
   const [state, action] = useActionState(saveBuyerDetails, initialFormState);
   const v = { ...initial, ...state.values } as Record<string, string | null | undefined>;
   const [accountType, setAccountType] = useState<string>(v.accountType ?? (allowIndividual ? "" : "company"));
-  const err = (name: keyof Initial, label: string, values?: Record<string, number>) =>
-    fieldError(state.fieldErrors?.[name], label, values);
+  const err = (name: keyof Initial, label: string) => fieldError(state.fieldErrors?.[name], label);
 
   const types = allowIndividual ? (["company", "individual"] as const) : (["company"] as const);
-  const typeError = err("accountType", tf("accountType"));
+  const typeError = err("accountType", t("accountTypeQuestion"));
+  const isCompany = accountType === "company";
 
   return (
     <form action={action} noValidate className="space-y-5">
       {state.formError ? <FormAlert>{t(`formErrors.${state.formError}`)}</FormAlert> : null}
 
       <fieldset aria-describedby={typeError ? "accountType-error" : undefined}>
-        <legend className="text-sm font-medium text-ink">{tf("accountType")}</legend>
+        <legend className="font-display text-base font-semibold text-navy-800">{t("accountTypeQuestion")}</legend>
         <div className="mt-2 grid gap-3 sm:grid-cols-2">
           {types.map((type) => (
             <label
@@ -74,30 +79,31 @@ export function BuyerDetailsForm({
         ) : null}
       </fieldset>
 
-      <SelectField
-        name="country"
-        label={tf("country")}
-        placeholder={t("choose")}
-        options={countries}
-        defaultValue={v.country ?? ""}
-        error={err("country", tf("country"))}
-      />
+      {accountType === "individual" ? (
+        <p role="note" className="rounded-(--radius-control) border border-gold-300 bg-gold-100 px-4 py-3 text-sm text-ink">
+          {t("individualNotice")}
+        </p>
+      ) : null}
 
-      {accountType === "company" ? (
+      {isCompany ? (
         <>
-          <Field
-            name="legalName"
-            label={tf("legalName")}
-            autoComplete="organization"
-            defaultValue={v.legalName ?? ""}
-            error={err("legalName", tf("legalName"))}
+          <Field name="legalName" label={tf("legalName")} autoComplete="organization" defaultValue={v.legalName ?? ""} error={err("legalName", tf("legalName"))} />
+          <Field name="tradeName" label={tf("tradeName")} defaultValue={v.tradeName ?? ""} error={err("tradeName", tf("tradeName"))} />
+          <SelectField
+            name="country"
+            label={tf("incorporationCountry")}
+            placeholder={t("choose")}
+            options={countries}
+            defaultValue={v.country ?? ""}
+            error={err("country", tf("incorporationCountry"))}
           />
+          <Field name="taxId" label={tf("taxId")} hint={t("hints.taxId")} defaultValue={v.taxId ?? ""} error={err("taxId", tf("taxId"))} />
           <Field
-            name="taxId"
-            label={tf("taxId")}
-            hint={t("hints.taxId")}
-            defaultValue={v.taxId ?? ""}
-            error={err("taxId", tf("taxId"))}
+            name="economicActivity"
+            label={tf("economicActivity")}
+            hint={t("hints.economicActivity")}
+            defaultValue={v.economicActivity ?? ""}
+            error={err("economicActivity", tf("economicActivity"))}
           />
           <SelectField
             name="sectorId"
@@ -118,19 +124,32 @@ export function BuyerDetailsForm({
         </>
       ) : accountType === "individual" ? (
         <>
-          <Field
-            name="fullName"
-            label={tf("fullName")}
-            autoComplete="name"
-            defaultValue={v.fullName ?? ""}
-            error={err("fullName", tf("fullName"))}
+          <Field name="fullName" label={tf("fullName")} autoComplete="name" defaultValue={v.fullName ?? ""} error={err("fullName", tf("fullName"))} />
+          <SelectField
+            name="country"
+            label={tf("residenceCountry")}
+            placeholder={t("choose")}
+            options={countries}
+            defaultValue={v.country ?? ""}
+            error={err("country", tf("residenceCountry"))}
           />
-          <TextareaField
-            name="projectDescription"
-            label={tf("projectDescription")}
-            hint={t("hints.projectDescription")}
-            defaultValue={v.projectDescription ?? ""}
-            error={err("projectDescription", tf("projectDescription"), { min: 50 })}
+          <div className="grid gap-5 sm:grid-cols-2">
+            <SelectField
+              name="idType"
+              label={tf("idType")}
+              placeholder={t("choose")}
+              options={idTypes.map((x) => ({ value: x, label: t(`idTypes.${x}`) }))}
+              defaultValue={v.idType ?? ""}
+              error={err("idType", tf("idType"))}
+            />
+            <Field name="idNumber" label={tf("idNumber")} defaultValue={v.idNumber ?? ""} error={err("idNumber", tf("idNumber"))} />
+          </div>
+          <Field
+            name="economicActivity"
+            label={tf("economicActivity")}
+            hint={t("hints.economicActivityIndividual")}
+            defaultValue={v.economicActivity ?? ""}
+            error={err("economicActivity", tf("economicActivity"))}
           />
         </>
       ) : null}

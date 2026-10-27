@@ -7,7 +7,8 @@ import { Field, FormAlert, SubmitButton, useFieldError } from "@/components/form
 import { initialFormState, MIN_PASSWORD_LENGTH } from "@/lib/forms";
 import { signUp } from "../actions";
 
-const accountRoles = ["buyer", "factory"] as const;
+// Las fábricas no se registran aquí: las incorpora Meridia.
+const accountTypes = ["company", "individual"] as const;
 
 export function SignUpForm() {
   const t = useTranslations("SignUp");
@@ -26,40 +27,41 @@ export function SignUpForm() {
     );
   }
 
-  const roleError = fieldError(state.fieldErrors?.accountRole, tf("fields.accountRole"));
+  const typeError = fieldError(state.fieldErrors?.accountType, t("typeQuestion"));
 
   return (
     <form action={action} noValidate className="space-y-5">
       {state.formError ? <FormAlert>{tf(`formErrors.${state.formError}`)}</FormAlert> : null}
 
-      <fieldset aria-describedby={roleError ? "accountRole-error" : undefined}>
-        <legend className="text-sm font-medium text-ink">{tf("fields.accountRole")}</legend>
+      <fieldset aria-describedby={typeError ? "accountType-error" : undefined}>
+        <legend className="font-display text-base font-semibold text-navy-800">{t("typeQuestion")}</legend>
         <div className="mt-2 grid gap-3 sm:grid-cols-2">
-          {accountRoles.map((role) => (
+          {accountTypes.map((type) => (
             <label
-              key={role}
+              key={type}
               className="flex cursor-pointer gap-3 rounded-(--radius-control) border border-line p-4 transition-colors has-checked:border-navy-800 has-checked:bg-navy-50"
             >
               <input
                 type="radio"
-                name="accountRole"
-                value={role}
-                defaultChecked={state.values?.accountRole === role}
+                name="accountType"
+                value={type}
+                defaultChecked={state.values?.accountType === type}
                 className="mt-1 accent-navy-800"
               />
               <span>
-                <span className="block font-display font-semibold text-navy-800">{t(`roles.${role}.title`)}</span>
-                <span className="mt-0.5 block text-sm text-ink-muted">{t(`roles.${role}.body`)}</span>
+                <span className="block font-display font-semibold text-navy-800">{t(`types.${type}.title`)}</span>
+                <span className="mt-0.5 block text-sm text-ink-muted">{t(`types.${type}.body`)}</span>
               </span>
             </label>
           ))}
         </div>
-        {roleError ? (
-          <p id="accountRole-error" className="mt-1.5 text-sm text-danger">
-            {roleError}
+        {typeError ? (
+          <p id="accountType-error" className="mt-1.5 text-sm text-danger">
+            {typeError}
           </p>
         ) : null}
       </fieldset>
+      <p className="text-sm text-ink-muted">{t("reviewNotice")}</p>
 
       <Field
         name="fullName"

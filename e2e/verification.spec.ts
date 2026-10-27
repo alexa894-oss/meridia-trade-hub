@@ -2,10 +2,10 @@ import { expect, test } from "@playwright/test";
 import { accounts, login } from "./fixtures";
 
 // Criterio de aceptación: ninguna empresa aparece como verificada antes de su validación.
-test("una empresa en revisión no aparece como verificada", async ({ page }) => {
+test("una solicitud pendiente no aparece como aprobada", async ({ page }) => {
   await login(page, accounts.buyerPending);
-  await expect(page.getByText("En revisión", { exact: true })).toBeVisible();
-  await expect(page.locator("body")).not.toContainText("Empresa verificada");
+  await expect(page.getByRole("heading", { name: "Solicitud recibida" })).toBeVisible();
+  await expect(page.locator("body")).not.toContainText("Solicitud aprobada");
 });
 
 test("en el comparador solo las fábricas validadas llevan la marca de verificación", async ({ page }) => {

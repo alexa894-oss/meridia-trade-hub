@@ -13,18 +13,19 @@ export const instant = false;
 // "Empresas por validar": compradoras y fábricas con documentos, fechas y estado.
 export default async function CompaniesPage({ searchParams }: PageProps<"/[locale]/admin/empresas">) {
   const sp = await searchParams;
-  const status = (typeof sp.estado === "string" && [...companyStatuses, "all"].includes(sp.estado) ? sp.estado : "in_review") as Status | "all";
-  const kind = (typeof sp.tipo === "string" && ["buyer", "factory", "all"].includes(sp.tipo) ? sp.tipo : "all") as Kind | "all";
+  const status = (typeof sp.estado === "string" && [...companyStatuses, "all"].includes(sp.estado) ? sp.estado : "all") as Status | "all";
+  // Los compradores se revisan en "Solicitudes de acceso".
+  const kind: Kind = "factory";
 
   const [t, ts, locale, companies, counts] = await Promise.all([
     getTranslations("Admin.companies"),
     getTranslations("Admin.status"),
     getLocale(),
     listCompanies({ status, kind }),
-    countCompaniesByStatus(),
+    countCompaniesByStatus("factory"),
   ]);
-  const href = (next: { estado?: string; tipo?: string }) => {
-    const params = new URLSearchParams({ estado: next.estado ?? status, tipo: next.tipo ?? kind });
+  const href = (next: { estado?: string }) => {
+    const params = new URLSearchParams({ estado: next.estado ?? status });
     return `/admin/empresas?${params}`;
   };
 
@@ -49,17 +50,6 @@ export default async function CompaniesPage({ searchParams }: PageProps<"/[local
             </li>
           ))}
         </ul>
-      </div>
-      <div className="flex gap-2 text-sm">
-        {(["all", "buyer", "factory"] as const).map((k) => (
-          <Link
-            key={k}
-            href={href({ tipo: k })}
-            className={`rounded-full px-3 py-1 ${k === kind ? "bg-gold-100 font-semibold text-navy-800" : "text-ink-muted hover:text-navy-800"}`}
-          >
-            {t(`kinds.${k}`)}
-          </Link>
-        ))}
       </div>
 
       {companies.length === 0 ? (

@@ -12,7 +12,6 @@ type Doc = { id: string; fileName: string | null };
 // Sube el archivo directo al bucket privado (carpeta de la empresa, RLS) y
 // luego lo registra en company_documents desde el servidor.
 export function DocumentUpload({
-  role,
   companyId,
   kind,
   label,
@@ -21,7 +20,6 @@ export function DocumentUpload({
   error,
   required,
 }: {
-  role: "buyer" | "factory";
   companyId: string;
   kind: DocumentKind;
   label: string;
@@ -50,7 +48,7 @@ export function DocumentUpload({
       .upload(path, file, { contentType: file.type, upsert: false });
     if (uploadError) return setMessage(t("failed"));
 
-    const result = await registerDocument(role, { kind, storagePath: path, fileName: file.name, mimeType: file.type });
+    const result = await registerDocument({ kind, storagePath: path, fileName: file.name, mimeType: file.type });
     if (!result.ok) {
       await supabase.storage.from("company-docs").remove([path]);
       return setMessage(t("failed"));
@@ -79,7 +77,7 @@ export function DocumentUpload({
                 disabled={pending}
                 onClick={() =>
                   startTransition(async () => {
-                    const r = await removeDocument(role, doc.id);
+                    const r = await removeDocument(doc.id);
                     if (!r.ok) setMessage(t("failed"));
                     router.refresh();
                   })

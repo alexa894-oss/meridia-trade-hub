@@ -2,13 +2,26 @@ import { expect, test } from "@playwright/test";
 import { accounts, login } from "./fixtures";
 
 // Criterio de aceptación: no se avanza si falta un campo obligatorio y el error nombra el campo.
-test("crear cuenta vacía: cada error nombra su campo", async ({ page }) => {
-  await page.goto("/crear-cuenta");
-  await page.getByRole("button", { name: "Crear cuenta" }).click();
-  for (const field of ["Tipo de cuenta", "Nombre completo", "Correo electrónico", "Contraseña", "Confirmar contraseña"]) {
+test("solicitar acceso vacío: cada error nombra su campo", async ({ page }) => {
+  await page.goto("/solicitar-acceso");
+  await page.getByRole("button", { name: "Continuar con la solicitud" }).click();
+  for (const field of ["¿Cómo deseas registrarte?", "Nombre completo", "Correo electrónico", "Contraseña", "Confirmar contraseña"]) {
     await expect(page.getByText(`Completa el campo «${field}».`)).toBeVisible();
   }
-  await expect(page).toHaveURL(/\/crear-cuenta/);
+  await expect(page).toHaveURL(/\/solicitar-acceso/);
+});
+
+test("solicitar acceso: no hay opción pública para registrar fábricas", async ({ page }) => {
+  await page.goto("/solicitar-acceso");
+  await expect(page.getByText("Empresa / Persona jurídica")).toBeVisible();
+  await expect(page.getByText("Persona natural")).toBeVisible();
+  await expect(page.getByText(/^Fábrica$/)).toHaveCount(0);
+});
+
+test("solicitante pendiente no entra a solicitudes de cotización, ni cambiando la URL", async ({ page }) => {
+  await login(page, accounts.buyerPending, "/comprador/solicitudes/nueva");
+  await expect(page).toHaveURL(/\/comprador\/solicitud$/);
+  await expect(page.getByRole("link", { name: "Solicitudes" })).toHaveCount(0);
 });
 
 test("solicitud: al enviar sin datos se nombran los campos que faltan", async ({ page }) => {

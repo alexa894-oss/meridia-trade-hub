@@ -6,7 +6,8 @@ export function AdminNav() {
       namespace="Admin.nav"
       items={[
         { href: "/admin", key: "dashboard", exact: true },
-        { href: "/admin/empresas", key: "companies" },
+        { href: "/admin/accesos", key: "accessRequests" },
+        { href: "/admin/empresas", key: "factories" },
         { href: "/admin/solicitudes", key: "rfqs" },
         { href: "/admin/pedidos", key: "orders" },
         { href: "/admin/comisiones", key: "commissions" },

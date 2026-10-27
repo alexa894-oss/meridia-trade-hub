@@ -12,7 +12,7 @@ export const roleHome: Record<Role, string> = {
 export const protectedPrefixes = ["/panel", "/comprador", "/fabrica", "/admin", "/restablecer", "/notificaciones", "/textos-legales"];
 
 // Rutas solo para visitantes: con sesión se redirige al panel.
-export const guestOnlyPrefixes = ["/ingresar", "/crear-cuenta", "/recuperar"];
+export const guestOnlyPrefixes = ["/ingresar", "/solicitar-acceso", "/crear-cuenta", "/recuperar"];
 
 export function matchesPrefix(pathname: string, prefixes: string[]) {
   return prefixes.some((p) => pathname === p || pathname.startsWith(`${p}/`));

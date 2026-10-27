@@ -18,7 +18,7 @@ async function adminClient() {
   return createClient();
 }
 
-const reviewActions: ReviewAction[] = ["validate", "request_info", "reject", "suspend"];
+const reviewActions: ReviewAction[] = ["start_review", "validate", "request_info", "reject", "suspend"];
 const tiers: Tier[] = ["vip", "standard"];
 const billingPeriods: BillingPeriod[] = ["monthly", "quarterly", "semiannual", "annual", "one_time"];
 
@@ -47,7 +47,7 @@ export async function reviewCompany(
   const tier = readString(formData, "tier");
   if (!reviewActions.includes(action)) return { status: "error", formError: "invalidTransition" };
 
-  const needsMessage = action !== "validate";
+  const needsMessage = action === "request_info" || action === "reject" || action === "suspend";
   const errors = {
     message: needsMessage ? validateRequired(message) : undefined,
     tier: tier && !tiers.includes(tier as Tier) ? ("invalidChoice" as const) : undefined,
@@ -65,6 +65,22 @@ export async function reviewCompany(
   }
   refresh();
   return { status: "success", message: `done.${action}` };
+}
+
+// Observación interna del expediente (solo la ven los administradores).
+export async function addCompanyNote(_prev: FormState<"body">, formData: FormData): Promise<FormState<"body">> {
+  const profile = await getCurrentProfile();
+  if (!profile || profile.role !== "admin") return { status: "error", formError: "notAllowed" };
+  const supabase = await createClient();
+  const body = readString(formData, "body");
+  const errors = { body: validateRequired(body) };
+  if (hasErrors(errors)) return { status: "error", fieldErrors: compact(errors) };
+  const { error } = await supabase
+    .from("company_notes")
+    .insert({ company_id: readString(formData, "companyId"), body: body.slice(0, 5000), author_id: profile.id });
+  if (error) return { status: "error", formError: "saveFailed", values: { body } };
+  refresh();
+  return { status: "success", message: "noteSaved" };
 }
 
 // Marca como verificados (o no) el año de fundación y la capacidad/ventas.

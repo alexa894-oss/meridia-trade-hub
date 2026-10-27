@@ -14,7 +14,7 @@ export default async function AdminDashboard() {
   const tiles = [
     {
       key: "companies",
-      href: "/admin/empresas?estado=in_review",
+      href: "/admin/accesos",
       count: alerts.companies_in_review,
       overdue: alerts.companies_overdue,
       hours: alerts.pending_company_hours,

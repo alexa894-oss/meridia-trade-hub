@@ -1,6 +1,6 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { Link } from "@/i18n/navigation";
+import { Link, redirect } from "@/i18n/navigation";
 import { endMembership, setFactoryVerification } from "@/lib/admin/actions";
 import { loadCompanyForReview } from "@/lib/admin/load";
 import { countryName } from "@/lib/countries";
@@ -18,6 +18,8 @@ export default async function CompanyReviewPage({ params }: PageProps<"/[locale]
   if (!UUID.test(id)) notFound();
   const data = await loadCompanyForReview(id);
   if (!data) notFound();
+  // Compradores: su expediente está en "Solicitudes de acceso".
+  if (data.company.kind === "buyer") redirect({ href: `/admin/accesos/${id}`, locale: await getLocale() });
 
   const [t, ts, tf, td, locale] = await Promise.all([
     getTranslations("Admin.detail"),

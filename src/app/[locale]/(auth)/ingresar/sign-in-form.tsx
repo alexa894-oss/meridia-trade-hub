@@ -49,7 +49,7 @@ export function SignInForm({ next, linkError }: { next?: string; linkError?: boo
 
       <p className="text-center text-sm text-ink-muted">
         {t("noAccount")}{" "}
-        <Link href="/crear-cuenta" className="font-semibold text-navy-800 underline-offset-4 hover:underline">
+        <Link href="/solicitar-acceso" className="font-semibold text-navy-800 underline-offset-4 hover:underline">
           {t("createAccount")}
         </Link>
       </p>

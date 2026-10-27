@@ -1,29 +1,30 @@
 {
   "Metadata": {
     "title": "Meridia Trade Hub",
-    "description": "Plataforma B2B que conecta compradores latinoamericanos con fábricas validadas de materiales de construcción y acabados."
+    "description": "Red comercial B2B privada que conecta empresas con fabricantes internacionales verificados."
   },
   "Common": {
     "signIn": "Ingresar a Meridia",
-    "signUp": "Crear cuenta",
-    "backHome": "Volver al inicio"
+    "signUp": "Solicitar acceso",
+    "backHome": "Volver al inicio",
+    "requestAccess": "Solicitar acceso"
   },
   "Home": {
-    "eyebrow": "Materiales de construcción y acabados",
-    "title": "Cotiza directo con fábricas validadas por Meridia",
-    "subtitle": "Publica lo que necesitas, recibe cotizaciones de fábricas compatibles y compáralas en un solo lugar.",
+    "eyebrow": "Red comercial B2B privada",
+    "title": "Conectamos tu empresa con fabricantes internacionales verificados.",
+    "subtitle": "Cuéntanos qué necesitas importar o fabricar. Meridia identifica proveedores compatibles, coordina cotizaciones y te ayuda a gestionar tus oportunidades comerciales en un solo lugar.",
     "features": {
       "validated": {
-        "title": "Fábricas validadas",
-        "body": "Solo operan en Meridia las fábricas que nuestro equipo revisó."
+        "title": "Fabricantes verificados",
+        "body": "Meridia selecciona y verifica a cada fabricante de su red antes de presentarlo."
       },
       "compare": {
-        "title": "Cotizaciones comparables",
-        "body": "Precio por término, tiempos, condiciones de pago y muestras, lado a lado."
+        "title": "Cotizaciones coordinadas",
+        "body": "Meridia revisa cada cotización antes de que llegue a ti y te ayuda a compararlas."
       },
       "messaging": {
         "title": "Comunicación en la plataforma",
-        "body": "Toda la conversación con la fábrica ocurre en la mensajería de Meridia."
+        "body": "Toda la conversación con los fabricantes ocurre dentro de Meridia."
       }
     },
     "footer": "© Meridia Trade Hub"
@@ -33,27 +34,29 @@
     "subtitle": "Usa el correo y la contraseña de tu cuenta.",
     "submit": "Ingresar",
     "forgot": "¿Olvidaste tu contraseña?",
-    "noAccount": "¿Aún no tienes cuenta?",
-    "createAccount": "Crear cuenta"
+    "noAccount": "¿Aún no tienes acceso?",
+    "createAccount": "Solicitar acceso"
   },
   "SignUp": {
-    "title": "Crear cuenta",
-    "subtitle": "Elige el tipo de cuenta. Los datos de tu empresa los completarás después.",
-    "submit": "Crear cuenta",
-    "haveAccount": "¿Ya tienes cuenta?",
+    "title": "Solicitar acceso",
+    "subtitle": "Crea tu usuario para completar la solicitud. Meridia la revisará antes de habilitar tu cuenta.",
+    "submit": "Continuar con la solicitud",
+    "haveAccount": "¿Ya tienes acceso?",
     "signIn": "Ingresar a Meridia",
     "goToSignIn": "Ir a Ingresar a Meridia",
-    "checkEmail": "Te enviamos un correo a {email}. Abre el enlace para confirmar tu cuenta y luego ingresa.",
-    "roles": {
-      "buyer": {
-        "title": "Comprador",
-        "body": "Publico solicitudes y recibo cotizaciones de fábricas."
+    "checkEmail": "Te enviamos un correo a {email}. Abre el enlace para confirmarlo y continuar con tu solicitud.",
+    "typeQuestion": "¿Cómo deseas registrarte?",
+    "types": {
+      "company": {
+        "title": "Empresa / Persona jurídica",
+        "body": "Solicito acceso a nombre de una empresa."
       },
-      "factory": {
-        "title": "Fábrica",
-        "body": "Recibo oportunidades asignadas por Meridia y cotizo."
+      "individual": {
+        "title": "Persona natural",
+        "body": "Solicito acceso a título personal."
       }
-    }
+    },
+    "reviewNotice": "Las solicitudes están sujetas a evaluación. No tendrás acceso a cotizaciones hasta que Meridia apruebe tu cuenta."
   },
   "Recover": {
     "title": "Recuperar contraseña",
@@ -133,24 +136,22 @@
     }
   },
   "Registration": {
-    "title": {
-      "buyer": "Registro de comprador",
-      "factory": "Registro de fábrica"
-    },
-    "intro": {
-      "buyer": "Completa los datos para que Meridia valide tu cuenta. Puedes guardar y volver cuando quieras.",
-      "factory": "Completa los datos de tu fábrica para que Meridia la valide. Puedes guardar y volver cuando quieras."
-    },
-    "backToPanel": "Volver a mi panel",
-    "stepsLabel": "Pasos del registro",
+    "title": "Solicitud de acceso",
+    "intro": "Completa la información para que Meridia evalúe tu solicitud. Puedes guardar y volver cuando quieras.",
+    "stepsLabel": "Pasos de la solicitud",
     "steps": {
-      "datos": "Datos",
-      "empresa": "Empresa",
-      "contacto": "Contacto",
-      "produccion": "Producción",
-      "documento": "Documento",
-      "documentos": "Documentos",
-      "enviar": "Enviar"
+      "company": {
+        "datos": "Empresa",
+        "contacto": "Representante",
+        "perfil": "Perfil de compra",
+        "verificacion": "Verificación"
+      },
+      "individual": {
+        "datos": "Datos personales",
+        "contacto": "Contacto",
+        "perfil": "Perfil de compra",
+        "verificacion": "Verificación"
+      }
     },
     "saveAndContinue": "Guardar y continuar",
     "choose": "Elige una opción",
@@ -158,36 +159,35 @@
     "completeFirst": "Para continuar, completa primero el paso:",
     "infoRequestedTitle": "Meridia pidió más información",
     "locked": {
-      "in_review": "Tu registro está en revisión. No puedes editarlo mientras Meridia lo revisa.",
-      "validated": "Tu empresa ya fue validada por Meridia.",
-      "rejected": "Tu registro fue rechazado. Revisa el motivo en tu panel.",
+      "in_review": "Tu solicitud fue recibida. No puedes editarla mientras Meridia la revisa.",
+      "reviewing": "Tu solicitud está en revisión. No puedes editarla mientras Meridia la revisa.",
+      "validated": "Tu solicitud ya fue aprobada.",
+      "rejected": "Tu solicitud fue rechazada. Revisa el motivo en tu seguimiento.",
       "suspended": "Tu cuenta está suspendida. Escríbenos si crees que es un error."
     },
-    "privacyNote": "Estos datos de contacto solo los ve el equipo de Meridia. Nunca se muestran a fábricas ni a compradores.",
-    "documentsNote": "Tus documentos se guardan en un espacio privado. Solo el equipo de Meridia puede verlos.",
-    "webOrBrochure": "Indica una web o sube un brochure (al menos uno).",
-    "fileRequired": "Sube el archivo de «{field}».",
-    "summaryTitle": "Revisa tu registro",
+    "privacyNote": "Estos datos de contacto solo los ve el equipo de Meridia. Nunca se muestran a fabricantes ni a otros compradores.",
+    "documentsNote": "Tus documentos se guardan en un espacio privado. Solo el equipo de Meridia puede verlos. Si falta alguno, Meridia te lo pedirá.",
+    "summaryTitle": "Revisa tu solicitud",
     "stepDone": "completo",
     "stepPending": "pendiente",
-    "submit": "Enviar a revisión",
+    "submit": "Enviar solicitud de acceso",
     "accountTypes": {
       "company": {
-        "title": "Empresa",
-        "body": "Compro a nombre de una empresa registrada."
+        "title": "Empresa / Persona jurídica",
+        "body": "Solicito acceso a nombre de una empresa."
       },
       "individual": {
         "title": "Persona natural",
-        "body": "Compro para un proyecto propio, sin empresa."
+        "body": "Solicito acceso a título personal."
       }
     },
     "fields": {
       "accountType": "Tipo de cuenta",
       "country": "País",
-      "legalName": "Razón social",
-      "taxId": "Identificador tributario",
-      "sector": "Sector",
-      "website": "Sitio web",
+      "legalName": "Razón social / nombre legal",
+      "taxId": "Identificación fiscal",
+      "sector": "Sector o industria",
+      "website": "Página web",
       "fullName": "Nombre completo",
       "projectDescription": "Descripción del proyecto",
       "legalNameZh": "Nombre legal en chino",
@@ -197,7 +197,7 @@
       "contactName": "Persona de contacto",
       "contactTitle": "Cargo",
       "phone": "Teléfono",
-      "email": "Correo",
+      "email": "Correo electrónico",
       "wechat": "WeChat",
       "categories": "Categorías",
       "capacity": "Capacidad de producción",
@@ -207,10 +207,29 @@
       "annualCapacityOrSales": "Capacidad o ventas anuales",
       "verificationDocument": "Documento de verificación",
       "idDocument": "Documento de identidad",
-      "businessLicense": "Registro empresarial chino"
+      "businessLicense": "Registro empresarial chino",
+      "tradeName": "Nombre comercial",
+      "incorporationCountry": "País de constitución",
+      "residenceCountry": "País de residencia",
+      "economicActivity": "Actividad económica",
+      "idType": "Tipo de identificación",
+      "idNumber": "Número de identificación",
+      "representativeName": "Nombre completo del representante",
+      "corporateEmail": "Correo electrónico corporativo",
+      "whatsapp": "WhatsApp",
+      "contactCountry": "País",
+      "companyType": "Tipo de empresa",
+      "interestCategories": "Categorías de productos de interés",
+      "destinationCountry": "País de destino de las importaciones",
+      "purchaseVolume": "Volumen aproximado de compra",
+      "purchaseFrequency": "Frecuencia estimada de compra",
+      "purchasePurpose": "Propósito de la compra",
+      "needsDescription": "Descripción de tu necesidad actual",
+      "commercialRegistration": "Registro comercial o equivalente",
+      "representationDocument": "Documento que acredite la representación"
     },
     "hints": {
-      "taxId": "Por ejemplo RUC, NIT, RFC o el que corresponda en tu país.",
+      "taxId": "RUC, NIT, RFC, VAT o la identificación fiscal que corresponda en tu país.",
       "projectDescription": "Cuéntanos qué proyecto tienes y qué materiales buscas (mínimo 50 caracteres).",
       "phone": "Con código de país, por ejemplo +507 6000-0000.",
       "categories": "Elige todas las que fabricas.",
@@ -219,13 +238,22 @@
       "verifiedOnly": "Estos datos son opcionales. Solo se muestran a los compradores cuando Meridia los verifica.",
       "verificationDocument": "Registro tributario o documento que acredite la empresa.",
       "idDocument": "Documento de identidad vigente.",
-      "businessLicense": "Licencia comercial (营业执照). Meridia la pedirá para validar fábricas estándar."
+      "businessLicense": "Licencia comercial (营业执照). Meridia la pedirá para validar fábricas estándar.",
+      "economicActivity": "Por ejemplo: construcción de vivienda, importación de acabados, distribución mayorista.",
+      "economicActivityIndividual": "A qué te dedicas. Por ejemplo: arquitecto independiente, desarrollo de un proyecto propio.",
+      "whatsapp": "Con código internacional, por ejemplo +57 300 000 0000.",
+      "interestCategories": "Elige todas las que te interesan.",
+      "purchaseVolume": "Por ejemplo: 2 contenedores al año o 3.000 m² por proyecto.",
+      "purchasePurpose": "Cuéntanos para qué es la compra y qué necesitas.",
+      "commercialRegistration": "Registro mercantil, certificado de existencia o el documento equivalente en tu país.",
+      "representationDocument": "Poder, nombramiento o documento que acredite que puedes representar a la empresa."
     },
     "legal": {
       "terms": "Términos de uso",
       "non_circumvention": "Acuerdo de no elusión",
       "accept": "He leído y acepto: {document}.",
-      "draftNotice": "Borrador: este texto todavía no es la versión definitiva."
+      "draftNotice": "Borrador: este texto todavía no es la versión definitiva.",
+      "privacy": "Política de privacidad"
     },
     "upload": {
       "choose": "Subir archivo",
@@ -240,47 +268,96 @@
       "failed": "No pudimos subir el archivo. Inténtalo de nuevo."
     },
     "formErrors": {
-      "notAllowed": "Tu cuenta no puede hacer este registro.",
-      "notEditable": "Tu registro ya no se puede editar.",
+      "notAllowed": "Tu cuenta no puede hacer esta solicitud.",
+      "notEditable": "Tu solicitud ya no se puede editar.",
       "previousStepMissing": "Completa primero los pasos anteriores.",
       "saveFailed": "No pudimos guardar. Inténtalo de nuevo.",
-      "missingDetails": "Faltan datos en el paso «Datos» o «Empresa».",
-      "missingContact": "Faltan datos en el paso «Contacto».",
-      "missingDocument": "Falta el documento obligatorio.",
-      "missingProduction": "Faltan datos en el paso «Producción».",
+      "missingDetails": "Faltan datos en el paso 1.",
+      "missingContact": "Faltan datos en el paso 2.",
       "missingLegal": "Debes aceptar los textos legales.",
-      "individualsNotAllowed": "Por ahora Meridia no acepta registros de personas naturales."
+      "individualsNotAllowed": "Por ahora Meridia no acepta solicitudes de personas naturales.",
+      "missingProfile": "Faltan datos en el paso «Perfil de compra»."
+    },
+    "backToRequest": "Volver a mi solicitud",
+    "stepTitles": {
+      "company": {
+        "datos": "Información empresarial",
+        "contacto": "Representante y contacto",
+        "perfil": "Perfil de compra",
+        "verificacion": "Verificación y solicitud de acceso"
+      },
+      "individual": {
+        "datos": "Datos personales",
+        "contacto": "Contacto",
+        "perfil": "Perfil de compra",
+        "verificacion": "Verificación y solicitud de acceso"
+      }
+    },
+    "accountTypeQuestion": "¿Cómo deseas registrarte?",
+    "individualNotice": "Meridia está orientada principalmente a operaciones comerciales y compras de volumen. Las solicitudes están sujetas a evaluación.",
+    "whenApplicable": "cuando corresponda",
+    "authorizedRepresentative": "Confirmo que estoy autorizado para representar a la empresa en esta solicitud.",
+    "authorizedRepresentativeShort": "Autorización para representar a la empresa",
+    "idTypes": {
+      "national_id": "Documento nacional de identidad",
+      "passport": "Pasaporte",
+      "residence_permit": "Permiso de residencia",
+      "other": "Otro"
+    },
+    "companyTypes": {
+      "construction": "Constructora",
+      "importer": "Importador",
+      "distributor": "Distribuidor",
+      "retail": "Comercio",
+      "manufacturer": "Fabricante",
+      "other": "Otro"
     }
   },
   "RegistrationStatus": {
-    "label": "Registro de tu empresa",
+    "label": "Solicitud de acceso",
+    "pageTitle": "Mi solicitud de acceso",
     "messageFromMeridia": "Mensaje de Meridia:",
+    "timeline": "Seguimiento",
+    "pending": "Pendiente",
+    "milestones": {
+      "in_review": "Solicitud recibida",
+      "reviewing": "En revisión",
+      "validated": "Aprobada"
+    },
+    "received": {
+      "title": "Tu solicitud de acceso ha sido recibida.",
+      "body": "Nuestro equipo revisará tu información y te notificará cuando tu cuenta esté habilitada o si necesitamos documentación adicional."
+    },
     "not_started": {
-      "title": "Registro pendiente",
-      "body": "Completa los datos de tu empresa para que Meridia la valide.",
-      "cta": "Completar registro"
+      "title": "Solicitud sin completar",
+      "body": "Completa tu solicitud para que Meridia la evalúe.",
+      "cta": "Completar solicitud"
     },
     "registered": {
-      "title": "Registro sin enviar",
-      "body": "Tienes un registro guardado. Complétalo y envíalo a revisión.",
-      "cta": "Continuar registro"
+      "title": "Solicitud sin enviar",
+      "body": "Tienes una solicitud guardada. Complétala y envíala.",
+      "cta": "Continuar solicitud"
     },
     "in_review": {
+      "title": "Solicitud recibida",
+      "body": "Meridia recibió tu solicitud. Te avisaremos aquí cuando la revisemos."
+    },
+    "reviewing": {
       "title": "En revisión",
-      "body": "Meridia está revisando tu registro. Verás el resultado en este panel."
+      "body": "Nuestro equipo está revisando tu información."
     },
     "info_requested": {
-      "title": "Información pedida",
-      "body": "Meridia necesita que completes o corrijas algunos datos.",
-      "cta": "Actualizar registro"
+      "title": "Información adicional requerida",
+      "body": "Meridia necesita que completes o corrijas algunos datos o documentos.",
+      "cta": "Completar información"
     },
     "validated": {
-      "title": "Empresa verificada",
-      "body": "Meridia validó tu empresa."
+      "title": "Solicitud aprobada",
+      "body": "Tu cuenta está habilitada. Ya puedes publicar solicitudes de cotización."
     },
     "rejected": {
-      "title": "Registro rechazado",
-      "body": "Meridia no pudo validar tu registro."
+      "title": "Solicitud rechazada",
+      "body": "Meridia no pudo aprobar tu solicitud."
     },
     "suspended": {
       "title": "Cuenta suspendida",
@@ -291,31 +368,33 @@
     "nav": {
       "label": "Administración",
       "dashboard": "Panel",
-      "companies": "Empresas",
       "plans": "Planes",
       "settings": "Configuración",
       "rfqs": "Solicitudes",
       "messages": "Mensajes",
       "orders": "Pedidos",
-      "commissions": "Comisiones"
+      "commissions": "Comisiones",
+      "accessRequests": "Solicitudes de acceso",
+      "factories": "Fabricantes"
     },
     "status": {
       "registered": "Registrada",
-      "in_review": "En revisión",
-      "validated": "Validada",
-      "info_requested": "Información pedida",
+      "in_review": "Recibida",
+      "validated": "Aprobada",
+      "info_requested": "Información requerida",
       "rejected": "Rechazada",
-      "suspended": "Suspendida"
+      "suspended": "Suspendida",
+      "reviewing": "En revisión"
     },
     "dashboard": {
       "title": "Panel de administración",
       "noThreshold": "Alerta inactiva: no hay umbral configurado.",
       "setThreshold": "Configurar umbral",
       "companies": {
-        "title": "Empresas pendientes",
-        "countLabel": "en revisión",
-        "overdue": "{count, plural, =0 {Ninguna} one {# empresa} other {# empresas}} con más de {hours} h sin revisar.",
-        "review": "Revisar empresas"
+        "title": "Solicitudes de acceso pendientes",
+        "countLabel": "por revisar",
+        "overdue": "{count, plural, =0 {Ninguna} one {# solicitud} other {# solicitudes}} con más de {hours} h sin revisar.",
+        "review": "Revisar solicitudes"
       },
       "rfqs": {
         "title": "Solicitudes sin respuesta",
@@ -328,7 +407,7 @@
       }
     },
     "companies": {
-      "title": "Empresas por validar",
+      "title": "Fabricantes",
       "all": "Todas",
       "empty": "No hay empresas en este estado.",
       "noName": "(sin datos todavía)",
@@ -380,11 +459,12 @@
       "endMembership": "Terminar hoy"
     },
     "documentKinds": {
-      "tax_registration": "Documento de verificación",
+      "tax_registration": "Registro comercial",
       "id_document": "Documento de identidad",
       "cn_business_license": "Registro empresarial chino",
       "brochure": "Brochure",
-      "other": "Otro"
+      "other": "Otro",
+      "representation": "Acreditación de representación"
     },
     "review": {
       "tier": "Tipo de fábrica",
@@ -396,13 +476,15 @@
         "standard": "Estándar"
       },
       "message": "Mensaje o motivo",
-      "messageHint": "Obligatorio para pedir información, rechazar o suspender. La empresa lo verá en su panel.",
+      "messageHint": "Obligatorio para solicitar información, rechazar o suspender. El solicitante lo verá en su seguimiento.",
       "actions": {
         "validate": "Validar",
         "reactivate": "Reactivar",
-        "requestInfo": "Pedir información",
+        "requestInfo": "Solicitar documentos o información",
         "reject": "Rechazar",
-        "suspend": "Suspender"
+        "suspend": "Suspender",
+        "startReview": "Marcar en revisión",
+        "approve": "Aprobar"
       },
       "noActions": {
         "registered": "La empresa todavía no envió su registro.",
@@ -410,7 +492,8 @@
         "validated": "",
         "rejected": "Registro rechazado. No hay acciones disponibles.",
         "in_review": "",
-        "suspended": ""
+        "suspended": "",
+        "reviewing": ""
       },
       "errors": {
         "tierRequired": "Elige el tipo de fábrica para validarla.",
@@ -423,10 +506,11 @@
         "slugTaken": "Ya existe una opción con ese nombre."
       },
       "done": {
-        "validate": "Empresa validada.",
+        "validate": "Aprobado.",
         "request_info": "Se pidió información a la empresa.",
         "reject": "Registro rechazado.",
-        "suspend": "Empresa suspendida."
+        "suspend": "Empresa suspendida.",
+        "start_review": "La solicitud está en revisión."
       }
     },
     "commercial": {
@@ -581,6 +665,49 @@
         "notAllowed": "Tu cuenta no puede hacer esta acción.",
         "saveFailed": "No pudimos guardar."
       }
+    },
+    "access": {
+      "title": "Solicitudes de acceso",
+      "intro": "Empresas y personas naturales que pidieron entrar a Meridia. Nadie opera hasta que se aprueba su solicitud.",
+      "back": "Volver a solicitudes de acceso",
+      "empty": "No hay solicitudes en este estado.",
+      "noName": "(sin datos todavía)",
+      "review": "Revisar",
+      "yes": "Sí",
+      "no": "No",
+      "admin": "Administrador",
+      "noDocuments": "El solicitante no subió documentos.",
+      "notesTitle": "Observaciones internas",
+      "notesPrivate": "Solo las ven los administradores de Meridia.",
+      "filters": {
+        "pending": "Por revisar",
+        "info_requested": "Información requerida",
+        "registered": "Sin enviar",
+        "validated": "Aprobadas",
+        "rejected": "Rechazadas",
+        "suspended": "Suspendidas",
+        "all": "Todas"
+      },
+      "columns": {
+        "name": "Empresa o persona",
+        "type": "Tipo",
+        "country": "País",
+        "sector": "Sector",
+        "date": "Fecha de solicitud",
+        "status": "Estado",
+        "action": "Acción"
+      },
+      "types": {
+        "company": "Empresa",
+        "individual": "Persona natural"
+      }
+    },
+    "notes": {
+      "label": "Nueva observación",
+      "hint": "Por ejemplo: llamada de verificación, documentos pendientes, riesgos.",
+      "add": "Agregar observación",
+      "saved": "Observación guardada.",
+      "error": "No pudimos guardar la observación."
     }
   },
   "Nav": {
@@ -589,7 +716,8 @@
       "home": "Inicio",
       "rfqs": "Solicitudes",
       "messages": "Mensajes",
-      "orders": "Pedidos"
+      "orders": "Pedidos",
+      "access": "Mi solicitud"
     },
     "factory": {
       "label": "Secciones",
@@ -894,11 +1022,12 @@
       "quote_hidden": "Meridia ocultó tu cotización en una solicitud.",
       "rfq_status": "Meridia actualizó tu solicitud #{number}.",
       "quote_received": "Recibiste una cotización en tu solicitud #{number}.",
-      "company_review": "Meridia actualizó el registro de tu empresa.",
+      "company_review": "Meridia actualizó el estado de tu solicitud.",
       "other": "Tienes un aviso nuevo.",
       "order_created": "Recibiste una orden de compra (solicitud #{number}).",
       "order_status": "Tu pedido cambió de estado.",
-      "commission_missing": "Una fábrica intentó aceptar una orden sin comisión configurada."
+      "commission_missing": "Una fábrica intentó aceptar una orden sin comisión configurada.",
+      "access_request": "Nueva solicitud de acceso para revisar."
     }
   },
   "Orders": {
@@ -1043,6 +1172,17 @@
       "mustAcceptAll": "Debes aceptar todos los textos para continuar.",
       "notAllowed": "Tu cuenta no puede hacer esta acción.",
       "saveFailed": "No pudimos guardar. Inténtalo de nuevo."
+    }
+  },
+  "FactoryAccess": {
+    "pending": {
+      "title": "Acceso aún no habilitado",
+      "body": "Meridia está completando la incorporación de tu fábrica. Te avisaremos cuando puedas responder solicitudes."
+    },
+    "enabled": {
+      "title": "Fábrica habilitada",
+      "body": "Ya puedes ver y responder las solicitudes que Meridia te asigne.",
+      "cta": "Ver oportunidades"
     }
   }
 }

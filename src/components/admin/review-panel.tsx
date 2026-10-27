@@ -7,7 +7,7 @@ import { FormAlert, SelectField, TextareaField, useFieldError } from "@/componen
 import { initialFormState } from "@/lib/forms";
 import { reviewCompany } from "@/lib/admin/actions";
 
-type Status = "registered" | "in_review" | "validated" | "info_requested" | "rejected" | "suspended";
+type Status = "registered" | "in_review" | "reviewing" | "validated" | "info_requested" | "rejected" | "suspended";
 
 function ActionButton({ action, tone, children }: { action: string; tone: "primary" | "neutral" | "danger"; children: string }) {
   const { pending } = useFormStatus();
@@ -47,10 +47,12 @@ export function ReviewPanel({
   const fieldError = useFieldError();
   const [state, action] = useActionState(reviewCompany, initialFormState);
 
+  const pending = status === "in_review" || status === "reviewing";
   const can = {
-    validate: status === "in_review" || status === "suspended",
-    requestInfo: status === "in_review",
-    reject: status === "in_review" || status === "info_requested",
+    startReview: status === "in_review",
+    validate: pending || status === "suspended" || (kind === "factory" && status === "registered"),
+    requestInfo: pending,
+    reject: pending || status === "info_requested",
     suspend: status === "validated",
   };
   const anything = Object.values(can).some(Boolean);
@@ -88,9 +90,14 @@ export function ReviewPanel({
             />
           ) : null}
           <div className="flex flex-wrap gap-2">
+            {can.startReview ? (
+              <ActionButton action="start_review" tone="neutral">
+                {t("actions.startReview")}
+              </ActionButton>
+            ) : null}
             {can.validate ? (
               <ActionButton action="validate" tone="primary">
-                {status === "suspended" ? t("actions.reactivate") : t("actions.validate")}
+                {status === "suspended" ? t("actions.reactivate") : kind === "buyer" ? t("actions.approve") : t("actions.validate")}
               </ActionButton>
             ) : null}
             {can.requestInfo ? (

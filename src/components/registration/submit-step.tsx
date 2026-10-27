@@ -3,30 +3,27 @@
 import { useActionState } from "react";
 import { useTranslations } from "next-intl";
 import { CheckboxField, FormAlert, SubmitButton, useFieldError } from "@/components/forms";
-import { initialFormState, type FormState } from "@/lib/forms";
+import { initialFormState } from "@/lib/forms";
 import { submitRegistration } from "@/lib/registration/actions";
 
-type LegalDoc = { id: string; kind: "terms" | "non_circumvention"; version: number; text: string; isDraft: boolean };
-type SubmitField = "acceptTerms" | "acceptNonCircumvention";
+type LegalKind = "terms" | "non_circumvention" | "privacy";
+type LegalDoc = { id: string; kind: LegalKind; version: number; text: string; isDraft: boolean };
 
+const fieldFor = { terms: "acceptTerms", privacy: "acceptPrivacy", non_circumvention: "acceptNonCircumvention" } as const;
+
+// Paso 4: resumen, aceptación de textos legales y "Enviar solicitud de acceso".
 export function SubmitStep({
-  role,
   legalDocuments,
   acceptedIds,
   summary,
 }: {
-  role: "buyer" | "factory";
   legalDocuments: LegalDoc[];
   acceptedIds: string[];
   summary: { label: string; done: boolean }[];
 }) {
   const t = useTranslations("Registration");
   const fieldError = useFieldError();
-  const [state, action] = useActionState<FormState<SubmitField>, FormData>(
-    submitRegistration.bind(null, role),
-    initialFormState,
-  );
-  const fieldFor = { terms: "acceptTerms", non_circumvention: "acceptNonCircumvention" } as const;
+  const [state, action] = useActionState(submitRegistration, initialFormState);
 
   return (
     <form action={action} noValidate className="space-y-6">

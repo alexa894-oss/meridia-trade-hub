@@ -1,15 +1,7 @@
-import { getTranslations, setRequestLocale } from "next-intl/server";
-import { AuthCard } from "@/components/auth-card";
-import { SignUpForm } from "./sign-up-form";
+import { getLocale } from "next-intl/server";
+import { redirect } from "@/i18n/navigation";
 
-export default async function SignUpPage({ params }: PageProps<"/[locale]/crear-cuenta">) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-  const t = await getTranslations("SignUp");
-
-  return (
-    <AuthCard title={t("title")} subtitle={t("subtitle")}>
-      <SignUpForm />
-    </AuthCard>
-  );
+// Dirección anterior: el registro público ahora es "Solicitar acceso".
+export default async function Page() {
+  redirect({ href: "/solicitar-acceso", locale: await getLocale() });
 }

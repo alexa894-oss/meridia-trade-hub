@@ -45,9 +45,13 @@ const expectError = async (name, fn) => { try { await fn(); check(name, false); 
 const mk = async (meta, app = {}) => (await q(`insert into auth.users(raw_user_meta_data, raw_app_meta_data) values ($1,$2) returning id`, [meta, app]))[0].id;
 const admin = await mk({}, { role: 'admin' });
 const buyer = await mk({ signup_role: 'buyer' });
+// El registro público siempre crea solicitantes (compradores); las fábricas las habilita Meridia.
 const facA = await mk({ signup_role: 'factory' });
 const facB = await mk({ signup_role: 'factory' });
-await expectError('signup sin rol válido falla', () => mk({ signup_role: 'admin' }));
+check('registro público no crea fábricas', (await q(`select count(*)::int as n from profiles where id in ($1,$2) and role='buyer'`, [facA, facB]))[0].n === 2);
+const sneaky = await mk({ signup_role: 'admin' });
+check('registro público no puede pedir rol admin', (await q(`select role from profiles where id=$1`, [sneaky]))[0].role === 'buyer');
+await q(`update profiles set role='factory' where id in ($1,$2)`, [facA, facB]);
 check('admin creado vía app_metadata', (await q(`select role from profiles where id=$1`, [admin]))[0].role === 'admin');
 
 // Datos base (como service role)
@@ -103,24 +107,59 @@ check('comprador no ve comisiones', (await q(`select * from commissions`)).lengt
 check('comprador no ve fábricas sin cotización enviada', (await q(`select * from get_rfq_factory_profiles($1)`, [rfq])).length === 0);
 check('comprador ve el mensaje de la conversación', (await q(`select * from messages where conversation_id=$1`, [conv])).length === 1);
 await asSuper();
-const pend = await mk({ signup_role: 'factory' });
-await q(`update profiles set company_id=$1 where id=$2`, [cPending, pend]);
+// Fábrica incorporada por Meridia (todavía sin habilitar) con su cuenta invitada.
+const pend = await mk({});
+await q(`update profiles set role='factory', company_id=$1 where id=$2`, [cPending, pend]);
+await q(`insert into factory_details(company_id,legal_name_zh,legal_name_en,city,province,website,capacity,departure_port) values ($1,'测试','Test Factory','Ningbo','Zhejiang','https://t.test','10k m2/mes','Ningbo')`, [cPending]);
+await q(`insert into company_contacts(company_id,contact_name,phone,email,wechat) values ($1,'Wang','+86 1','w@t.test','wangwx')`, [cPending]);
+await q(`insert into factory_categories(factory_company_id,category_id) values ($1,$2)`, [cPending, cat]);
 await asUser(pend);
 await expectError('empresa registrada no puede autovalidarse', () => q(`update companies set status='validated' where id=$1`, [cPending]));
 await expectError('empresa no pasa a revisión con UPDATE directo', () => q(`update companies set status='in_review' where id=$1`, [cPending]));
-await expectError('envío a revisión incompleto falla', () => q(`select submit_company_for_review()`));
-await q(`insert into factory_details(company_id,legal_name_zh,legal_name_en,city,province,website,capacity,departure_port) values ($1,'测试','Test Factory','Ningbo','Zhejiang','https://t.test','10k m2/mes','Ningbo')`, [cPending]);
-await q(`insert into company_contacts(company_id,contact_name,phone,email,wechat) values ($1,'Wang','+86 1','w@t.test','wangwx')`, [cPending]);
+await expectError('una fábrica no se envía sola a revisión', () => q(`select submit_company_for_review()`));
+await expectError('una fábrica no crea su propia ficha', () => q(`select register_company('CN')`));
 await q(`update factory_details set founded_year=2001, founded_year_verified=true, annual_figure_verified=true where company_id=$1`, [cPending]);
 const fdp = (await q(`select founded_year_verified, annual_figure_verified from factory_details where company_id=$1`, [cPending]))[0];
 check('fábrica no puede autoverificar datos', fdp.founded_year_verified === false && fdp.annual_figure_verified === false);
-await q(`insert into factory_categories(factory_company_id,category_id) values ($1,$2)`, [cPending, cat]);
-await expectError('envío sin aceptar textos legales falla', () => q(`select submit_company_for_review()`));
-await q(`insert into legal_acceptances(user_id,legal_document_id) select $1, id from current_legal_documents()`, [pend]);
+check('fábrica no ve datos de otros', (await q(`select * from company_contacts`)).length === 1);
+
+// --- Etapa 9: solicitud de acceso de un comprador ---
+await asSuper();
+const appl = await mk({ signup_role: 'buyer', full_name: 'Luis' });
+await asUser(appl);
+const cAppl = (await q(`select register_company('co') as id`))[0].id;
+await expectError('solicitante pendiente no crea solicitudes de cotización', () => q(`insert into rfqs(buyer_company_id,created_by,product) values ($1,$2,'Pisos')`, [cAppl, appl]));
+await q(`insert into buyer_details(company_id,account_type,legal_name,tax_id) values ($1,'company','Importadora Andes','NIT-9')`, [cAppl]);
+await expectError('solicitud incompleta no se envía', () => q(`select submit_company_for_review()`));
+await q(`update buyer_details set trade_name='Andes', economic_activity='Importación', company_type='importer', destination_country='CO', purchase_volume='2 contenedores al año', purchase_frequency_id=(select id from purchase_frequencies where slug='annual') where company_id=$1`, [cAppl]);
+await q(`update companies set sector_id=(select id from sectors where slug='construction') where id=$1`, [cAppl]);
+await q(`insert into company_contacts(company_id,contact_name,contact_title,phone,email,whatsapp,city,country) values ($1,'Luis','Gerente','+57 300 0000001','l@andes.test','+57 300 0000001','Bogotá','CO')`, [cAppl]);
+await q(`insert into buyer_categories(buyer_company_id,category_id) values ($1,$2)`, [cAppl, cat]);
+await q(`insert into legal_acceptances(user_id,legal_document_id) select $1, id from current_legal_documents()`, [appl]);
+await expectError('sin autorización del representante no se envía', () => q(`select submit_company_for_review()`));
+await q(`update buyer_details set representative_authorized=true where company_id=$1`, [cAppl]);
 await q(`select submit_company_for_review()`);
-check('empresa completa se envía a revisión', (await q(`select status from companies where id=$1`, [cPending]))[0]?.status === 'in_review');
-await expectError('empresa en revisión no puede editar contacto', () => q(`update company_contacts set phone='x' where company_id=$1 returning 1`, [cPending]).then((r) => { if (!r.length) throw new Error('0 filas'); }));
-check('fábrica no ve sectores inactivos ni datos de otros', (await q(`select * from company_contacts`)).length === 1);
+check('solicitud enviada queda como recibida', (await q(`select status from companies where id=$1`, [cAppl]))[0].status === 'in_review');
+await expectError('solicitud recibida no se edita', () => q(`update company_contacts set phone='x' where company_id=$1 returning 1`, [cAppl]).then((r) => { if (!r.length) throw new Error('0 filas'); }));
+await asUser(admin);
+check('Meridia recibe aviso de la nueva solicitud', (await q(`select count(*)::int as n from notifications where user_id=$1 and type='access_request'`, [admin]))[0].n === 1);
+await q(`insert into company_notes(company_id,body,author_id) values ($1,'Confirmar volumen por teléfono',$2)`, [cAppl, admin]);
+await expectError('no se aprueba en revisión sin pasar por recibida', () => q(`select admin_review_company($1,'start_review')`, [cBuyer]));
+await q(`select admin_review_company($1,'start_review')`, [cAppl]);
+check('la solicitud pasa a en revisión', (await q(`select status from companies where id=$1`, [cAppl]))[0].status === 'reviewing');
+await q(`select admin_review_company($1,'request_info','Sube el registro mercantil')`, [cAppl]);
+await asUser(appl);
+check('solicitante no ve observaciones internas', (await q(`select * from company_notes`)).length === 0);
+check('solicitante ve el pedido de información', (await q(`select message from company_reviews where company_id=$1 and action='request_info'`, [cAppl]))[0]?.message === 'Sube el registro mercantil');
+await q(`select submit_company_for_review()`);
+await asUser(admin);
+await q(`select admin_review_company($1,'validate')`, [cAppl]);
+await asUser(appl);
+check('solicitud aprobada', (await q(`select status from companies where id=$1`, [cAppl]))[0].status === 'validated');
+const applDraft = await q(`insert into rfqs(buyer_company_id,created_by,product) values ($1,$2,'Pisos') returning id`, [cAppl, appl]);
+check('comprador aprobado ya puede crear solicitudes', applDraft.length === 1);
+await asSuper();
+await q(`delete from rfqs where id=$1`, [applDraft[0].id]);
 await asUser(buyer);
 
 await asSuper(); // atajo de datos: el flujo real de envío se prueba en la Etapa 5
@@ -131,7 +170,7 @@ check('comprador ve fábrica cotizante: año verificado visible, sin tipo VIP ni
 check('comprador ve la cotización enviada', (await q(`select * from quotes`)).length === 1);
 
 await asUser(admin);
-check('admin ve todos los contactos', (await q(`select * from company_contacts`)).length === 3);
+check('admin ve todos los contactos', (await q(`select * from company_contacts`)).length === 4);
 await asSuper();
 await expectError('pago que no suma 100 falla', () => q(`update quotes set balance_pct=60 where rfq_id=$1`, [rfq]));
 const hist = await q(`select entity_type, from_status, to_status from status_history order by id`);
@@ -142,18 +181,12 @@ await asUser(facB);
 await expectError('no admin no puede revisar empresas', () => q(`select admin_review_company($1,'validate')`, [cPending]));
 await expectError('no admin no puede ver alertas', () => q(`select admin_alerts()`));
 await asUser(admin);
-await expectError('pedir información exige mensaje', () => q(`select admin_review_company($1,'request_info','  ')`, [cPending]));
+await expectError('pedir información exige mensaje', () => q(`select admin_review_company($1,'request_info','  ')`, [cAppl]));
 await expectError('validar fábrica exige tipo', () => q(`select admin_review_company($1,'validate')`, [cPending]));
 await expectError('estándar sin registro empresarial chino falla', () => q(`select admin_review_company($1,'validate',null,'standard')`, [cPending]));
-await q(`select admin_review_company($1,'request_info','Falta el brochure')`, [cPending]);
-check('pedir información cambia el estado', (await q(`select status from companies where id=$1`, [cPending]))[0].status === 'info_requested');
-check('la nota queda en el historial', (await q(`select note from status_history where entity_id=$1 and to_status='info_requested'`, [cPending]))[0]?.note === 'Falta el brochure');
-check('la empresa recibe una notificación', (await q(`select count(*)::int as n from notifications where user_id=$1`, [pend]))[0].n === 1);
-await expectError('no se valida desde información pedida', () => q(`select admin_review_company($1,'validate',null,'vip')`, [cPending]));
-await asUser(pend);
-await q(`select submit_company_for_review()`);
-await asUser(admin);
+check('la nota del pedido de información queda en el historial', (await q(`select note from status_history where entity_id=$1 and to_status='info_requested'`, [cAppl]))[0]?.note === 'Sube el registro mercantil');
 await q(`select admin_review_company($1,'validate',null,'vip')`, [cPending]);
+check('la fábrica habilitada recibe una notificación', (await q(`select count(*)::int as n from notifications where user_id=$1`, [pend]))[0].n === 1);
 const val = (await q(`select c.status, c.validated_by, fa.tier from companies c join factory_admin fa on fa.company_id=c.id where c.id=$1`, [cPending]))[0];
 check('validar como VIP registra quién validó', val.status === 'validated' && val.validated_by === admin && val.tier === 'vip');
 await expectError('pasar a estándar sin licencia falla', () => q(`update factory_admin set tier='standard' where company_id=$1`, [cPending]));
@@ -335,14 +368,14 @@ await q(`select admin_commission_action($1,'paid')`, [comm]);
 check('cobro marcado a mano', (await q(`select status from commissions where id=$1`, [comm]))[0].status === 'paid');
 
 // --- Etapa 8: re-aceptación de textos legales ---
-await asUser(pend);
+await asUser(appl);
 check('sin textos pendientes tras aceptar', (await q(`select * from pending_legal_documents()`)).length === 0);
 await asUser(admin);
 await q(`insert into legal_documents(kind,version,content,is_draft) values ('terms', 2, '{"es":"Términos v2"}', false)`);
-await asUser(pend);
+await asUser(appl);
 const pendingNow = await q(`select kind, version from pending_legal_documents()`);
 check('versión nueva queda pendiente', pendingNow.length === 1 && pendingNow[0].version === 2);
-await q(`insert into legal_acceptances(user_id,legal_document_id) select $1, id from pending_legal_documents()`, [pend]);
+await q(`insert into legal_acceptances(user_id,legal_document_id) select $1, id from pending_legal_documents()`, [appl]);
 check('al aceptarla ya no está pendiente', (await q(`select * from pending_legal_documents()`)).length === 0);
 
 console.log(fails ? `\n${fails} FALLOS` : '\nTodo OK');

@@ -28,10 +28,10 @@ export default function HomePage({ params }: PageProps<"/[locale]">) {
               </h1>
               <p className="mt-5 max-w-xl text-lg text-ink-muted">{t("subtitle")}</p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <ButtonLink href="/ingresar">{common("signIn")}</ButtonLink>
-                <ButtonLink href="/crear-cuenta" variant="accent">
-                  {common("signUp")}
+                <ButtonLink href="/solicitar-acceso" variant="accent">
+                  {common("requestAccess")}
                 </ButtonLink>
+                <ButtonLink href="/ingresar">{common("signIn")}</ButtonLink>
               </div>
             </div>
             <div className="mx-auto w-56 sm:w-72 md:w-full md:max-w-sm">

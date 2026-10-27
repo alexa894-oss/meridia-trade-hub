@@ -59,11 +59,13 @@ const categories = await lookup("categories");
 const sectors = await lookup("sectors");
 const units = await lookup("units");
 
+// Toda cuenta nace como solicitante (comprador); las fábricas las habilita Meridia.
 async function user(email, role, fullName) {
   const data = must(
-    await db.auth.admin.createUser({ email, password, email_confirm: true, user_metadata: { signup_role: role, full_name: fullName, locale: "es" } }),
+    await db.auth.admin.createUser({ email, password, email_confirm: true, user_metadata: { full_name: fullName, locale: "es" } }),
     `crear ${email}`,
   );
+  if (role === "factory") must(await db.from("profiles").update({ role: "factory" }).eq("id", data.user.id), "rol de fábrica");
   return data.user.id;
 }
 
@@ -89,10 +91,11 @@ async function acceptLegal(userId) {
 // ---------------------------------------------------------------------------
 // Compradores
 // ---------------------------------------------------------------------------
+const frequencies = await lookup("purchase_frequencies");
 const buyers = [
-  { email: `compras.andina@${DOMAIN}`, name: "Laura Gómez", legal: "Constructora Andina S.A.S.", taxId: "NIT 900.000.001-1", country: "CO", sector: "construction", status: "validated", title: "Jefa de compras", phone: "+57 300 000 0001" },
-  { email: `compras.istmo@${DOMAIN}`, name: "Carlos Pérez", legal: "Grupo Edificar del Istmo S.A.", taxId: "RUC 0000000-1-000001", country: "PA", sector: "real-estate", status: "validated", title: "Gerente de proyectos", phone: "+507 6000 0001" },
-  { email: `proyecto.rojas@${DOMAIN}`, name: "Mariana Rojas", individual: true, country: "CR", status: "in_review", phone: "+506 8000 0001", description: "Remodelación de vivienda familiar en San José: pisos, puertas interiores y ventanas de aluminio." },
+  { email: `compras.andina@${DOMAIN}`, name: "Laura Gómez", legal: "Constructora Andina S.A.S.", trade: "Constructora Andina", taxId: "NIT 900.000.001-1", country: "CO", city: "Medellín", sector: "construction", type: "construction", activity: "Construcción de vivienda", status: "validated", title: "Jefa de compras", phone: "+57 300 000 0001", cats: ["flooring", "doors"], volume: "4 contenedores al año", frequency: "quarterly" },
+  { email: `compras.istmo@${DOMAIN}`, name: "Carlos Pérez", legal: "Grupo Edificar del Istmo S.A.", trade: "Edificar del Istmo", taxId: "RUC 0000000-1-000001", country: "PA", city: "Ciudad de Panamá", sector: "real-estate", type: "construction", activity: "Desarrollo inmobiliario y hotelero", status: "validated", title: "Gerente de proyectos", phone: "+507 6000 0001", cats: ["doors", "windows"], volume: "2 contenedores por proyecto", frequency: "per-project" },
+  { email: `proyecto.rojas@${DOMAIN}`, name: "Mariana Rojas", individual: true, country: "CR", status: "in_review", phone: "+506 8000 0001", activity: "Arquitecta independiente", purpose: "Remodelación de vivienda familiar en San José: pisos, puertas interiores y ventanas de aluminio.", cats: ["flooring", "windows"], volume: "1.200 m² de piso" },
 ];
 const buyerIds = {};
 for (const b of buyers) {
@@ -101,24 +104,38 @@ for (const b of buyers) {
   must(
     await db.from("buyer_details").insert(
       b.individual
-        ? { company_id: cid, account_type: "individual", full_name: b.name, project_description: b.description }
-        : { company_id: cid, account_type: "company", legal_name: b.legal, tax_id: b.taxId, website: null },
+        ? {
+            company_id: cid, account_type: "individual", full_name: b.name, id_type: "national_id", id_number: "1-0000-0000",
+            economic_activity: b.activity, purchase_purpose: b.purpose, destination_country: b.country, purchase_volume: b.volume,
+          }
+        : {
+            company_id: cid, account_type: "company", legal_name: b.legal, trade_name: b.trade, tax_id: b.taxId, website: null,
+            economic_activity: b.activity, company_type: b.type, representative_authorized: true, destination_country: b.country,
+            purchase_volume: b.volume, purchase_frequency_id: frequencies[b.frequency],
+          },
     ),
     "datos comprador",
   );
-  must(await db.from("company_contacts").insert({ company_id: cid, contact_name: b.name, contact_title: b.title ?? null, phone: b.phone, email: b.email }), "contacto comprador");
+  must(
+    await db.from("company_contacts").insert({
+      company_id: cid, contact_name: b.name, contact_title: b.title ?? null, phone: b.phone, whatsapp: b.phone, email: b.email,
+      city: b.city ?? null, country: b.individual ? null : b.country,
+    }),
+    "contacto comprador",
+  );
+  must(await db.from("buyer_categories").insert(b.cats.map((c) => ({ buyer_company_id: cid, category_id: categories[c] }))), "categorías de interés");
   await acceptLegal(uid);
   buyerIds[b.email] = { uid, cid };
 }
 
 // ---------------------------------------------------------------------------
-// Fábricas (una estándar con licencia, VIP sin licencia, una en revisión)
+// Fábricas (una estándar con licencia, VIP sin licencia, una incorporada sin habilitar)
 // ---------------------------------------------------------------------------
 const factories = [
   { email: `ventas.puertas@${DOMAIN}`, zh: "佛山示例木门有限公司", en: "Foshan Sample Wood Doors Co., Ltd.", city: "Foshan", province: "Guangdong", cats: ["doors"], capacity: "3.000 puertas al mes", port: "Shenzhen", year: 2009, status: "validated", tier: "standard", license: true, wechat: "seed_puertas" },
   { email: `ventas.ventanas@${DOMAIN}`, zh: "广州示例铝窗有限公司", en: "Guangzhou Sample Aluminium Windows Co., Ltd.", city: "Guangzhou", province: "Guangdong", cats: ["windows", "doors"], capacity: "8.000 m² de ventanas al mes", port: "Guangzhou (Nansha)", year: 2012, status: "validated", tier: "vip", license: false, wechat: "seed_ventanas" },
   { email: `ventas.pisos@${DOMAIN}`, zh: "晋江示例陶瓷有限公司", en: "Jinjiang Sample Ceramics Co., Ltd.", city: "Jinjiang", province: "Fujian", cats: ["flooring", "ceramics-porcelain"], capacity: "60.000 m² al mes", port: "Xiamen", year: 2005, status: "validated", tier: "standard", license: true, wechat: "seed_pisos" },
-  { email: `ventas.revestimientos@${DOMAIN}`, zh: "厦门示例石材有限公司", en: "Xiamen Sample Stone Cladding Co., Ltd.", city: "Xiamen", province: "Fujian", cats: ["wall-cladding"], capacity: "15.000 m² al mes", port: "Xiamen", year: null, status: "in_review", tier: null, license: false, wechat: "seed_revest" },
+  { email: `ventas.revestimientos@${DOMAIN}`, zh: "厦门示例石材有限公司", en: "Xiamen Sample Stone Cladding Co., Ltd.", city: "Xiamen", province: "Fujian", cats: ["wall-cladding"], capacity: "15.000 m² al mes", port: "Xiamen", year: null, status: "registered", tier: null, license: false, wechat: "seed_revest" },
 ];
 const factoryIds = {};
 for (const f of factories) {

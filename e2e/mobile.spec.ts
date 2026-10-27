@@ -4,10 +4,11 @@ import { accounts, login } from "./fixtures";
 // Revisión en celular: cada pantalla clave sin desplazamiento horizontal de página.
 // Las capturas quedan en test-results/ para revisarlas.
 const screens: { who: string; email?: string; paths: string[] }[] = [
-  { who: "visitante", paths: ["/", "/ingresar", "/crear-cuenta", "/recuperar"] },
+  { who: "visitante", paths: ["/", "/ingresar", "/solicitar-acceso", "/recuperar"] },
+  { who: "solicitante", email: accounts.buyerPending, paths: ["/comprador", "/comprador/solicitud", "/comprador/solicitud/datos", "/comprador/solicitud/perfil"] },
   { who: "comprador", email: accounts.buyerIstmo, paths: ["/comprador", "/comprador/solicitudes", "/comprador/solicitudes/nueva", "/comprador/pedidos", "/comprador/mensajes", "/notificaciones"] },
   { who: "fabrica", email: accounts.factoryDoors, paths: ["/fabrica", "/fabrica/oportunidades", "/fabrica/pedidos", "/fabrica/comisiones", "/fabrica/mensajes"] },
-  { who: "admin", email: accounts.admin, paths: ["/admin", "/admin/empresas", "/admin/solicitudes", "/admin/pedidos", "/admin/comisiones", "/admin/planes", "/admin/configuracion"] },
+  { who: "admin", email: accounts.admin, paths: ["/admin", "/admin/accesos", "/admin/empresas", "/admin/solicitudes", "/admin/pedidos", "/admin/comisiones", "/admin/planes", "/admin/configuracion"] },
 ];
 
 for (const s of screens) {
