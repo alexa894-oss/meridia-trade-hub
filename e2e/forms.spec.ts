@@ -2,13 +2,16 @@ import { expect, test } from "@playwright/test";
 import { accounts, login } from "./fixtures";
 
 // Criterio de aceptación: no se avanza si falta un campo obligatorio y el error nombra el campo.
-test("solicitar acceso vacío: cada error nombra su campo", async ({ page }) => {
+test("solicitar acceso: no avanza sin los obligatorios y cada error nombra su campo", async ({ page }) => {
   await page.goto("/solicitar-acceso");
-  await page.getByRole("button", { name: "Continuar con la solicitud" }).click();
-  for (const field of ["¿Cómo deseas registrarte?", "Nombre completo", "Correo electrónico", "Contraseña", "Confirmar contraseña"]) {
+  await page.getByRole("button", { name: "Continuar" }).click();
+  await expect(page.getByText("Completa el campo «¿Cómo deseas registrarte?».")).toBeVisible();
+  await page.getByText("Empresa / Persona jurídica").click();
+  await page.getByRole("button", { name: "Continuar" }).click();
+  for (const field of ["Razón social / nombre legal", "Nombre comercial", "País de constitución", "Identificación fiscal", "Actividad económica", "Sector o industria"]) {
     await expect(page.getByText(`Completa el campo «${field}».`)).toBeVisible();
   }
-  await expect(page).toHaveURL(/\/solicitar-acceso/);
+  await expect(page.getByRole("heading", { name: "Información empresarial" })).toBeVisible();
 });
 
 test("solicitar acceso: no hay opción pública para registrar fábricas", async ({ page }) => {

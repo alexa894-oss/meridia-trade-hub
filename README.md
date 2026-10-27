@@ -106,7 +106,8 @@ GitHub Actions (`.github/workflows/ci.yml`) corre lint, typecheck, i18n, `check:
 ## Acceso privado (Etapa 9)
 
 - El registro público es **Solicitar acceso** (`/solicitar-acceso`): empresa / persona jurídica o persona natural. No existe registro público de fábricas.
-- La solicitud se completa en `/comprador/solicitud/<paso>` (datos → contacto → perfil de compra → verificación) y se sigue en `/comprador/solicitud`: recibida → en revisión → aprobada · información adicional requerida · rechazada.
+- El formulario se llena **completo antes de crear la cuenta** (datos → contacto → perfil de compra → contraseña y textos legales). Al enviarlo se crean la cuenta y la solicitud juntas (`submit_access_request()`), que queda **recibida**. Después llega el correo de confirmación; al confirmarlo, el solicitante entra a `/comprador/solicitud` a ver el seguimiento y subir documentos.
+- Seguimiento: recibida → en revisión → aprobada · información adicional requerida · rechazada. Si Meridia pide información, el solicitante corrige sus datos en `/comprador/solicitud/<paso>` y reenvía.
 - Mientras no esté aprobada, la cuenta solo ve su seguimiento: solicitudes de cotización, pedidos y mensajes quedan bloqueados (en la interfaz y en la base: `rfqs_buyer_insert` exige empresa aprobada).
 - Admin → **Solicitudes de acceso** (`/admin/accesos`): tabla, expediente completo, observaciones internas (`company_notes`, solo admin) y acciones: marcar en revisión, solicitar documentos o información, aprobar, rechazar.
 - Los documentos del solicitante son opcionales ("cuando corresponda"); Meridia los pide si hacen falta.

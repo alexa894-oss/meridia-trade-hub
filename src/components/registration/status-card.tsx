@@ -4,6 +4,7 @@ import { formatDate } from "@/components/admin/ui";
 import type { CurrentProfile } from "@/lib/auth/session";
 import { loadRegistration, type CompanyStatus } from "@/lib/registration/load";
 import { REQUEST_BASE } from "@/lib/registration/steps";
+import { DocumentUpload } from "./document-upload";
 
 type TrackerStatus = CompanyStatus | "not_started";
 
@@ -12,9 +13,25 @@ const milestones = ["in_review", "reviewing", "validated"] as const;
 
 // Seguimiento de la solicitud de acceso. "Aprobada" solo aparece cuando Meridia la aprueba.
 export async function RequestTracker({ profile, justSubmitted = false }: { profile: CurrentProfile; justSubmitted?: boolean }) {
-  const [t, locale, data] = await Promise.all([getTranslations("RegistrationStatus"), getLocale(), loadRegistration(profile)]);
+  const [t, tr, tf, locale, data] = await Promise.all([
+    getTranslations("RegistrationStatus"),
+    getTranslations("Registration"),
+    getTranslations("Registration.fields"),
+    getLocale(),
+    loadRegistration(profile),
+  ]);
   const status = (data.company?.status ?? "not_started") as TrackerStatus;
   const editable = status === "not_started" || status === "registered" || status === "info_requested";
+  // Documentos: se pueden subir mientras la solicitud no esté resuelta.
+  const acceptsDocuments = !!data.company && ["registered", "info_requested", "in_review", "reviewing"].includes(status);
+  const isIndividual = data.buyer?.accountType === "individual";
+  const docsOf = (kind: string) => data.documents.filter((d) => d.kind === kind).map((d) => ({ id: d.id, fileName: d.fileName }));
+  const slots = isIndividual
+    ? [{ kind: "id_document" as const, label: tf("idDocument"), hint: tr("hints.idDocument") }]
+    : [
+        { kind: "tax_registration" as const, label: tf("commercialRegistration"), hint: tr("hints.commercialRegistration") },
+        { kind: "representation" as const, label: tf("representationDocument"), hint: tr("hints.representationDocument") },
+      ];
   const tone =
     status === "validated"
       ? "border-success/30 bg-success/5"
@@ -51,6 +68,25 @@ export async function RequestTracker({ profile, justSubmitted = false }: { profi
           </ButtonLink>
         ) : null}
       </section>
+
+      {acceptsDocuments ? (
+        <section className="space-y-4 rounded-xl border border-line bg-surface p-6">
+          <div>
+            <h2 className="font-display text-base font-semibold text-navy-800">{t("documents.title")}</h2>
+            <p className="mt-1 text-sm text-ink-muted">{t("documents.body")}</p>
+          </div>
+          {slots.map((slot) => (
+            <DocumentUpload
+              key={slot.kind}
+              companyId={data.company!.id}
+              kind={slot.kind}
+              label={`${slot.label} · ${tr("whenApplicable")}`}
+              hint={slot.hint}
+              documents={docsOf(slot.kind)}
+            />
+          ))}
+        </section>
+      ) : null}
 
       {position >= 0 && status !== "rejected" && status !== "suspended" ? (
         <section className="rounded-xl border border-line bg-surface p-6">

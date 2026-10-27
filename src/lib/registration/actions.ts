@@ -3,18 +3,7 @@
 import { getLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentProfile, type CurrentProfile } from "@/lib/auth/session";
-import { isCountryCode } from "@/lib/countries";
-import {
-  compact,
-  hasErrors,
-  normalizeUrl,
-  readString,
-  validateEmail,
-  validatePhone,
-  validateRequired,
-  type FieldErrorCode,
-  type FormState,
-} from "@/lib/forms";
+import { compact, hasErrors, normalizeUrl, type FormState } from "@/lib/forms";
 import { createClient } from "@/lib/supabase/server";
 import {
   ALLOWED_UPLOAD_TYPES,
@@ -26,6 +15,18 @@ import {
   type DocumentKind,
   type RegistrationStep,
 } from "./steps";
+import {
+  contactFields,
+  detailsFields,
+  profileFields,
+  readFields,
+  validateContact,
+  validateDetails,
+  validateProfile,
+  type ContactField,
+  type DetailsField,
+  type ProfileField,
+} from "./validate";
 
 // Sesión de solicitante + solicitud editable. Cada acción se autoriza sola.
 async function editableContext() {
@@ -63,63 +64,19 @@ async function currentAccountType(ctx: Ctx) {
   return data?.account_type ?? null;
 }
 
-const choice = (value: string, options: readonly string[]): FieldErrorCode | undefined =>
-  !value ? "required" : options.includes(value) ? undefined : "invalidChoice";
-const country = (value: string): FieldErrorCode | undefined =>
-  !value ? "required" : isCountryCode(value) ? undefined : "invalidChoice";
-
 // ---------------------------------------------------------------------------
 // Paso 1 · Empresa: información empresarial · Persona natural: datos personales
 // ---------------------------------------------------------------------------
-type DetailsField =
-  | "accountType"
-  | "country"
-  | "legalName"
-  | "tradeName"
-  | "taxId"
-  | "economicActivity"
-  | "sectorId"
-  | "website"
-  | "fullName"
-  | "idType"
-  | "idNumber";
-
 export async function saveBuyerDetails(_prev: FormState<DetailsField>, formData: FormData): Promise<FormState<DetailsField>> {
   const ctx = await editableContext();
   if ("error" in ctx) return { status: "error", formError: ctx.error };
 
-  const v = {
-    accountType: readString(formData, "accountType"),
-    country: readString(formData, "country"),
-    legalName: readString(formData, "legalName"),
-    tradeName: readString(formData, "tradeName"),
-    taxId: readString(formData, "taxId"),
-    economicActivity: readString(formData, "economicActivity"),
-    sectorId: readString(formData, "sectorId"),
-    website: readString(formData, "website"),
-    fullName: readString(formData, "fullName"),
-    idType: readString(formData, "idType"),
-    idNumber: readString(formData, "idNumber"),
-  };
-
+  const v = readFields(formData, detailsFields);
   const { data: settings } = await ctx.supabase.rpc("get_public_settings");
   const allowIndividual = (settings as Record<string, unknown> | null)?.allow_individual_buyers !== false;
   const isCompany = v.accountType === "company";
   const url = normalizeUrl(v.website);
-
-  const errors: Record<DetailsField, FieldErrorCode | undefined> = {
-    accountType: choice(v.accountType, allowIndividual ? ["company", "individual"] : ["company"]),
-    country: country(v.country),
-    legalName: isCompany ? validateRequired(v.legalName) : undefined,
-    tradeName: isCompany ? validateRequired(v.tradeName) : undefined,
-    taxId: isCompany ? validateRequired(v.taxId) : undefined,
-    economicActivity: validateRequired(v.economicActivity),
-    sectorId: isCompany ? validateRequired(v.sectorId) : undefined,
-    website: isCompany ? url.error : undefined,
-    fullName: !isCompany ? validateRequired(v.fullName) : undefined,
-    idType: !isCompany ? choice(v.idType, idTypes) : undefined,
-    idNumber: !isCompany ? validateRequired(v.idNumber) : undefined,
-  };
+  const errors = validateDetails(v, allowIndividual);
   if (hasErrors(errors)) return { status: "error", fieldErrors: compact(errors), values: v };
 
   const companyId = await ensureCompany(ctx, v.country);
@@ -150,16 +107,6 @@ export async function saveBuyerDetails(_prev: FormState<DetailsField>, formData:
 // ---------------------------------------------------------------------------
 // Paso 2 · Representante y contacto (privado: solo lo ve Meridia)
 // ---------------------------------------------------------------------------
-type ContactField =
-  | "contactName"
-  | "contactTitle"
-  | "email"
-  | "phone"
-  | "whatsapp"
-  | "contactCountry"
-  | "city"
-  | "authorized";
-
 export async function saveContact(_prev: FormState<ContactField>, formData: FormData): Promise<FormState<ContactField>> {
   const ctx = await editableContext();
   if ("error" in ctx) return { status: "error", formError: ctx.error };
@@ -168,26 +115,9 @@ export async function saveContact(_prev: FormState<ContactField>, formData: Form
   if (!companyId || !accountType) return { status: "error", formError: "previousStepMissing" };
   const isCompany = accountType === "company";
 
-  const v = {
-    contactName: readString(formData, "contactName"),
-    contactTitle: readString(formData, "contactTitle"),
-    email: readString(formData, "email").toLowerCase(),
-    phone: readString(formData, "phone"),
-    whatsapp: readString(formData, "whatsapp"),
-    contactCountry: readString(formData, "contactCountry"),
-    city: readString(formData, "city"),
-    authorized: formData.get("authorized") === "on" ? "on" : "",
-  };
-  const errors: Record<ContactField, FieldErrorCode | undefined> = {
-    contactName: isCompany ? validateRequired(v.contactName) : undefined,
-    contactTitle: isCompany ? validateRequired(v.contactTitle) : undefined,
-    email: validateEmail(v.email),
-    phone: validatePhone(v.phone),
-    whatsapp: validatePhone(v.whatsapp),
-    contactCountry: isCompany ? country(v.contactCountry) : undefined,
-    city: isCompany ? validateRequired(v.city) : undefined,
-    authorized: isCompany && !v.authorized ? "mustAccept" : undefined,
-  };
+  const v = readFields(formData, contactFields);
+  v.email = v.email.toLowerCase();
+  const errors = validateContact(v, isCompany);
   if (hasErrors(errors)) return { status: "error", fieldErrors: compact(errors), values: v };
 
   // Persona natural: el contacto es la propia persona.
@@ -219,15 +149,6 @@ export async function saveContact(_prev: FormState<ContactField>, formData: Form
 // ---------------------------------------------------------------------------
 // Paso 3 · Perfil de compra
 // ---------------------------------------------------------------------------
-type ProfileField =
-  | "companyType"
-  | "categoryIds"
-  | "destinationCountry"
-  | "purchaseVolume"
-  | "purchaseFrequencyId"
-  | "purchasePurpose"
-  | "needsDescription";
-
 export async function saveBuyerProfile(_prev: FormState<ProfileField>, formData: FormData): Promise<FormState<ProfileField>> {
   const ctx = await editableContext();
   if ("error" in ctx) return { status: "error", formError: ctx.error };
@@ -236,25 +157,10 @@ export async function saveBuyerProfile(_prev: FormState<ProfileField>, formData:
   if (!companyId || !accountType) return { status: "error", formError: "previousStepMissing" };
   const isCompany = accountType === "company";
 
-  const categoryIds = formData.getAll("categoryIds").filter((x): x is string => typeof x === "string" && !!x);
-  const v = {
-    companyType: readString(formData, "companyType"),
-    destinationCountry: readString(formData, "destinationCountry"),
-    purchaseVolume: readString(formData, "purchaseVolume"),
-    purchaseFrequencyId: readString(formData, "purchaseFrequencyId"),
-    purchasePurpose: readString(formData, "purchasePurpose"),
-    needsDescription: readString(formData, "needsDescription"),
-  };
-  const errors: Record<ProfileField, FieldErrorCode | undefined> = {
-    companyType: isCompany ? choice(v.companyType, companyTypes) : undefined,
-    categoryIds: categoryIds.length ? undefined : "selectAtLeastOne",
-    destinationCountry: country(v.destinationCountry),
-    purchaseVolume: validateRequired(v.purchaseVolume),
-    purchaseFrequencyId: isCompany ? validateRequired(v.purchaseFrequencyId) : undefined,
-    purchasePurpose: !isCompany ? validateRequired(v.purchasePurpose) : undefined,
-    needsDescription: undefined,
-  };
-  const values = { ...v, categoryIds: categoryIds.join(",") };
+  const v = readFields(formData, profileFields);
+  const categoryIds = v.categoryIds.split(",").filter(Boolean);
+  const errors = validateProfile(v, isCompany);
+  const values = v;
   if (hasErrors(errors)) return { status: "error", fieldErrors: compact(errors), values };
 
   const { error: detailsError } = await ctx.supabase
@@ -284,8 +190,18 @@ export async function saveBuyerProfile(_prev: FormState<ProfileField>, formData:
 // Documentos: el archivo ya se subió desde el navegador a Storage (RLS por
 // carpeta de la empresa); aquí solo se registra.
 // ---------------------------------------------------------------------------
+// Los documentos se pueden subir también con la solicitud ya enviada (desde el seguimiento).
+async function documentsContext() {
+  const profile = await getCurrentProfile();
+  if (!profile || profile.role !== "buyer" || !profile.companyId) return { error: "notAllowed" as const };
+  const supabase = await createClient();
+  const { data } = await supabase.from("companies").select("status").eq("id", profile.companyId).maybeSingle();
+  if (!data || !["registered", "info_requested", "in_review", "reviewing"].includes(data.status)) return { error: "notEditable" as const };
+  return { profile, supabase };
+}
+
 export async function registerDocument(input: { kind: string; storagePath: string; fileName: string; mimeType: string }) {
-  const ctx = await editableContext();
+  const ctx = await documentsContext();
   if ("error" in ctx) return { ok: false as const, error: ctx.error };
   const companyId = ctx.profile.companyId;
   if (!companyId) return { ok: false as const, error: "previousStepMissing" };
@@ -308,7 +224,7 @@ export async function registerDocument(input: { kind: string; storagePath: strin
 }
 
 export async function removeDocument(documentId: string) {
-  const ctx = await editableContext();
+  const ctx = await documentsContext();
   if ("error" in ctx) return { ok: false as const, error: ctx.error };
 
   const { data: doc } = await ctx.supabase.from("company_documents").select("id, storage_path").eq("id", documentId).maybeSingle();

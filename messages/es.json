@@ -37,27 +37,6 @@
     "noAccount": "¿Aún no tienes acceso?",
     "createAccount": "Solicitar acceso"
   },
-  "SignUp": {
-    "title": "Solicitar acceso",
-    "subtitle": "Crea tu usuario para completar la solicitud. Meridia la revisará antes de habilitar tu cuenta.",
-    "submit": "Continuar con la solicitud",
-    "haveAccount": "¿Ya tienes acceso?",
-    "signIn": "Ingresar a Meridia",
-    "goToSignIn": "Ir a Ingresar a Meridia",
-    "checkEmail": "Te enviamos un correo a {email}. Abre el enlace para confirmarlo y continuar con tu solicitud.",
-    "typeQuestion": "¿Cómo deseas registrarte?",
-    "types": {
-      "company": {
-        "title": "Empresa / Persona jurídica",
-        "body": "Solicito acceso a nombre de una empresa."
-      },
-      "individual": {
-        "title": "Persona natural",
-        "body": "Solicito acceso a título personal."
-      }
-    },
-    "reviewNotice": "Las solicitudes están sujetas a evaluación. No tendrás acceso a cotizaciones hasta que Meridia apruebe tu cuenta."
-  },
   "Recover": {
     "title": "Recuperar contraseña",
     "subtitle": "Te enviaremos un enlace para definir una contraseña nueva.",
@@ -362,6 +341,10 @@
     "suspended": {
       "title": "Cuenta suspendida",
       "body": "Tu cuenta está suspendida. Escríbenos si crees que es un error."
+    },
+    "documents": {
+      "title": "Documentos",
+      "body": "Opcionales. Súbelos si los tienes a mano o cuando Meridia te los pida. Solo el equipo de Meridia puede verlos."
     }
   },
   "Admin": {
@@ -1183,6 +1166,35 @@
       "title": "Fábrica habilitada",
       "body": "Ya puedes ver y responder las solicitudes que Meridia te asigne.",
       "cta": "Ver oportunidades"
+    }
+  },
+  "AccessRequest": {
+    "title": "Solicitar acceso",
+    "subtitle": "Completa tu solicitud. Meridia la revisará antes de habilitar tu cuenta.",
+    "continue": "Continuar",
+    "back": "Atrás",
+    "emailHint": "Con este correo entrarás a Meridia y recibirás los avisos de tu solicitud.",
+    "accountTitle": "Tu usuario",
+    "accountBody": "Entrarás a Meridia con {email}. Define tu contraseña.",
+    "documentsLater": "Los documentos (registro comercial, representación o identidad) los podrás subir después, desde el seguimiento de tu solicitud, o cuando Meridia te los pida.",
+    "received": {
+      "title": "Tu solicitud de acceso ha sido recibida.",
+      "body": "Nuestro equipo revisará tu información y te notificará cuando tu cuenta esté habilitada o si necesitamos documentación adicional.",
+      "confirmEmail": "Te enviamos un correo a {email}. Confírmalo para poder entrar a ver el seguimiento de tu solicitud y subir documentos.",
+      "signIn": "Ir a Ingresar a Meridia"
+    },
+    "errors": {
+      "emailTaken": "Ya existe una cuenta con ese correo. Ingresa a Meridia o usa otro correo.",
+      "weakPassword": "La contraseña es demasiado débil. Usa una más larga o con más variedad.",
+      "rateLimited": "Se enviaron demasiados correos. Espera unos minutos e inténtalo de nuevo.",
+      "emailUndeliverable": "No podemos enviar correos a esa dirección. Revisa que esté bien escrita o usa otra.",
+      "notConfigured": "La conexión con el servidor no está configurada.",
+      "submitFailed": "No pudimos enviar tu solicitud. Inténtalo de nuevo.",
+      "missingDetails": "Faltan datos en el paso 1.",
+      "missingContact": "Faltan datos en el paso 2.",
+      "missingProfile": "Faltan datos en el paso «Perfil de compra».",
+      "missingLegal": "Debes aceptar los textos legales.",
+      "individualsNotAllowed": "Por ahora Meridia no acepta solicitudes de personas naturales."
     }
   }
 }

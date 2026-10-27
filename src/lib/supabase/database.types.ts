@@ -1468,6 +1468,10 @@ export type Database = {
         Args: { p_factory: string; p_rfq: string }
         Returns: undefined
       }
+      buyer_application_error: {
+        Args: { p_company: string; p_user: string }
+        Returns: string
+      }
       buyer_confirm_receipt: { Args: { p_order: string }; Returns: undefined }
       buyer_create_order: {
         Args: {
@@ -1563,6 +1567,7 @@ export type Database = {
       }
       mark_overdue_commissions: { Args: never; Returns: undefined }
       mark_quotes_reviewed: { Args: { p_rfq: string }; Returns: undefined }
+      my_company_accepts_documents: { Args: never; Returns: boolean }
       my_company_editable: { Args: never; Returns: boolean }
       my_company_id: { Args: never; Returns: string }
       my_company_validated: { Args: never; Returns: boolean }
@@ -1601,6 +1606,10 @@ export type Database = {
       register_company: { Args: { p_country: string }; Returns: string }
       setting: { Args: { p_key: string }; Returns: Json }
       storage_owner_id: { Args: { p_name: string }; Returns: string }
+      submit_access_request: {
+        Args: { p_data: Json; p_user: string }
+        Returns: string
+      }
       submit_company_for_review: { Args: never; Returns: undefined }
       submit_quote: { Args: { p_quote: string }; Returns: undefined }
       submit_rfq: { Args: { p_rfq: string }; Returns: undefined }

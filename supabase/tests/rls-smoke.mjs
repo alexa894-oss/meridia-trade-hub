@@ -15,7 +15,7 @@ await db.exec(`
 create role anon nologin; create role authenticated nologin; create role service_role nologin bypassrls;
 create schema auth;
 create table auth.users(id uuid primary key default gen_random_uuid(), email text,
-  raw_app_meta_data jsonb default '{}', raw_user_meta_data jsonb default '{}');
+  raw_app_meta_data jsonb default '{}', raw_user_meta_data jsonb default '{}', created_at timestamptz default now());
 create function auth.uid() returns uuid language sql stable as $$
   select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
 create schema storage;
@@ -366,6 +366,38 @@ await q(`select mark_overdue_commissions()`);
 check('facturada con vencimiento pasado queda vencida', (await q(`select status from commissions where id=$1`, [comm]))[0].status === 'overdue');
 await q(`select admin_commission_action($1,'paid')`, [comm]);
 check('cobro marcado a mano', (await q(`select status from commissions where id=$1`, [comm]))[0].status === 'paid');
+
+// --- Etapa 9: solicitud pública (se llena completa antes de confirmar el correo) ---
+const asAnon = async () => { await db.exec(`reset role; select set_config('request.jwt.claim.sub', '', false); set role anon;`); };
+await asSuper();
+const sectorId = (await q(`select id from sectors where slug='construction'`))[0].id;
+const freqId = (await q(`select id from purchase_frequencies where slug='annual'`))[0].id;
+const fullRequest = {
+  account_type: 'company', country: 'co', legal_name: 'Importadora Sur S.A.S.', trade_name: 'Sur', tax_id: 'NIT 1',
+  economic_activity: 'Importación', sector_id: sectorId, contact_name: 'Ana Sur', contact_title: 'Gerente',
+  contact_email: 'ana@sur.test', phone: '+57 300 0000002', whatsapp: '+57 300 0000002', contact_country: 'CO', city: 'Cali',
+  representative_authorized: true, company_type: 'importer', category_ids: [cat], destination_country: 'CO',
+  purchase_volume: '1 contenedor', purchase_frequency_id: freqId, accepted_legal: true,
+};
+const pubUser = await mk({ full_name: 'Ana Sur' });
+const incompleteUser = await mk({ full_name: 'Sin datos' });
+const oldUser = await mk({ full_name: 'Antigua' });
+await q(`update auth.users set created_at = now() - interval '2 hours' where id=$1`, [oldUser]);
+await asAnon();
+await expectError('solicitud pública incompleta no se guarda', () => q(`select submit_access_request($1,$2)`, [incompleteUser, { ...fullRequest, whatsapp: '' }]));
+await expectError('solicitud pública sin aceptar textos no se guarda', () => q(`select submit_access_request($1,$2)`, [incompleteUser, { ...fullRequest, accepted_legal: false }]));
+const cPub = (await q(`select submit_access_request($1,$2) as id`, [pubUser, fullRequest]))[0].id;
+await expectError('no se puede enviar dos veces con la misma cuenta', () => q(`select submit_access_request($1,$2)`, [pubUser, fullRequest]));
+await expectError('no sirve para cuentas antiguas', () => q(`select submit_access_request($1,$2)`, [oldUser, fullRequest]));
+await expectError('anónimo no lee solicitudes', () => q(`select * from companies where id=$1`, [cPub]).then((r) => { if (!r.length) throw new Error('0 filas'); }));
+await asSuper();
+check('la solicitud pública queda recibida', (await q(`select status from companies where id=$1`, [cPub]))[0].status === 'in_review');
+check('la solicitud incompleta no dejó datos', (await q(`select company_id from profiles where id=$1`, [incompleteUser]))[0].company_id === null);
+check('la solicitud pública registra los textos aceptados', (await q(`select count(*)::int as n from legal_acceptances where user_id=$1`, [pubUser]))[0].n === (await q(`select count(*)::int as n from current_legal_documents()`))[0].n);
+await asUser(pubUser);
+await q(`insert into company_documents(company_id,kind,storage_path,file_name,uploaded_by) values ($1,'tax_registration',$2,'registro.pdf',$3)`, [cPub, `${cPub}/registro.pdf`, pubUser]);
+check('el solicitante sube documentos desde su seguimiento', (await q(`select count(*)::int as n from company_documents where company_id=$1`, [cPub]))[0].n === 1);
+await expectError('pero no edita sus datos mientras está en revisión', () => q(`update company_contacts set phone='x' where company_id=$1 returning 1`, [cPub]).then((r) => { if (!r.length) throw new Error('0 filas'); }));
 
 // --- Etapa 8: re-aceptación de textos legales ---
 await asUser(appl);
