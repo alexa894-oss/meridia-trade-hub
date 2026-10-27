@@ -5,6 +5,9 @@ import { PageLoading } from "@/components/page-loading";
 import { createClient } from "@/lib/supabase/server";
 import { InvitationForm } from "./invitation-form";
 
+// Depende del enlace (token) de cada invitación: se resuelve al pedir la página.
+export const instant = false;
+
 // Invitación privada de Meridia para un fabricante de su red.
 export default async function InvitationPage({ params }: PageProps<"/[locale]/invitacion/[token]">) {
   const { locale } = await params;
