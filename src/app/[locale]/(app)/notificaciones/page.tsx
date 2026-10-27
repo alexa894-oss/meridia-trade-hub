@@ -29,7 +29,8 @@ function hrefFor(type: string, payload: Record<string, unknown>, role: Role) {
       return `${base}/${payload.order_id}`;
     }
     case "commission_missing":
-      return `/admin/empresas/${payload.company_id}`;
+    case "factory_joined":
+      return `/admin/fabricantes/${payload.company_id}`;
     case "access_request":
       return `/admin/accesos/${payload.company_id}`;
     case "company_review":
@@ -50,7 +51,7 @@ export default function NotificationsPage() {
 async function NotificationsList() {
   const profile = await requireProfile();
   const [t, locale, items] = await Promise.all([getTranslations("Notifications"), getLocale(), listNotifications(profile.id)]);
-  const known = ["message", "rfq_assigned", "quote_hidden", "rfq_status", "quote_received", "company_review", "order_created", "order_status", "commission_missing", "access_request"];
+  const known = ["message", "rfq_assigned", "quote_hidden", "rfq_status", "quote_received", "company_review", "order_created", "order_status", "commission_missing", "access_request", "factory_joined"];
 
   return (
     <div className="mx-auto max-w-2xl space-y-5">

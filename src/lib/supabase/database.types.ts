@@ -489,24 +489,51 @@ export type Database = {
       }
       factory_admin: {
         Row: {
+          capacity_verified: boolean
+          capacity_verified_at: string | null
+          capacity_verified_by: string | null
           commission_rate: number | null
           company_id: string
+          history_verified: boolean
+          history_verified_at: string | null
+          history_verified_by: string | null
+          identity_verified: boolean
+          identity_verified_at: string | null
+          identity_verified_by: string | null
           notes: string | null
           tier: Database["public"]["Enums"]["factory_tier"] | null
           updated_at: string
           updated_by: string | null
         }
         Insert: {
+          capacity_verified?: boolean
+          capacity_verified_at?: string | null
+          capacity_verified_by?: string | null
           commission_rate?: number | null
           company_id: string
+          history_verified?: boolean
+          history_verified_at?: string | null
+          history_verified_by?: string | null
+          identity_verified?: boolean
+          identity_verified_at?: string | null
+          identity_verified_by?: string | null
           notes?: string | null
           tier?: Database["public"]["Enums"]["factory_tier"] | null
           updated_at?: string
           updated_by?: string | null
         }
         Update: {
+          capacity_verified?: boolean
+          capacity_verified_at?: string | null
+          capacity_verified_by?: string | null
           commission_rate?: number | null
           company_id?: string
+          history_verified?: boolean
+          history_verified_at?: string | null
+          history_verified_by?: string | null
+          identity_verified?: boolean
+          identity_verified_at?: string | null
+          identity_verified_by?: string | null
           notes?: string | null
           tier?: Database["public"]["Enums"]["factory_tier"] | null
           updated_at?: string
@@ -554,50 +581,74 @@ export type Database = {
       }
       factory_details: {
         Row: {
+          address: string | null
           annual_capacity_or_sales: string | null
           annual_figure_verified: boolean
           brochure_path: string | null
           capacity: string | null
-          city: string
+          certifications: string | null
+          city: string | null
+          commercial_terms: string | null
           company_id: string
           departure_port: string | null
+          export_markets: string | null
           founded_year: number | null
           founded_year_verified: boolean
           legal_name_en: string
-          legal_name_zh: string
-          province: string
+          legal_name_zh: string | null
+          moq: string | null
+          products: string | null
+          province: string | null
+          registration_number: string | null
+          trade_name: string | null
           updated_at: string
           website: string | null
         }
         Insert: {
+          address?: string | null
           annual_capacity_or_sales?: string | null
           annual_figure_verified?: boolean
           brochure_path?: string | null
           capacity?: string | null
-          city: string
+          certifications?: string | null
+          city?: string | null
+          commercial_terms?: string | null
           company_id: string
           departure_port?: string | null
+          export_markets?: string | null
           founded_year?: number | null
           founded_year_verified?: boolean
           legal_name_en: string
-          legal_name_zh: string
-          province: string
+          legal_name_zh?: string | null
+          moq?: string | null
+          products?: string | null
+          province?: string | null
+          registration_number?: string | null
+          trade_name?: string | null
           updated_at?: string
           website?: string | null
         }
         Update: {
+          address?: string | null
           annual_capacity_or_sales?: string | null
           annual_figure_verified?: boolean
           brochure_path?: string | null
           capacity?: string | null
-          city?: string
+          certifications?: string | null
+          city?: string | null
+          commercial_terms?: string | null
           company_id?: string
           departure_port?: string | null
+          export_markets?: string | null
           founded_year?: number | null
           founded_year_verified?: boolean
           legal_name_en?: string
-          legal_name_zh?: string
-          province?: string
+          legal_name_zh?: string | null
+          moq?: string | null
+          products?: string | null
+          province?: string | null
+          registration_number?: string | null
+          trade_name?: string | null
           updated_at?: string
           website?: string | null
         }
@@ -606,6 +657,50 @@ export type Database = {
             foreignKeyName: "factory_details_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: true
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      factory_invitations: {
+        Row: {
+          accepted_at: string | null
+          accepted_by: string | null
+          company_id: string
+          created_at: string
+          created_by: string
+          email: string
+          id: string
+          revoked_at: string | null
+          token_hash: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          company_id: string
+          created_at?: string
+          created_by: string
+          email: string
+          id?: string
+          revoked_at?: string | null
+          token_hash: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          company_id?: string
+          created_at?: string
+          created_by?: string
+          email?: string
+          id?: string
+          revoked_at?: string | null
+          token_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "factory_invitations_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },
@@ -1432,6 +1527,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_factory_invitation: {
+        Args: { p_token: string; p_user: string }
+        Returns: string
+      }
       admin_alerts: { Args: never; Returns: Json }
       admin_assign_rfq: {
         Args: { p_factories: string[]; p_rfq: string }
@@ -1512,11 +1611,19 @@ export type Database = {
         }
       }
       expire_quotes: { Args: { p_rfq: string }; Returns: undefined }
+      factory_is_verified: { Args: { p_company: string }; Returns: boolean }
       factory_order_action: {
         Args: { p_action: string; p_order: string; p_reason?: string }
         Returns: string
       }
       find_contact_info: { Args: { p_text: string }; Returns: string }
+      get_factory_invitation: {
+        Args: { p_token: string }
+        Returns: {
+          company_name: string
+          email: string
+        }[]
+      }
       get_public_settings: { Args: never; Returns: Json }
       get_rfq_buyer_profile: {
         Args: { p_rfq: string }
@@ -1543,6 +1650,7 @@ export type Database = {
           tier: Database["public"]["Enums"]["factory_tier"]
         }[]
       }
+      invitation_hash: { Args: { p_token: string }; Returns: string }
       is_admin: { Args: never; Returns: boolean }
       is_assigned: { Args: { p_rfq: string }; Returns: boolean }
       list_my_conversations: {

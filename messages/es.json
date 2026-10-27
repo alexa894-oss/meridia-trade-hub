@@ -362,7 +362,7 @@
       "orders": "Pedidos",
       "commissions": "Comisiones",
       "accessRequests": "Solicitudes de acceso",
-      "factories": "Fabricantes"
+      "factories": "Red de fabricantes"
     },
     "status": {
       "registered": "Registrada",
@@ -391,25 +391,6 @@
         "toAssign": "{count, plural, =0 {No hay solicitudes} one {# solicitud} other {# solicitudes}} esperando asignación.",
         "review": "Ver solicitudes",
         "assignNow": "Asignar solicitudes"
-      }
-    },
-    "companies": {
-      "title": "Fabricantes",
-      "all": "Todas",
-      "empty": "No hay empresas en este estado.",
-      "noName": "(sin datos todavía)",
-      "documents": "{count, plural, =0 {sin documentos} one {# documento} other {# documentos}}",
-      "registeredAt": "Registrada el {date}",
-      "submittedAt": "enviada el {date}",
-      "kinds": {
-        "all": "Todas",
-        "buyer": "Compradores",
-        "factory": "Fábricas"
-      },
-      "kind": {
-        "company": "Comprador · empresa",
-        "individual": "Comprador · persona natural",
-        "factory": "Fábrica"
       }
     },
     "detail": {
@@ -448,16 +429,16 @@
     "documentKinds": {
       "tax_registration": "Registro comercial",
       "id_document": "Documento de identidad",
-      "cn_business_license": "Registro empresarial chino",
-      "brochure": "Brochure",
-      "other": "Otro",
+      "cn_business_license": "Registro empresarial",
+      "brochure": "Catálogo o brochure",
+      "other": "Otro documento de respaldo",
       "representation": "Acreditación de representación"
     },
     "review": {
       "tier": "Tipo de fábrica",
       "chooseTier": "Elige VIP o estándar",
-      "tierHint": "Obligatorio para validar una fábrica.",
-      "tierHintNoLicense": "Obligatorio para validar. Sin registro empresarial chino solo puede validarse como VIP.",
+      "tierHint": "Obligatorio para habilitar una fábrica.",
+      "tierHintNoLicense": "Obligatorio para habilitar. Sin registro empresarial cargado solo puede habilitarse como VIP.",
       "tiers": {
         "vip": "VIP (con contrato)",
         "standard": "Estándar"
@@ -471,7 +452,8 @@
         "reject": "Rechazar",
         "suspend": "Suspender",
         "startReview": "Marcar en revisión",
-        "approve": "Aprobar"
+        "approve": "Aprobar",
+        "enable": "Habilitar"
       },
       "noActions": {
         "registered": "La empresa todavía no envió su registro.",
@@ -484,7 +466,7 @@
       },
       "errors": {
         "tierRequired": "Elige el tipo de fábrica para validarla.",
-        "licenseRequired": "Una fábrica estándar necesita el registro empresarial chino.",
+        "licenseRequired": "Una fábrica estándar necesita el registro empresarial en su documentación.",
         "messageRequired": "Escribe el mensaje o motivo.",
         "invalidTransition": "Esta acción no es posible en el estado actual. Recarga la página.",
         "notFound": "No se encontró la empresa.",
@@ -493,7 +475,7 @@
         "slugTaken": "Ya existe una opción con ese nombre."
       },
       "done": {
-        "validate": "Aprobado.",
+        "validate": "Listo.",
         "request_info": "Se pidió información a la empresa.",
         "reject": "Registro rechazado.",
         "suspend": "Empresa suspendida.",
@@ -695,6 +677,137 @@
       "add": "Agregar observación",
       "saved": "Observación guardada.",
       "error": "No pudimos guardar la observación."
+    },
+    "factories": {
+      "title": "Red de fabricantes",
+      "intro": "Directorio interno de Meridia. Los compradores nunca lo ven.",
+      "add": "Agregar fabricante",
+      "addIntro": "El fabricante queda registrado en la red sin cuenta. Después puedes verificarlo, habilitarlo e invitarlo a la plataforma.",
+      "back": "Volver a la red de fabricantes",
+      "empty": "Todavía no hay fabricantes en la red.",
+      "noName": "(sin nombre)",
+      "open": "Abrir ficha",
+      "addedOn": "incorporado el {date}",
+      "createdNotice": "Fabricante agregado a la red. Ahora puedes verificarlo, habilitarlo e invitarlo.",
+      "documentsPrivate": "Solo los administradores de Meridia ven estos documentos.",
+      "enableHint": "Solo una fábrica habilitada puede recibir solicitudes de cotización y entrar a su panel.",
+      "notesPrivate": "Solo las ven los administradores de Meridia.",
+      "verifiedCount": "{count}/3 verificaciones",
+      "columns": {
+        "name": "Fabricante",
+        "country": "País",
+        "categories": "Categorías",
+        "verifications": "Verificación",
+        "account": "Cuenta",
+        "status": "Estado",
+        "action": "Acción"
+      },
+      "account": {
+        "none": "Sin cuenta",
+        "invited": "Invitación enviada",
+        "active": "Cuenta activa"
+      },
+      "status": {
+        "registered": "Sin habilitar",
+        "in_review": "Sin habilitar",
+        "reviewing": "Sin habilitar",
+        "validated": "Habilitada",
+        "info_requested": "Sin habilitar",
+        "rejected": "Rechazada",
+        "suspended": "Suspendida"
+      },
+      "sections": {
+        "profile": "Ficha del fabricante",
+        "documents": "Documentación de respaldo",
+        "enable": "Habilitación",
+        "verifications": "Verificaciones",
+        "invitation": "Acceso a la plataforma",
+        "notes": "Observaciones internas"
+      },
+      "verifications": {
+        "identity": {
+          "title": "Identidad legal verificada",
+          "body": "Registro empresarial, razón social y representantes comprobados."
+        },
+        "capacity": {
+          "title": "Capacidad productiva evaluada",
+          "body": "Instalaciones, volumen y tiempos de producción revisados."
+        },
+        "history": {
+          "title": "Historial comercial evaluado",
+          "body": "Exportaciones previas, referencias y cumplimiento revisados."
+        },
+        "rule": "El comprador ve el sello «Verificada» solo cuando están las tres.",
+        "save": "Guardar verificaciones",
+        "saved": "Verificaciones guardadas.",
+        "error": "No pudimos guardar las verificaciones.",
+        "verifiedOn": "Marcada el {date}"
+      },
+      "invitation": {
+        "active": "Cuenta activa en la plataforma:",
+        "pending": "Invitación enviada a {email} el {date}, todavía sin usar.",
+        "revoke": "Anular",
+        "hint": "Genera un enlace privado de un solo uso y envíaselo al fabricante. Con él crea su cuenta, ya vinculada a esta ficha. Podrá responder solicitudes cuando la fábrica esté habilitada.",
+        "email": "Correo del fabricante",
+        "emailHint": "El fabricante creará su cuenta con este correo.",
+        "invite": "Invitar fabricante a la plataforma",
+        "regenerate": "Generar un enlace nuevo",
+        "created": "Invitación creada",
+        "createdBody": "Copia este enlace privado y envíalo al fabricante por WhatsApp o correo. Es de un solo uso y no se volverá a mostrar.",
+        "linkLabel": "Enlace de invitación",
+        "copy": "Copiar enlace",
+        "copied": "Copiado ✓",
+        "error": "No pudimos crear la invitación."
+      },
+      "form": {
+        "fields": {
+          "legalName": "Razón social",
+          "tradeName": "Nombre comercial",
+          "legalNameLocal": "Nombre legal en idioma local",
+          "country": "País",
+          "city": "Ciudad",
+          "address": "Dirección",
+          "registrationNumber": "Número de registro empresarial",
+          "website": "Página web",
+          "contactName": "Contacto comercial",
+          "contactTitle": "Cargo",
+          "email": "Correo electrónico",
+          "phone": "Teléfono",
+          "whatsapp": "WhatsApp",
+          "wechat": "WeChat",
+          "categoryIds": "Categorías de fabricación",
+          "products": "Productos",
+          "capacity": "Capacidad productiva",
+          "moq": "Cantidad mínima (MOQ)",
+          "departurePort": "Puerto de salida",
+          "exportMarkets": "Mercados de exportación",
+          "certifications": "Certificaciones",
+          "commercialTerms": "Condiciones comerciales",
+          "notes": "Observaciones internas"
+        },
+        "hints": {
+          "legalNameLocal": "Por ejemplo, el nombre en chino que aparece en su licencia.",
+          "email": "También es el correo al que se envía la invitación a la plataforma.",
+          "categoryIds": "Elige todas las que fabrica. Si falta una, agrégala en Configuración → Categorías.",
+          "capacity": "Por ejemplo: 20.000 m² al mes.",
+          "moq": "Por ejemplo: 1 contenedor de 20 pies.",
+          "exportMarkets": "Por ejemplo: Estados Unidos, Chile, Panamá."
+        },
+        "sections": {
+          "company": "Empresa",
+          "contact": "Contacto comercial",
+          "production": "Producción y condiciones",
+          "notes": "Observaciones internas"
+        },
+        "contactPrivate": "Estos datos solo los ve Meridia. Nunca se muestran a los compradores.",
+        "saved": "Ficha guardada.",
+        "saveChanges": "Guardar cambios",
+        "create": "Agregar fabricante",
+        "errors": {
+          "saveFailed": "No pudimos guardar la ficha. Inténtalo de nuevo.",
+          "notAllowed": "Tu cuenta no puede hacer esta acción."
+        }
+      }
     }
   },
   "Nav": {
@@ -1014,7 +1127,8 @@
       "order_created": "Recibiste una orden de compra (solicitud #{number}).",
       "order_status": "Tu pedido cambió de estado.",
       "commission_missing": "Una fábrica intentó aceptar una orden sin comisión configurada.",
-      "access_request": "Nueva solicitud de acceso para revisar."
+      "access_request": "Nueva solicitud de acceso para revisar.",
+      "factory_joined": "Un fabricante invitado creó su cuenta."
     }
   },
   "Orders": {
@@ -1164,7 +1278,7 @@
   "FactoryAccess": {
     "pending": {
       "title": "Acceso aún no habilitado",
-      "body": "Meridia está completando la incorporación de tu fábrica. Te avisaremos cuando puedas responder solicitudes."
+      "body": "Tu cuenta ya está vinculada a tu fábrica. Meridia te avisará cuando esté habilitada para recibir solicitudes de cotización."
     },
     "enabled": {
       "title": "Fábrica habilitada",
@@ -1201,5 +1315,21 @@
       "individualsNotAllowed": "Por ahora Meridia no acepta solicitudes de personas naturales."
     },
     "demoFill": "Llenar con datos de ejemplo (solo en desarrollo)"
+  },
+  "Invitation": {
+    "title": "Invitación a Meridia",
+    "intro": "Meridia te invita a ingresar como {company} para recibir y responder solicitudes de cotización.",
+    "emailFixed": "Tu cuenta usará el correo {email}.",
+    "submit": "Crear mi cuenta",
+    "checkEmail": "Te enviamos un correo a {email}. Confírmalo y luego ingresa a Meridia.",
+    "goToSignIn": "Ir a Ingresar a Meridia",
+    "invalid": "Este enlace de invitación no es válido o ya se usó. Pide a Meridia uno nuevo.",
+    "errors": {
+      "invalid": "Este enlace de invitación no es válido o ya se usó. Pide a Meridia uno nuevo.",
+      "emailTaken": "Ya existe una cuenta con ese correo. Escríbele a Meridia.",
+      "weakPassword": "La contraseña es demasiado débil. Usa una más larga o con más variedad.",
+      "rateLimited": "Se enviaron demasiados correos. Espera unos minutos e inténtalo de nuevo.",
+      "failed": "No pudimos crear tu cuenta. Inténtalo de nuevo."
+    }
   }
 }

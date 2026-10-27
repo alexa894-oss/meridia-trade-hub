@@ -18,10 +18,11 @@ export const companyStatuses: CompanyStatus[] = [
 export function companyDisplayName(c: {
   kind: CompanyKind;
   buyer_details: { legal_name: string | null; full_name: string | null } | null;
-  factory_details: { legal_name_en: string; legal_name_zh: string } | null;
+  factory_details: { legal_name_en: string; legal_name_zh: string | null; trade_name?: string | null } | null;
 }) {
   if (c.kind === "factory") {
-    return c.factory_details ? `${c.factory_details.legal_name_en} · ${c.factory_details.legal_name_zh}` : null;
+    const f = c.factory_details;
+    return f ? [f.trade_name ?? f.legal_name_en, f.legal_name_zh].filter(Boolean).join(" · ") : null;
   }
   return c.buyer_details?.legal_name ?? c.buyer_details?.full_name ?? null;
 }
@@ -81,7 +82,7 @@ export async function loadCompanyForReview(id: string) {
   const { data: company } = await supabase
     .from("companies")
     .select(
-      "*, sectors(names), buyer_details(*, purchase_frequencies(names)), buyer_categories(categories(names)), factory_details(*), company_contacts(*), factory_admin(*), factory_categories(categories(names)), company_documents(id, kind, file_name, storage_path, created_at)",
+      "*, sectors(names), buyer_details(*, purchase_frequencies(names)), buyer_categories(categories(names)), factory_details(*), company_contacts(*), factory_admin(*), factory_categories(category_id, categories(names)), company_documents(id, kind, file_name, storage_path, created_at)",
     )
     .eq("id", id)
     .maybeSingle();

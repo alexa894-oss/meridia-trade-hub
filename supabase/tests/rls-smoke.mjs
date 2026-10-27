@@ -404,6 +404,40 @@ await q(`insert into company_documents(company_id,kind,storage_path,file_name,up
 check('el solicitante sube documentos desde su seguimiento', (await q(`select count(*)::int as n from company_documents where company_id=$1`, [cPub]))[0].n === 1);
 await expectError('pero no edita sus datos mientras está en revisión', () => q(`update company_contacts set phone='x' where company_id=$1 returning 1`, [cPub]).then((r) => { if (!r.length) throw new Error('0 filas'); }));
 
+// --- Etapa 9 (Parte B): red de fabricantes e invitación privada ---
+await asSuper();
+const cNet = (await q(`insert into companies(kind,country,status) values ('factory','VN','registered') returning id`))[0].id;
+await q(`insert into factory_details(company_id,legal_name_en,trade_name,address,products) values ($1,'Saigon Footwear Co.','Saigon Shoes','HCMC','Calzado deportivo')`, [cNet]);
+await q(`insert into factory_admin(company_id,tier) values ($1,'vip')`, [cNet]);
+const tokenHash = (await q(`select invitation_hash('token-secreto-1') as h`))[0].h;
+await q(`insert into factory_invitations(company_id,email,token_hash,created_by) values ($1,'ventas@saigon.test',$2,$3)`, [cNet, tokenHash, admin]);
+await asAnon();
+const inv = await q(`select * from get_factory_invitation('token-secreto-1')`);
+check('el enlace de invitación muestra la fábrica y el correo', inv.length === 1 && inv[0].company_name === 'Saigon Shoes' && inv[0].email === 'ventas@saigon.test');
+check('un enlace inventado no muestra nada', (await q(`select * from get_factory_invitation('otro')`)).length === 0);
+await expectError('anónimo no lee invitaciones', () => q(`select * from factory_invitations`).then((r) => { if (!r.length) throw new Error('0 filas'); }));
+await asSuper();
+const wrongMail = (await q(`insert into auth.users(email,raw_user_meta_data) values ('otro@x.test','{}') returning id`))[0].id;
+const invitee = (await q(`insert into auth.users(email,raw_user_meta_data) values ('Ventas@Saigon.test','{}') returning id`))[0].id;
+await asAnon();
+await expectError('la invitación exige el correo invitado', () => q(`select accept_factory_invitation('token-secreto-1',$1)`, [wrongMail]));
+await q(`select accept_factory_invitation('token-secreto-1',$1)`, [invitee]);
+await expectError('la invitación es de un solo uso', () => q(`select accept_factory_invitation('token-secreto-1',$1)`, [wrongMail]));
+await asSuper();
+const prInv = (await q(`select role, company_id from profiles where id=$1`, [invitee]))[0];
+check('el invitado queda como cuenta de su fábrica', prInv.role === 'factory' && prInv.company_id === cNet);
+check('Meridia recibe aviso de la cuenta creada', (await q(`select count(*)::int as n from notifications where type='factory_joined'`))[0].n >= 1);
+await asUser(invitee);
+check('fábrica sin habilitar no ve oportunidades', (await q(`select * from rfqs`)).length === 0);
+await expectError('la fábrica no edita su ficha', () => q(`update factory_details set products='x' where company_id=$1 returning 1`, [cNet]).then((r) => { if (!r.length) throw new Error('0 filas'); }));
+await expectError('la fábrica no marca sus verificaciones', () => q(`update factory_admin set identity_verified=true where company_id=$1 returning 1`, [cNet]).then((r) => { if (!r.length) throw new Error('0 filas'); }));
+await asSuper();
+check('sin las tres verificaciones no está verificada', (await q(`select factory_is_verified($1) as v`, [cNet]))[0].v === false);
+await q(`update factory_admin set identity_verified=true, capacity_verified=true where company_id=$1`, [cNet]);
+check('con dos de tres sigue sin verificar', (await q(`select factory_is_verified($1) as v`, [cNet]))[0].v === false);
+await q(`update factory_admin set history_verified=true where company_id=$1`, [cNet]);
+check('con las tres queda verificada', (await q(`select factory_is_verified($1) as v`, [cNet]))[0].v === true);
+
 // --- Etapa 8: re-aceptación de textos legales ---
 await asUser(appl);
 check('sin textos pendientes tras aceptar', (await q(`select * from pending_legal_documents()`)).length === 0);

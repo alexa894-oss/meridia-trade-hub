@@ -8,6 +8,8 @@ import { registerDocument, removeDocument } from "@/lib/registration/actions";
 import { ALLOWED_UPLOAD_TYPES, MAX_UPLOAD_BYTES, type DocumentKind } from "@/lib/registration/steps";
 
 type Doc = { id: string; fileName: string | null };
+type Result = { ok: true } | { ok: false; error?: string };
+type Register = (input: { kind: string; storagePath: string; fileName: string; mimeType: string }) => Promise<Result>;
 
 // Sube el archivo directo al bucket privado (carpeta de la empresa, RLS) y
 // luego lo registra en company_documents desde el servidor.
@@ -19,6 +21,8 @@ export function DocumentUpload({
   documents,
   error,
   required,
+  onRegister = registerDocument,
+  onRemove = removeDocument,
 }: {
   companyId: string;
   kind: DocumentKind;
@@ -27,6 +31,9 @@ export function DocumentUpload({
   documents: Doc[];
   error?: string;
   required?: boolean;
+  /** Acciones de servidor para registrar/quitar (por defecto, las del solicitante). */
+  onRegister?: Register;
+  onRemove?: (documentId: string) => Promise<Result>;
 }) {
   const t = useTranslations("Registration.upload");
   const router = useRouter();
@@ -48,7 +55,7 @@ export function DocumentUpload({
       .upload(path, file, { contentType: file.type, upsert: false });
     if (uploadError) return setMessage(t("failed"));
 
-    const result = await registerDocument({ kind, storagePath: path, fileName: file.name, mimeType: file.type });
+    const result = await onRegister({ kind, storagePath: path, fileName: file.name, mimeType: file.type });
     if (!result.ok) {
       await supabase.storage.from("company-docs").remove([path]);
       return setMessage(t("failed"));
@@ -77,7 +84,7 @@ export function DocumentUpload({
                 disabled={pending}
                 onClick={() =>
                   startTransition(async () => {
-                    const r = await removeDocument(doc.id);
+                    const r = await onRemove(doc.id);
                     if (!r.ok) setMessage(t("failed"));
                     router.refresh();
                   })

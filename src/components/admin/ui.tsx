@@ -17,6 +17,7 @@ export function Card({ title, children, actions }: { title?: string; children: R
 const statusTone: Record<string, string> = {
   validated: "bg-success/10 text-success",
   in_review: "bg-gold-100 text-gold-700",
+  reviewing: "bg-navy-100 text-navy-800",
   info_requested: "bg-gold-100 text-gold-700",
   registered: "bg-navy-50 text-ink-muted",
   rejected: "bg-danger/10 text-danger",

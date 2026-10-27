@@ -132,10 +132,10 @@ for (const b of buyers) {
 // Fábricas (una estándar con licencia, VIP sin licencia, una incorporada sin habilitar)
 // ---------------------------------------------------------------------------
 const factories = [
-  { email: `ventas.puertas@${DOMAIN}`, zh: "佛山示例木门有限公司", en: "Foshan Sample Wood Doors Co., Ltd.", city: "Foshan", province: "Guangdong", cats: ["doors"], capacity: "3.000 puertas al mes", port: "Shenzhen", year: 2009, status: "validated", tier: "standard", license: true, wechat: "seed_puertas" },
-  { email: `ventas.ventanas@${DOMAIN}`, zh: "广州示例铝窗有限公司", en: "Guangzhou Sample Aluminium Windows Co., Ltd.", city: "Guangzhou", province: "Guangdong", cats: ["windows", "doors"], capacity: "8.000 m² de ventanas al mes", port: "Guangzhou (Nansha)", year: 2012, status: "validated", tier: "vip", license: false, wechat: "seed_ventanas" },
-  { email: `ventas.pisos@${DOMAIN}`, zh: "晋江示例陶瓷有限公司", en: "Jinjiang Sample Ceramics Co., Ltd.", city: "Jinjiang", province: "Fujian", cats: ["flooring", "ceramics-porcelain"], capacity: "60.000 m² al mes", port: "Xiamen", year: 2005, status: "validated", tier: "standard", license: true, wechat: "seed_pisos" },
-  { email: `ventas.revestimientos@${DOMAIN}`, zh: "厦门示例石材有限公司", en: "Xiamen Sample Stone Cladding Co., Ltd.", city: "Xiamen", province: "Fujian", cats: ["wall-cladding"], capacity: "15.000 m² al mes", port: "Xiamen", year: null, status: "registered", tier: null, license: false, wechat: "seed_revest" },
+  { email: `ventas.puertas@${DOMAIN}`, zh: "佛山示例木门有限公司", en: "Foshan Sample Wood Doors Co., Ltd.", city: "Foshan", province: "Guangdong", cats: ["doors"], capacity: "3.000 puertas al mes", port: "Shenzhen", year: 2009, status: "validated", tier: "standard", license: true, wechat: "seed_puertas", products: "Puertas interiores de madera" },
+  { email: `ventas.ventanas@${DOMAIN}`, zh: "广州示例铝窗有限公司", en: "Guangzhou Sample Aluminium Windows Co., Ltd.", city: "Guangzhou", province: "Guangdong", cats: ["windows", "doors"], capacity: "8.000 m² de ventanas al mes", port: "Guangzhou (Nansha)", year: 2012, status: "validated", tier: "vip", license: false, wechat: "seed_ventanas", products: "Ventanas y puertas de aluminio" },
+  { email: `ventas.pisos@${DOMAIN}`, zh: "晋江示例陶瓷有限公司", en: "Jinjiang Sample Ceramics Co., Ltd.", city: "Jinjiang", province: "Fujian", cats: ["flooring", "ceramics-porcelain"], capacity: "60.000 m² al mes", port: "Xiamen", year: 2005, status: "validated", tier: "standard", license: true, wechat: "seed_pisos", products: "Porcelanato y cerámica" },
+  { email: `ventas.revestimientos@${DOMAIN}`, zh: "厦门示例石材有限公司", en: "Xiamen Sample Stone Cladding Co., Ltd.", city: "Xiamen", province: "Fujian", cats: ["wall-cladding"], capacity: "15.000 m² al mes", port: "Xiamen", year: null, status: "registered", tier: null, license: false, wechat: "seed_revest", products: "Revestimientos de piedra" },
 ];
 const factoryIds = {};
 for (const f of factories) {
@@ -143,7 +143,7 @@ for (const f of factories) {
   const cid = await company(uid, "factory", f.status, "CN", null);
   must(
     await db.from("factory_details").insert({
-      company_id: cid, legal_name_zh: f.zh, legal_name_en: f.en, city: f.city, province: f.province,
+      company_id: cid, legal_name_zh: f.zh, legal_name_en: f.en, city: f.city, province: f.province, products: f.products,
       website: `https://${f.wechat.replace("seed_", "")}.example`, capacity: f.capacity, departure_port: f.port,
       founded_year: f.year, founded_year_verified: f.year !== null && f.status === "validated",
     }),
@@ -155,7 +155,14 @@ for (const f of factories) {
     must(await db.from("company_documents").insert({ company_id: cid, kind: "cn_business_license", storage_path: `${cid}/seed-license.pdf`, file_name: "licencia-de-prueba.pdf", uploaded_by: uid }), "licencia");
   }
   // Tipo de fábrica sí; comisión NO: la define el administrador.
-  if (f.tier) must(await db.from("factory_admin").insert({ company_id: cid, tier: f.tier }), "tipo de fábrica");
+  // Las habilitadas, con sus tres verificaciones (las marca Meridia).
+  const verified = f.status === "validated";
+  must(
+    await db.from("factory_admin").insert({
+      company_id: cid, tier: f.tier, identity_verified: verified, capacity_verified: verified, history_verified: verified,
+    }),
+    "tipo y verificaciones",
+  );
   await acceptLegal(uid);
   factoryIds[f.email] = { uid, cid };
 }

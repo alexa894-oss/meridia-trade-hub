@@ -7,7 +7,7 @@ export function AdminNav() {
       items={[
         { href: "/admin", key: "dashboard", exact: true },
         { href: "/admin/accesos", key: "accessRequests" },
-        { href: "/admin/empresas", key: "factories" },
+        { href: "/admin/fabricantes", key: "factories" },
         { href: "/admin/solicitudes", key: "rfqs" },
         { href: "/admin/pedidos", key: "orders" },
         { href: "/admin/comisiones", key: "commissions" },

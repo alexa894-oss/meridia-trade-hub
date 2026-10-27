@@ -97,7 +97,7 @@ export function ReviewPanel({
             ) : null}
             {can.validate ? (
               <ActionButton action="validate" tone="primary">
-                {status === "suspended" ? t("actions.reactivate") : kind === "buyer" ? t("actions.approve") : t("actions.validate")}
+                {status === "suspended" ? t("actions.reactivate") : kind === "buyer" ? t("actions.approve") : t("actions.enable")}
               </ActionButton>
             ) : null}
             {can.requestInfo ? (

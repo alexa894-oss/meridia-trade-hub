@@ -94,7 +94,7 @@ export default async function AdminRfqPage({ params }: PageProps<"/[locale]/admi
                   {
                     label: t("buyerName"),
                     value: (
-                      <Link href={`/admin/empresas/${buyer.id}`} className="text-navy-800 underline">
+                      <Link href={`/admin/accesos/${buyer.id}`} className="text-navy-800 underline">
                         {buyer.buyer_details?.legal_name ?? buyer.buyer_details?.full_name}
                       </Link>
                     ),

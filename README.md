@@ -110,6 +110,8 @@ GitHub Actions (`.github/workflows/ci.yml`) corre lint, typecheck, i18n, `check:
 - Seguimiento: recibida → en revisión → aprobada · información adicional requerida · rechazada. Si Meridia pide información, el solicitante corrige sus datos en `/comprador/solicitud/<paso>` y reenvía.
 - Mientras no esté aprobada, la cuenta solo ve su seguimiento: solicitudes de cotización, pedidos y mensajes quedan bloqueados (en la interfaz y en la base: `rfqs_buyer_insert` exige empresa aprobada).
 - Admin → **Solicitudes de acceso** (`/admin/accesos`): tabla, expediente completo, observaciones internas (`company_notes`, solo admin) y acciones: marcar en revisión, solicitar documentos o información, aprobar, rechazar.
+- Admin → **Red de fabricantes** (`/admin/fabricantes`): directorio interno (los compradores nunca lo ven). **Agregar fabricante** crea la ficha sin cuenta; en la ficha se editan los datos, se sube la documentación de respaldo, se marcan las **3 verificaciones** (identidad legal, capacidad productiva, historial comercial), se **habilita** (tipo VIP/estándar) y se genera la **invitación privada**: un enlace de un solo uso (`/invitacion/<token>`, solo se guarda su hash) con el que el fabricante crea su cuenta ya vinculada a la ficha.
+- Una fábrica sin habilitar no ve oportunidades ni puede recibir asignaciones. El comprador ve "Verificada" solo con las tres verificaciones.
 - Los documentos del solicitante son opcionales ("cuando corresponda"); Meridia los pide si hacen falta.
 
 ## Registro de empresas

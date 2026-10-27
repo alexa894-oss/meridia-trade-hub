@@ -19,7 +19,7 @@ export default async function AccessRequestPage({ params }: PageProps<"/[locale]
   const data = await loadCompanyForReview(id);
   if (!data) notFound();
   const locale = await getLocale();
-  if (data.company.kind !== "buyer") redirect({ href: `/admin/empresas/${id}`, locale });
+  if (data.company.kind !== "buyer") redirect({ href: `/admin/fabricantes/${id}`, locale });
 
   const [t, ta, ts, tf, tr, td] = await Promise.all([
     getTranslations("Admin.detail"),
