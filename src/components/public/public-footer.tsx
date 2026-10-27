@@ -8,7 +8,7 @@ export async function PublicFooter() {
   const head = "mb-3 font-display text-xs font-semibold tracking-[0.12em] text-white uppercase";
   const link = "text-navy-100 hover:text-white";
   return (
-    <footer className="bg-navy-950 text-sm text-navy-100">
+    <footer id="contacto" className="scroll-mt-20 bg-navy-950 text-sm text-navy-100">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div className="grid content-start gap-3">
           <Link href="/" className="flex items-center gap-2.5">

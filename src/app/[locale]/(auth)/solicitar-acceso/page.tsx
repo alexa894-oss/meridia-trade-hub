@@ -43,7 +43,8 @@ async function RequestForm({ searchParams }: { searchParams: PageProps<"/[locale
   const initialValues: Record<string, string> = {
     ...(categoryIds.length ? { categoryIds: categoryIds.join(",") } : {}),
     ...(interest ? { needsDescription: interest, purchasePurpose: interest } : {}),
-    ...(product && !industry ? { otherProducts: product } : {}),
+    // Industria sin categoría en la plataforma (o ninguna): se precarga como "Otro producto".
+    ...(!categoryIds.length && (product || industry) ? { otherProducts: product || tp(`${industry!.slug}.name`) } : {}),
   };
   const prefilled = [product, industry ? tp(`${industry.slug}.name`) : ""].filter(Boolean);
 

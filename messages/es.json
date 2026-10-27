@@ -1357,26 +1357,30 @@
       "signIn": "Ingresar",
       "quote": "Solicitar cotización",
       "openMenu": "Abrir menú",
-      "closeMenu": "Cerrar menú"
+      "closeMenu": "Cerrar menú",
+      "contact": "Contacto"
     },
     "hero": {
-      "eyebrow": "Abastecimiento y fabricación internacional",
-      "titleStart": "Lo que tu empresa necesita, conectado con ",
-      "titleAccent": "quien puede fabricarlo.",
-      "subtitle": "Explora soluciones de abastecimiento internacional y conecta tus necesidades comerciales con una red seleccionada de fabricantes. Meridia facilita la búsqueda, las cotizaciones y el seguimiento de tus oportunidades.",
+      "eyebrow": "Comercio internacional para empresas",
+      "titleStart": "De tu necesidad a nuevas oportunidades ",
+      "titleAccent": "de negocio.",
+      "subtitle": "Meridia conecta empresas con fabricantes internacionales para facilitar el abastecimiento, la fabricación y la importación de productos con mayor eficiencia y confianza.",
       "searchLabel": "Producto que necesitas",
       "placeholder": "¿Qué producto necesitas importar o fabricar?",
       "searchButton": "Buscar soluciones",
-      "try": "Prueba:",
+      "try": "Ejemplos:",
       "examples": [
         "Puertas de aluminio",
         "Pisos laminados",
-        "Ventanas arquitectónicas",
-        "Porcelanato",
-        "Materiales de construcción"
+        "Bebidas energéticas",
+        "Equipamiento comercial",
+        "Mobiliario",
+        "Textiles"
       ],
       "exploreIndustries": "Explorar industrias →",
-      "howItWorks": "Cómo funciona Meridia →"
+      "howItWorks": "Cómo funciona Meridia →",
+      "primary": "Solicitar una cotización",
+      "secondary": "Conoce cómo funciona"
     },
     "search": {
       "related": "Industrias relacionadas",
@@ -1387,10 +1391,11 @@
       "noneButton": "Contar mi requerimiento"
     },
     "industriesSection": {
-      "eyebrow": "Industrias",
-      "title": "Explora soluciones por industria",
+      "eyebrow": "Explora soluciones por industria",
+      "title": "Encuentra fabricantes para tu industria",
       "subtitle": "Descubre las categorías de productos que podemos ayudarte a cotizar y abastecer.",
-      "open": "Ver industria"
+      "open": "Ver industria",
+      "all": "Ver todas las industrias"
     },
     "industries": {
       "construccion-y-acabados": {
@@ -1413,7 +1418,8 @@
           "Hoteles y oficinas",
           "Remodelaciones",
           "Distribución y ferretería"
-        ]
+        ],
+        "card": "Puertas, ventanas, revestimientos y más"
       },
       "puertas-y-ventanas": {
         "name": "Puertas y ventanas",
@@ -1435,7 +1441,8 @@
           "Hoteles",
           "Oficinas",
           "Vivienda unifamiliar"
-        ]
+        ],
+        "card": "Aluminio, madera y PVC"
       },
       "pisos-y-revestimientos": {
         "name": "Pisos y revestimientos",
@@ -1457,6 +1464,67 @@
           "Comercio",
           "Hotelería",
           "Áreas exteriores"
+        ],
+        "card": "Pisos SPC, laminados, porcelanatos"
+      },
+      "alimentos-y-bebidas": {
+        "name": "Alimentos y bebidas",
+        "card": "Bebidas, envasados, productos de consumo",
+        "description": "Bebidas, alimentos envasados y productos de consumo masivo.",
+        "sub": [
+          "Bebidas",
+          "Alimentos envasados",
+          "Productos de consumo"
+        ],
+        "products": [
+          "Bebidas energéticas",
+          "Snacks envasados",
+          "Productos de marca propia"
+        ],
+        "applications": [
+          "Distribución mayorista",
+          "Supermercados",
+          "Marcas propias"
+        ]
+      },
+      "equipamiento-comercial": {
+        "name": "Equipamiento comercial",
+        "card": "Mobiliario, exhibidores, iluminación",
+        "description": "Mobiliario, exhibidores e iluminación para espacios comerciales.",
+        "sub": [
+          "Mobiliario comercial",
+          "Exhibidores",
+          "Iluminación comercial"
+        ],
+        "products": [
+          "Góndolas y estanterías",
+          "Exhibidores de punto de venta",
+          "Mostradores"
+        ],
+        "applications": [
+          "Tiendas y franquicias",
+          "Oficinas",
+          "Hoteles y restaurantes"
+        ]
+      },
+      "textiles-y-confeccion": {
+        "name": "Textiles y confección",
+        "card": "Prendas, textiles técnicos, accesorios",
+        "description": "Prendas, uniformes, textiles técnicos y accesorios.",
+        "sub": [
+          "Prendas",
+          "Textiles técnicos",
+          "Accesorios"
+        ],
+        "products": [
+          "Uniformes corporativos",
+          "Ropa de trabajo",
+          "Textiles para hotelería"
+        ],
+        "applications": [
+          "Empresas",
+          "Hotelería",
+          "Distribución"
         ]
       }
     },
@@ -1468,7 +1536,9 @@
       "howTitle": "Cómo la atendemos",
       "howBody": "Meridia ya gestiona solicitudes en esta categoría. No mostramos precios ni disponibilidad: cada cotización se prepara para tu solicitud.",
       "quote": "Solicitar cotización",
-      "other": "¿Buscas otra industria? Cuéntanos tu requerimiento."
+      "other": "¿Buscas otra industria? Cuéntanos tu requerimiento.",
+      "howBodyNew": "Evaluamos cada solicitud de esta industria según los fabricantes disponibles en nuestra red. No mostramos precios ni disponibilidad: cada cotización se prepara para tu solicitud.",
+      "allTitle": "Todas las industrias"
     },
     "about": {
       "eyebrow": "¿Qué es Meridia?",
@@ -1490,8 +1560,8 @@
       }
     },
     "how": {
-      "eyebrow": "Cómo funciona",
-      "title": "Compra directo con fabricantes verificados por Meridia",
+      "eyebrow": "Un proceso simple y efectivo",
+      "title": "Así funciona Meridia",
       "subtitle": "De tu necesidad a propuestas comparables, en cuatro pasos.",
       "perks": [
         "Compra directa con el fabricante",
@@ -1582,6 +1652,32 @@
       "version": "Versión {version}",
       "draft": "Borrador: este texto todavía no es la versión definitiva.",
       "missing": "Este texto todavía no está publicado."
+    },
+    "otherIndustries": {
+      "name": "Otras industrias",
+      "card": "Soluciones a medida para necesidades específicas"
+    },
+    "partner": {
+      "eyebrow": "Más que conexiones, resultados",
+      "title": "Tu socio en abastecimiento internacional",
+      "items": [
+        {
+          "title": "Fabricantes seleccionados",
+          "body": "Trabajamos con una red de fabricantes evaluados por nuestro equipo."
+        },
+        {
+          "title": "Cotizaciones comparables",
+          "body": "Recibe propuestas organizadas y transparentes."
+        },
+        {
+          "title": "Acompañamiento comercial",
+          "body": "Te apoyamos en cada etapa de tu proceso de importación o fabricación."
+        },
+        {
+          "title": "Mayor eficiencia",
+          "body": "Concentra tus oportunidades y el seguimiento en un solo lugar."
+        }
+      ]
     }
   }
 }

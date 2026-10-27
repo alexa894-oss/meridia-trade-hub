@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { industries, industryBySlug } from "@/lib/public/industries";
 import { Illustration } from "@/components/public/illustration";
@@ -42,10 +43,17 @@ export default async function IndustryPage({ params }: PageProps<"/[locale]/indu
     <>
       <PublicHeader />
       <main className="flex-1 bg-surface-muted">
-        <Illustration name={ind.icon} className="aspect-[21/6] min-h-40" />
+        {ind.photo ? (
+          <div className="relative aspect-[21/6] min-h-40">
+            <Image src={ind.photo} alt="" fill priority sizes="100vw" className="object-cover" />
+            <div className="absolute inset-0 bg-navy-950/35" />
+          </div>
+        ) : (
+          <Illustration name={ind.icon} className="aspect-[21/6] min-h-40" />
+        )}
         <div className="mx-auto -mt-10 grid max-w-4xl gap-6 px-4 pb-16 sm:px-6">
           <article className="grid gap-6 rounded-2xl border border-line bg-surface p-6 shadow-sm sm:p-8">
-            <Link href="/#industrias" className="text-sm font-semibold text-navy-800 hover:underline">
+            <Link href="/industrias" className="text-sm font-semibold text-navy-800 hover:underline">
               {t("industryPage.back")}
             </Link>
             <div className="grid gap-2">
@@ -58,7 +66,7 @@ export default async function IndustryPage({ params }: PageProps<"/[locale]/indu
               {block(t("industryPage.applications"), list("applications"))}
               <div>
                 <h2 className="mb-2 font-display text-xs font-semibold tracking-[0.1em] text-gold-700 uppercase">{t("industryPage.howTitle")}</h2>
-                <p className="text-ink-muted">{t("industryPage.howBody")}</p>
+                <p className="text-ink-muted">{t(ind.categories.length ? "industryPage.howBody" : "industryPage.howBodyNew")}</p>
               </div>
             </div>
             <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5">

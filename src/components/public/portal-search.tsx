@@ -45,8 +45,8 @@ export function PortalSearch() {
   }
 
   return (
-    <div className="grid gap-4">
-      <form role="search" onSubmit={onSubmit} className="flex max-w-3xl flex-col gap-2 rounded-2xl bg-white p-2 shadow-[0_12px_40px_rgba(0,0,0,0.25)] sm:flex-row">
+    <div className="grid gap-4 rounded-2xl border border-line bg-surface p-4 shadow-[0_18px_45px_rgba(18,38,70,0.12)] sm:p-5">
+      <form role="search" onSubmit={onSubmit} className="flex flex-col gap-3 sm:flex-row">
         <label htmlFor="portal-q" className="sr-only">
           {t("hero.searchLabel")}
         </label>
@@ -57,21 +57,21 @@ export function PortalSearch() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={t("hero.placeholder")}
-          className="min-h-12 min-w-0 flex-1 bg-transparent px-3 text-[17px] text-navy-700 outline-none placeholder:text-navy-600/60"
+          className="min-h-13 min-w-0 flex-1 rounded-(--radius-control) border border-line bg-surface bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2024%2024%22%20fill=%22none%22%20stroke=%22%23122646%22%20stroke-width=%222.2%22%3E%3Ccircle%20cx=%2211%22%20cy=%2211%22%20r=%227%22/%3E%3Cpath%20d=%22m20%2020-4-4%22/%3E%3C/svg%3E')] bg-[length:22px] bg-[position:14px_center] bg-no-repeat pr-3 pl-12 text-[17px] text-navy-700 outline-none placeholder:text-navy-700 focus:border-navy-600"
         />
-        <button type="submit" className="min-h-13 rounded-(--radius-control) bg-gold-500 px-6 font-display font-semibold text-navy-900 hover:bg-gold-300">
+        <button type="submit" className="min-h-13 rounded-(--radius-control) bg-navy-800 px-7 font-display font-semibold text-white hover:bg-navy-900">
           {t("hero.searchButton")}
         </button>
       </form>
 
       <div className="flex flex-wrap items-center gap-2">
-        <span className="mr-1 text-sm text-navy-100">{t("hero.try")}</span>
+        <span className="mr-2 text-sm text-ink">{t("hero.try")}</span>
         {examples.map((ex) => (
           <button
             key={ex}
             type="button"
             onClick={() => run(ex)}
-            className="rounded-full border border-white/30 bg-white/5 px-3 py-1.5 text-sm text-white hover:border-gold-500"
+            className="rounded-full bg-surface-muted px-3.5 py-1.5 text-sm text-navy-800 hover:bg-gold-100"
           >
             {ex}
           </button>
@@ -79,7 +79,7 @@ export function PortalSearch() {
       </div>
 
       {searched ? (
-        <div aria-live="polite" className="grid max-w-3xl gap-3 rounded-2xl bg-white p-4 text-navy-700">
+        <div aria-live="polite" className="grid gap-3 border-t border-line pt-4 text-navy-700">
           {matches.length ? (
             <>
               <h2 className="font-display text-base font-semibold">{t("search.related")}</h2>

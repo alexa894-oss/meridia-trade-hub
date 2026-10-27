@@ -14,7 +14,7 @@ export function PublicHeader() {
     { href: "/#industrias", label: t("industries") },
     { href: "/#como-funciona", label: t("how") },
     { href: "/#sobre", label: t("about") },
-    { href: "/ingresar", label: t("signIn") },
+    { href: "/#contacto", label: t("contact") },
   ];
 
   return (
@@ -28,13 +28,23 @@ export function PublicHeader() {
           </span>
         </Link>
 
-        <nav aria-label={t("label")} className="ml-auto hidden items-center gap-6 lg:flex">
-          {links.map((l) => (
-            <Link key={l.href} href={l.href} className="border-b-2 border-transparent py-2 font-display text-sm font-medium text-navy-800 hover:border-gold-500">
+        <nav aria-label={t("label")} className="ml-auto hidden items-center gap-6 xl:gap-7 lg:flex">
+          {links.map((l, i) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className={`border-b-2 py-2 font-display text-sm font-medium text-navy-800 hover:border-gold-500 ${i === 0 ? "border-gold-500" : "border-transparent"}`}
+            >
               {l.label}
             </Link>
           ))}
         </nav>
+        <Link
+          href="/ingresar"
+          className="hidden min-h-10 items-center rounded-(--radius-control) border border-navy-800 px-4 font-display text-sm font-semibold text-navy-800 hover:bg-navy-50 lg:inline-flex"
+        >
+          {t("signIn")}
+        </Link>
         <Link
           href="/solicitar-acceso"
           className="hidden min-h-10 items-center rounded-(--radius-control) bg-gold-500 px-4 font-display text-sm font-semibold text-navy-900 hover:bg-gold-300 lg:inline-flex"
@@ -59,6 +69,9 @@ export function PublicHeader() {
                 {l.label}
               </Link>
             ))}
+            <Link href="/ingresar" onClick={() => setOpen(false)} className="py-2 font-display text-base font-medium text-navy-800">
+              {t("signIn")}
+            </Link>
             <Link
               href="/solicitar-acceso"
               onClick={() => setOpen(false)}
