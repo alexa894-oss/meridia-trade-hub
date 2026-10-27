@@ -56,6 +56,7 @@ export type Database = {
           id_number: string | null
           id_type: Database["public"]["Enums"]["id_document_type"] | null
           legal_name: string | null
+          other_products: string | null
           project_description: string | null
           purchase_frequency_id: string | null
           purchase_purpose: string | null
@@ -78,6 +79,7 @@ export type Database = {
           id_number?: string | null
           id_type?: Database["public"]["Enums"]["id_document_type"] | null
           legal_name?: string | null
+          other_products?: string | null
           project_description?: string | null
           purchase_frequency_id?: string | null
           purchase_purpose?: string | null
@@ -100,6 +102,7 @@ export type Database = {
           id_number?: string | null
           id_type?: Database["public"]["Enums"]["id_document_type"] | null
           legal_name?: string | null
+          other_products?: string | null
           project_description?: string | null
           purchase_frequency_id?: string | null
           purchase_purpose?: string | null

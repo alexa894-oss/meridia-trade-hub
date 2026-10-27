@@ -79,7 +79,8 @@
       "noShowroom": "El campo «{field}» no puede mencionar el showroom.",
       "invalidAmount": "El campo «{field}» debe ser un monto válido (0 o más).",
       "invalidCurrency": "El campo «{field}» debe ser un código de moneda de 3 letras, por ejemplo USD.",
-      "invalidHours": "El campo «{field}» debe ser un número de horas mayor que 0, o quedar vacío."
+      "invalidHours": "El campo «{field}» debe ser un número de horas mayor que 0, o quedar vacío.",
+      "tooLong": "El campo «{field}» es demasiado largo."
     },
     "formErrors": {
       "invalidCredentials": "El correo o la contraseña no son correctos.",
@@ -205,7 +206,9 @@
       "purchasePurpose": "Propósito de la compra",
       "needsDescription": "Descripción de tu necesidad actual",
       "commercialRegistration": "Registro comercial o equivalente",
-      "representationDocument": "Documento que acredite la representación"
+      "representationDocument": "Documento que acredite la representación",
+      "otherProducts": "Otro producto",
+      "interestCategoriesOrOther": "Categorías de productos de interés u Otro producto"
     },
     "hints": {
       "taxId": "RUC, NIT, RFC, VAT o la identificación fiscal que corresponda en tu país.",
@@ -221,11 +224,12 @@
       "economicActivity": "Por ejemplo: construcción de vivienda, importación de acabados, distribución mayorista.",
       "economicActivityIndividual": "A qué te dedicas. Por ejemplo: arquitecto independiente, desarrollo de un proyecto propio.",
       "whatsapp": "Con código internacional, por ejemplo +57 300 000 0000.",
-      "interestCategories": "Elige todas las que te interesan.",
+      "interestCategories": "Elige las que te interesan. Si tu producto no está en la lista, escríbelo abajo en «Otro producto».",
       "purchaseVolume": "Por ejemplo: 2 contenedores al año o 3.000 m² por proyecto.",
       "purchasePurpose": "Cuéntanos para qué es la compra y qué necesitas.",
       "commercialRegistration": "Registro mercantil, certificado de existencia o el documento equivalente en tu país.",
-      "representationDocument": "Poder, nombramiento o documento que acredite que puedes representar a la empresa."
+      "representationDocument": "Poder, nombramiento o documento que acredite que puedes representar a la empresa.",
+      "otherProducts": "Si buscas algo que no está en la lista, por ejemplo: calzado deportivo, empaques de cartón."
     },
     "legal": {
       "terms": "Términos de uso",

@@ -172,6 +172,7 @@ export async function saveBuyerProfile(_prev: FormState<ProfileField>, formData:
       purchase_frequency_id: v.purchaseFrequencyId || null,
       purchase_purpose: isCompany ? null : v.purchasePurpose,
       project_description: v.needsDescription || null,
+      other_products: v.otherProducts || null,
     })
     .eq("company_id", companyId);
 

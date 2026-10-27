@@ -29,6 +29,7 @@ export type RegistrationData = {
     purchaseFrequencyId: string | null;
     purchasePurpose: string | null;
     needsDescription: string | null;
+    otherProducts: string | null;
   } | null;
   contact: {
     name: string;
@@ -132,6 +133,7 @@ export async function loadRegistration(profile: CurrentProfile): Promise<Registr
           purchaseFrequencyId: b.purchase_frequency_id,
           purchasePurpose: b.purchase_purpose,
           needsDescription: b.project_description,
+          otherProducts: b.other_products,
         }
       : null,
     contact: c

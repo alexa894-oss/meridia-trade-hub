@@ -18,7 +18,7 @@ function completion(data: RegistrationData): Record<RegistrationStep, boolean> {
   return {
     datos: !!b,
     contacto: !!c?.whatsapp && (!isCompany || (!!c.city && !!b?.representativeAuthorized)),
-    perfil: !!b?.destinationCountry && !!b.purchaseVolume && data.categoryIds.length > 0,
+    perfil: !!b?.destinationCountry && !!b.purchaseVolume && (data.categoryIds.length > 0 || !!b.otherProducts),
     verificacion: false,
   };
 }
@@ -179,6 +179,7 @@ async function StepContent({
             purchaseFrequencyId: b?.purchaseFrequencyId ?? null,
             purchasePurpose: b?.purchasePurpose ?? null,
             needsDescription: b?.needsDescription ?? null,
+            otherProducts: b?.otherProducts ?? null,
           }}
         />
       );

@@ -123,6 +123,7 @@ export default async function AccessRequestPage({ params }: PageProps<"/[locale]
                     label: tf("interestCategories"),
                     value: company.buyer_categories.map((x) => names(x.categories)).filter(Boolean).join(", ") || null,
                   },
+                  { label: tf("otherProducts"), value: b.other_products },
                   { label: tf("destinationCountry"), value: country(b.destination_country) },
                   { label: tf("purchaseVolume"), value: b.purchase_volume },
                   ...(isCompany

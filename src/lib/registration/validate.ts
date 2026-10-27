@@ -71,18 +71,21 @@ export const profileFields = [
   "purchaseFrequencyId",
   "purchasePurpose",
   "needsDescription",
+  "otherProducts",
 ] as const;
 export type ProfileField = (typeof profileFields)[number];
 
 export function validateProfile(v: Record<ProfileField, string>, isCompany: boolean): Errors<ProfileField> {
   return {
     companyType: isCompany ? choice(v.companyType, companyTypes) : undefined,
-    categoryIds: v.categoryIds ? undefined : "selectAtLeastOne",
+    // Al menos una categoría o un producto escrito en "Otro producto".
+    categoryIds: v.categoryIds || v.otherProducts ? undefined : "selectAtLeastOne",
     destinationCountry: country(v.destinationCountry),
     purchaseVolume: validateRequired(v.purchaseVolume),
     purchaseFrequencyId: isCompany ? validateRequired(v.purchaseFrequencyId) : undefined,
     purchasePurpose: !isCompany ? validateRequired(v.purchasePurpose) : undefined,
     needsDescription: undefined,
+    otherProducts: v.otherProducts.length > 500 ? "tooLong" : undefined,
   };
 }
 

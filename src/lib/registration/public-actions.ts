@@ -152,6 +152,7 @@ export async function submitAccessRequest(values: Values, legalKinds: string[]):
       purchase_frequency_id: values.purchaseFrequencyId,
       purchase_purpose: values.purchasePurpose,
       needs_description: values.needsDescription,
+      other_products: values.otherProducts,
       accepted_legal: true,
     },
   });

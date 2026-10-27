@@ -389,8 +389,13 @@ await expectError('solicitud pública sin aceptar textos no se guarda', () => q(
 const cPub = (await q(`select submit_access_request($1,$2) as id`, [pubUser, fullRequest]))[0].id;
 await expectError('no se puede enviar dos veces con la misma cuenta', () => q(`select submit_access_request($1,$2)`, [pubUser, fullRequest]));
 await expectError('no sirve para cuentas antiguas', () => q(`select submit_access_request($1,$2)`, [oldUser, fullRequest]));
+const otherUser = (await (async () => { await asSuper(); return mk({ full_name: 'Zapatos' }); })());
+await asAnon();
+await expectError('sin categorías ni otro producto no se guarda', () => q(`select submit_access_request($1,$2)`, [otherUser, { ...fullRequest, category_ids: [] }]));
+const cOther = (await q(`select submit_access_request($1,$2) as id`, [otherUser, { ...fullRequest, category_ids: [], other_products: 'Zapatos deportivos' }]))[0].id;
 await expectError('anónimo no lee solicitudes', () => q(`select * from companies where id=$1`, [cPub]).then((r) => { if (!r.length) throw new Error('0 filas'); }));
 await asSuper();
+check('con "otro producto" y sin categorías se acepta', (await q(`select other_products from buyer_details where company_id=$1`, [cOther]))[0].other_products === 'Zapatos deportivos');
 check('la solicitud pública queda recibida', (await q(`select status from companies where id=$1`, [cPub]))[0].status === 'in_review');
 check('la solicitud incompleta no dejó datos', (await q(`select company_id from profiles where id=$1`, [incompleteUser]))[0].company_id === null);
 check('la solicitud pública registra los textos aceptados', (await q(`select count(*)::int as n from legal_acceptances where user_id=$1`, [pubUser]))[0].n === (await q(`select count(*)::int as n from current_legal_documents()`))[0].n);

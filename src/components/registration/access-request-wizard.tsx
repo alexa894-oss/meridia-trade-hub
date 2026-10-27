@@ -328,8 +328,9 @@ export function AccessRequestWizard({
               hint={t("hints.interestCategories")}
               options={categories}
               selected={new Set(v("categoryIds").split(",").filter(Boolean))}
-              error={err("categoryIds", tf("interestCategories"))}
+              error={err("categoryIds", tf("interestCategoriesOrOther"))}
             />
+            <Field name="otherProducts" label={`${tf("otherProducts")} · ${t("optional")}`} hint={t("hints.otherProducts")} defaultValue={v("otherProducts")} error={err("otherProducts", tf("otherProducts"))} />
             <SelectField name="destinationCountry" label={tf("destinationCountry")} placeholder={t("choose")} options={countries} defaultValue={v("destinationCountry")} error={err("destinationCountry", tf("destinationCountry"))} />
             <Field name="purchaseVolume" label={tf("purchaseVolume")} hint={t("hints.purchaseVolume")} defaultValue={v("purchaseVolume")} error={err("purchaseVolume", tf("purchaseVolume"))} />
             {isCompany ? (

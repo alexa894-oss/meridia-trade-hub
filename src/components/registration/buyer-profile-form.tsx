@@ -16,6 +16,7 @@ type Initial = {
   purchaseFrequencyId: string | null;
   purchasePurpose: string | null;
   needsDescription: string | null;
+  otherProducts: string | null;
 };
 
 type Option = { value: string; label: string };
@@ -71,7 +72,14 @@ export function BuyerProfileForm({
         hint={t("hints.interestCategories")}
         options={categories}
         selected={selected}
-        error={err("categoryIds", tf("interestCategories"))}
+        error={err("categoryIds", tf("interestCategoriesOrOther"))}
+      />
+      <Field
+        name="otherProducts"
+        label={`${tf("otherProducts")} · ${t("optional")}`}
+        hint={t("hints.otherProducts")}
+        defaultValue={v("otherProducts")}
+        error={err("otherProducts", tf("otherProducts"))}
       />
 
       <SelectField

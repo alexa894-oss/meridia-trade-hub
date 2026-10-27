@@ -12,6 +12,7 @@ export type FieldErrorCode =
   | "invalidUrl"
   | "invalidYear"
   | "tooShort"
+  | "tooLong"
   | "selectAtLeastOne"
   | "mustAccept"
   | "fileRequired"
