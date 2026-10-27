@@ -23,6 +23,7 @@ export function AccessRequestWizard({
   frequencies,
   legalDocuments,
   allowIndividual,
+  demo = false,
 }: {
   countries: Option[];
   sectors: Option[];
@@ -30,6 +31,8 @@ export function AccessRequestWizard({
   frequencies: Option[];
   legalDocuments: LegalDoc[];
   allowIndividual: boolean;
+  /** Solo en desarrollo: botón para rellenar con una empresa ficticia. */
+  demo?: boolean;
 }) {
   const t = useTranslations("Registration");
   const tf = useTranslations("Registration.fields");
@@ -43,6 +46,7 @@ export function AccessRequestWizard({
   const [formError, setFormError] = useState<string | null>(null);
   const [submittedEmail, setSubmittedEmail] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const [fillCount, setFillCount] = useState(0);
 
   const step = steps[stepIndex];
   const accountType = values.accountType;
@@ -102,6 +106,37 @@ export function AccessRequestWizard({
     });
   }
 
+  // Datos ficticios para recorrer el formulario rápido (nunca en producción).
+  function fillDemo() {
+    const pickBy = (opts: Option[], text: string) => opts.find((o) => o.label.toLowerCase().includes(text))?.value ?? opts[0]?.value ?? "";
+    setValues((prev) => ({
+      ...prev,
+      accountType: "company",
+      legalName: "Constructora Demo del Pacífico S.A.",
+      tradeName: "Demo Pacífico",
+      country: "PA",
+      taxId: "RUC 0000-DEMO-01",
+      economicActivity: "Construcción de vivienda y oficinas",
+      sectorId: pickBy(sectors, "constru"),
+      website: "",
+      contactName: "Representante Demo",
+      contactTitle: "Gerente de compras",
+      phone: "+507 6000-0000",
+      whatsapp: "+507 6000-0000",
+      contactCountry: "PA",
+      city: "Ciudad de Panamá",
+      authorized: "on",
+      companyType: "construction",
+      categoryIds: [pickBy(categories, "piso"), pickBy(categories, "puerta")].filter(Boolean).join(","),
+      destinationCountry: "PA",
+      purchaseVolume: "2 contenedores al año",
+      purchaseFrequencyId: pickBy(frequencies, "trimes"),
+      needsDescription: "Pisos y puertas para un edificio de 40 apartamentos.",
+    }));
+    setFillCount((n) => n + 1);
+    goTo(stepIndex);
+  }
+
   if (submittedEmail) {
     return (
       <section role="status" className="space-y-4">
@@ -119,6 +154,15 @@ export function AccessRequestWizard({
 
   return (
     <div className="space-y-6">
+      {demo ? (
+        <button
+          type="button"
+          onClick={fillDemo}
+          className="w-full rounded-(--radius-control) border border-dashed border-gold-500 bg-gold-100 px-4 py-2 text-sm font-semibold text-navy-800 hover:bg-gold-300/40"
+        >
+          {ta("demoFill")}
+        </button>
+      ) : null}
       <nav aria-label={t("stepsLabel")}>
         <ol className="flex gap-1.5">
           {steps.map((s, i) => {
@@ -153,7 +197,7 @@ export function AccessRequestWizard({
 
       <h2 className="font-display text-lg font-semibold text-navy-800">{t(`stepTitles.${kind}.${step === "enviar" ? "verificacion" : step}`)}</h2>
 
-      <form id="access-form" key={step} onSubmit={onSubmit} noValidate className="space-y-5">
+      <form id="access-form" key={`${step}-${fillCount}`} onSubmit={onSubmit} noValidate className="space-y-5">
         {formError ? <FormAlert>{ta(`errors.${formError}`)}</FormAlert> : null}
 
         {step === "datos" ? (

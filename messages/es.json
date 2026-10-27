@@ -1195,6 +1195,7 @@
       "missingProfile": "Faltan datos en el paso «Perfil de compra».",
       "missingLegal": "Debes aceptar los textos legales.",
       "individualsNotAllowed": "Por ahora Meridia no acepta solicitudes de personas naturales."
-    }
+    },
+    "demoFill": "Llenar con datos de ejemplo (solo en desarrollo)"
   }
 }
