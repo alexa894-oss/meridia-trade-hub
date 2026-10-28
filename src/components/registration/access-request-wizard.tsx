@@ -10,6 +10,7 @@ import { submitAccessRequest, validateAccessStep, type PublicStep } from "@/lib/
 import { companyTypes, idTypes, REQUEST_BASE } from "@/lib/registration/steps";
 import { ActivityField } from "./activity-field";
 import { CategoryPicker } from "./category-picker";
+import { PhoneField } from "./phone-field";
 
 type Option = { value: string; label: string };
 type LegalDoc = { id: string; kind: "terms" | "non_circumvention" | "privacy"; version: number; text: string; isDraft: boolean };
@@ -306,7 +307,17 @@ export function AccessRequestWizard({
               defaultValue={v("email")}
               error={err("email", isCompany ? tf("corporateEmail") : tf("email"))}
             />
-            <Field name="whatsapp" type="tel" autoComplete="tel" inputMode="tel" label={tf("whatsapp")} hint={t("hints.whatsapp")} defaultValue={v("whatsapp")} error={err("whatsapp", tf("whatsapp"))} />
+            <PhoneField
+              name="whatsapp"
+              label={tf("whatsapp")}
+              countryLabel={t("phoneCountry")}
+              numberLabel={t("phoneNumber")}
+              hint={t("hints.whatsapp")}
+              countries={countries}
+              defaultValue={v("whatsapp")}
+              defaultCountry={v("country")}
+              error={err("whatsapp", tf("whatsapp"))}
+            />
             {isCompany ? (
               <>
                 <div className="grid gap-5 sm:grid-cols-2">

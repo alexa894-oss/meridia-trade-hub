@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { useTranslations } from "next-intl";
 import { CheckboxField, Field, FormAlert, SelectField, SubmitButton, useFieldError } from "@/components/forms";
+import { PhoneField } from "./phone-field";
 import { initialFormState } from "@/lib/forms";
 import { saveContact } from "@/lib/registration/actions";
 
@@ -56,7 +57,17 @@ export function ContactForm({
         defaultValue={text("email")}
         error={err("email", isIndividual ? tf("email") : tf("corporateEmail"))}
       />
-      <Field name="whatsapp" type="tel" autoComplete="tel" inputMode="tel" label={tf("whatsapp")} hint={t("hints.whatsapp")} defaultValue={text("whatsapp")} error={err("whatsapp", tf("whatsapp"))} />
+      <PhoneField
+        name="whatsapp"
+        label={tf("whatsapp")}
+        countryLabel={t("phoneCountry")}
+        numberLabel={t("phoneNumber")}
+        hint={t("hints.whatsapp")}
+        countries={countries}
+        defaultValue={text("whatsapp")}
+        defaultCountry={text("contactCountry")}
+        error={err("whatsapp", tf("whatsapp"))}
+      />
       {isIndividual ? null : (
         <>
           <div className="grid gap-5 sm:grid-cols-2">

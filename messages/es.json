@@ -224,7 +224,7 @@
       "businessLicense": "Licencia comercial (营业执照). Meridia la pedirá para validar fábricas estándar.",
       "economicActivity": "Por ejemplo: construcción de vivienda, importación de acabados, distribución mayorista.",
       "economicActivityIndividual": "A qué te dedicas. Por ejemplo: arquitecto independiente, desarrollo de un proyecto propio.",
-      "whatsapp": "Con código internacional, por ejemplo +57 300 000 0000.",
+      "whatsapp": "Elige el país y el código se agrega solo. Luego escribe tu número.",
       "interestCategories": "Elige las que te interesan. Si tu producto no está en la lista, escríbelo abajo en «Otro producto».",
       "purchaseVolume": "Por ejemplo: 2 contenedores al año o 3.000 m² por proyecto.",
       "purchasePurpose": "Cuéntanos para qué es la compra y qué necesitas.",
@@ -295,7 +295,9 @@
       "retail": "Comercio",
       "manufacturer": "Fabricante",
       "other": "Otro"
-    }
+    },
+    "phoneCountry": "País del número",
+    "phoneNumber": "Número"
   },
   "RegistrationStatus": {
     "label": "Solicitud de acceso",
