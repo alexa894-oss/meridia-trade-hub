@@ -10,7 +10,6 @@ type Initial = {
   contactName: string | null;
   contactTitle: string | null;
   email: string | null;
-  phone: string | null;
   whatsapp: string | null;
   contactCountry: string | null;
   city: string | null;
@@ -57,10 +56,7 @@ export function ContactForm({
         defaultValue={text("email")}
         error={err("email", isIndividual ? tf("email") : tf("corporateEmail"))}
       />
-      <div className="grid gap-5 sm:grid-cols-2">
-        <Field name="phone" type="tel" autoComplete="tel" inputMode="tel" label={tf("phone")} hint={t("hints.phone")} defaultValue={text("phone")} error={err("phone", tf("phone"))} />
-        <Field name="whatsapp" type="tel" inputMode="tel" label={tf("whatsapp")} hint={t("hints.whatsapp")} defaultValue={text("whatsapp")} error={err("whatsapp", tf("whatsapp"))} />
-      </div>
+      <Field name="whatsapp" type="tel" autoComplete="tel" inputMode="tel" label={tf("whatsapp")} hint={t("hints.whatsapp")} defaultValue={text("whatsapp")} error={err("whatsapp", tf("whatsapp"))} />
       {isIndividual ? null : (
         <>
           <div className="grid gap-5 sm:grid-cols-2">

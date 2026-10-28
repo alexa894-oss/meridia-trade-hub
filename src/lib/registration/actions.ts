@@ -132,7 +132,7 @@ export async function saveContact(_prev: FormState<ContactField>, formData: Form
     contact_name: name,
     contact_title: isCompany ? v.contactTitle : null,
     email: v.email,
-    phone: v.phone,
+    phone: v.whatsapp, // solo se pide WhatsApp
     whatsapp: v.whatsapp,
     country: isCompany ? v.contactCountry : null,
     city: isCompany ? v.city : null,

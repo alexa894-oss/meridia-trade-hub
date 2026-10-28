@@ -156,7 +156,6 @@ async function StepContent({
             contactName: data.contact?.name ?? null,
             contactTitle: data.contact?.title ?? null,
             email: data.contact?.email ?? null,
-            phone: data.contact?.phone ?? null,
             whatsapp: data.contact?.whatsapp ?? null,
             contactCountry: data.contact?.country ?? data.company?.country ?? null,
             city: data.contact?.city ?? null,

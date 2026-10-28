@@ -46,7 +46,7 @@ export function validateDetails(v: Record<DetailsField, string>, allowIndividual
 }
 
 // Paso 2 · Representante y contacto
-export const contactFields = ["contactName", "contactTitle", "email", "phone", "whatsapp", "contactCountry", "city", "authorized"] as const;
+export const contactFields = ["contactName", "contactTitle", "email", "whatsapp", "contactCountry", "city", "authorized"] as const;
 export type ContactField = (typeof contactFields)[number];
 
 export function validateContact(v: Record<ContactField, string>, isCompany: boolean): Errors<ContactField> {
@@ -54,7 +54,6 @@ export function validateContact(v: Record<ContactField, string>, isCompany: bool
     contactName: isCompany ? validateRequired(v.contactName) : undefined,
     contactTitle: isCompany ? validateRequired(v.contactTitle) : undefined,
     email: validateEmail(v.email),
-    phone: validatePhone(v.phone),
     whatsapp: validatePhone(v.whatsapp),
     contactCountry: isCompany ? country(v.contactCountry) : undefined,
     city: isCompany ? validateRequired(v.city) : undefined,

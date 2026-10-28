@@ -126,7 +126,6 @@ export function AccessRequestWizard({
       website: "",
       contactName: "Representante Demo",
       contactTitle: "Gerente de compras",
-      phone: "+507 6000-0000",
       whatsapp: "+507 6000-0000",
       contactCountry: "PA",
       city: "Ciudad de Panamá",
@@ -298,10 +297,7 @@ export function AccessRequestWizard({
               defaultValue={v("email")}
               error={err("email", isCompany ? tf("corporateEmail") : tf("email"))}
             />
-            <div className="grid gap-5 sm:grid-cols-2">
-              <Field name="phone" type="tel" autoComplete="tel" inputMode="tel" label={tf("phone")} hint={t("hints.phone")} defaultValue={v("phone")} error={err("phone", tf("phone"))} />
-              <Field name="whatsapp" type="tel" inputMode="tel" label={tf("whatsapp")} hint={t("hints.whatsapp")} defaultValue={v("whatsapp")} error={err("whatsapp", tf("whatsapp"))} />
-            </div>
+            <Field name="whatsapp" type="tel" autoComplete="tel" inputMode="tel" label={tf("whatsapp")} hint={t("hints.whatsapp")} defaultValue={v("whatsapp")} error={err("whatsapp", tf("whatsapp"))} />
             {isCompany ? (
               <>
                 <div className="grid gap-5 sm:grid-cols-2">

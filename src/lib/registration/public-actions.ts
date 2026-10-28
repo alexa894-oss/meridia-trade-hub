@@ -140,7 +140,8 @@ export async function submitAccessRequest(values: Values, legalKinds: string[]):
       contact_name: values.contactName,
       contact_title: values.contactTitle,
       contact_email: email,
-      phone: values.phone,
+      // Solo se pide WhatsApp; la base de datos exige teléfono, así que se guarda el mismo número.
+      phone: values.whatsapp,
       whatsapp: values.whatsapp,
       contact_country: values.contactCountry,
       city: values.city,
