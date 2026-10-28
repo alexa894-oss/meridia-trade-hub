@@ -52,8 +52,8 @@ async function RequestForm({ searchParams }: { searchParams: PageProps<"/[locale
     <AccessRequestWizard
       countries={countryOptions(locale).map((c) => ({ value: c.code, label: c.name }))}
       sectors={opt(options.sectors)}
+      otherSectorId={options.sectors.find((s) => s.slug === "other")?.id}
       categories={opt(options.categories)}
-      frequencies={opt(options.frequencies)}
       allowIndividual={(settings.data as Record<string, unknown> | null)?.allow_individual_buyers !== false}
       // Botón de datos ficticios: solo en el servidor de desarrollo local.
       demo={process.env.NODE_ENV === "development"}

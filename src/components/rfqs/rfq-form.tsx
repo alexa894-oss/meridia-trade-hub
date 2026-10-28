@@ -17,6 +17,7 @@ export type RfqFormInitial = {
   description: string;
   quantity: string;
   unitId: string;
+  purchaseFrequencyId: string;
   destinationCountry: string;
   technicalSpecs: string;
   deadline: string;
@@ -62,6 +63,7 @@ export function RfqForm({
   initial,
   categories,
   units,
+  frequencies,
   countries,
   canSubmit,
   initialError,
@@ -69,6 +71,7 @@ export function RfqForm({
   initial: RfqFormInitial;
   categories: Option[];
   units: Option[];
+  frequencies: Option[];
   countries: Option[];
   canSubmit: boolean;
   initialError?: string;
@@ -85,7 +88,7 @@ export function RfqForm({
   const [hasFile, setHasFile] = useState(!!initial.referenceFileName);
   const [contactWarnings, setContactWarnings] = useState<Partial<Record<string, string>>>({});
 
-  const fieldKey: Partial<Record<string, string>> = { categoryId: "category", unitId: "unit" };
+  const fieldKey: Partial<Record<string, string>> = { categoryId: "category", unitId: "unit", purchaseFrequencyId: "purchaseFrequency" };
   const label = (name: string) => t(`fields.${fieldKey[name] ?? name}`);
   const err = (name: RfqField) => {
     const code = state.fieldErrors?.[name];
@@ -130,6 +133,15 @@ export function RfqForm({
           <Field name="quantity" inputMode="decimal" label={label("quantity")} defaultValue={val("quantity")} error={err("quantity")} />
           <SelectField name="unitId" label={label("unit")} placeholder={t("choose")} options={units} defaultValue={val("unitId")} error={err("unitId")} />
         </div>
+        <SelectField
+          name="purchaseFrequencyId"
+          label={label("purchaseFrequency")}
+          hint={t("hints.purchaseFrequency")}
+          placeholder={t("choose")}
+          options={frequencies}
+          defaultValue={val("purchaseFrequencyId")}
+          error={err("purchaseFrequencyId")}
+        />
       </fieldset>
 
       <fieldset className="space-y-3">

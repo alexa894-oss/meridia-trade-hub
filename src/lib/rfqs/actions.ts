@@ -17,6 +17,7 @@ export type RfqField =
   | "description"
   | "quantity"
   | "unitId"
+  | "purchaseFrequencyId"
   | "destinationCountry"
   | "technicalSpecs"
   | "deadline"
@@ -55,6 +56,7 @@ export async function saveRfq(_prev: FormState<RfqField>, formData: FormData): P
     description: readString(formData, "description"),
     quantity: readString(formData, "quantity").replace(",", "."),
     unitId: readString(formData, "unitId"),
+    purchaseFrequencyId: readString(formData, "purchaseFrequencyId"),
     destinationCountry: readString(formData, "destinationCountry"),
     technicalSpecs: readString(formData, "technicalSpecs"),
     deadline: readString(formData, "deadline"),
@@ -74,6 +76,7 @@ export async function saveRfq(_prev: FormState<RfqField>, formData: FormData): P
     description: required(v.description),
     quantity: v.quantity ? (Number.isFinite(quantity) && quantity! > 0 ? undefined : "invalidQuantity") : required(v.quantity),
     unitId: required(v.unitId),
+    purchaseFrequencyId: required(v.purchaseFrequencyId),
     destinationCountry: v.destinationCountry ? (isCountryCode(v.destinationCountry) ? undefined : "invalidChoice") : required(v.destinationCountry),
     technicalSpecs: required(v.technicalSpecs),
     deadline: v.deadline ? (v.deadline > today() ? undefined : "deadlineFuture") : required(v.deadline),
@@ -100,6 +103,7 @@ export async function saveRfq(_prev: FormState<RfqField>, formData: FormData): P
     description: v.description || null,
     quantity,
     unit_id: v.unitId || null,
+    purchase_frequency_id: v.purchaseFrequencyId || null,
     destination_country: v.destinationCountry || null,
     technical_specs: v.technicalSpecs || null,
     deadline: v.deadline || null,

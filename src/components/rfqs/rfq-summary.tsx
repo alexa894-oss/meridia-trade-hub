@@ -19,6 +19,10 @@ export async function RfqSummary({ rfq, imageUrl }: { rfq: NonNullable<RfqRecord
           { label: t("fields.product"), value: rfq.product },
           { label: t("fields.category"), value: rfq.categories ? localized(rfq.categories.names as Record<string, string>, locale) : null },
           { label: t("fields.quantity"), value: quantity },
+          {
+            label: t("fields.purchaseFrequency"),
+            value: rfq.purchase_frequencies ? localized(rfq.purchase_frequencies.names as Record<string, string>, locale) : null,
+          },
           { label: t("fields.destinationCountry"), value: rfq.destination_country ? countryName(rfq.destination_country, locale) : null },
           { label: t("fields.deadline"), value: rfq.deadline ? formatDate(`${rfq.deadline}T12:00:00Z`, locale) : null },
           { label: t("fields.incoterms"), value: rfq.incoterms.length ? rfq.incoterms.join(" · ") : null },

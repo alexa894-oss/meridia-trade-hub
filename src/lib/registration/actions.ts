@@ -169,7 +169,6 @@ export async function saveBuyerProfile(_prev: FormState<ProfileField>, formData:
       company_type: isCompany ? (v.companyType as (typeof companyTypes)[number]) : null,
       destination_country: v.destinationCountry,
       purchase_volume: v.purchaseVolume,
-      purchase_frequency_id: v.purchaseFrequencyId || null,
       purchase_purpose: isCompany ? null : v.purchasePurpose,
       project_description: v.needsDescription || null,
       other_products: v.otherProducts || null,

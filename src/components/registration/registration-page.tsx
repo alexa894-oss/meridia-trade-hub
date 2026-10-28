@@ -132,6 +132,7 @@ async function StepContent({
           allowIndividual={data.allowIndividualBuyers}
           countries={countries}
           sectors={options.sectors.map((s) => ({ value: s.id, label: localized(s.names, locale) }))}
+          otherSectorId={options.sectors.find((s) => s.slug === "other")?.id}
           initial={{
             accountType,
             country: data.company?.country ?? null,
@@ -169,13 +170,11 @@ async function StepContent({
           isIndividual={isIndividual}
           countries={countries}
           categories={options.categories.map((c) => ({ value: c.id, label: localized(c.names, locale) }))}
-          frequencies={options.frequencies.map((f) => ({ value: f.id, label: localized(f.names, locale) }))}
           initial={{
             companyType: b?.companyType ?? null,
             categoryIds: data.categoryIds,
             destinationCountry: b?.destinationCountry ?? null,
             purchaseVolume: b?.purchaseVolume ?? null,
-            purchaseFrequencyId: b?.purchaseFrequencyId ?? null,
             purchasePurpose: b?.purchasePurpose ?? null,
             needsDescription: b?.needsDescription ?? null,
             otherProducts: b?.otherProducts ?? null,

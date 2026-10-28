@@ -13,7 +13,6 @@ type Initial = {
   categoryIds: string[];
   destinationCountry: string | null;
   purchaseVolume: string | null;
-  purchaseFrequencyId: string | null;
   purchasePurpose: string | null;
   needsDescription: string | null;
   otherProducts: string | null;
@@ -27,13 +26,11 @@ export function BuyerProfileForm({
   isIndividual,
   categories,
   countries,
-  frequencies,
 }: {
   initial: Initial;
   isIndividual: boolean;
   categories: Option[];
   countries: Option[];
-  frequencies: Option[];
 }) {
   const t = useTranslations("Registration");
   const tf = useTranslations("Registration.fields");
@@ -97,16 +94,6 @@ export function BuyerProfileForm({
         defaultValue={v("purchaseVolume")}
         error={err("purchaseVolume", tf("purchaseVolume"))}
       />
-      {isIndividual ? null : (
-        <SelectField
-          name="purchaseFrequencyId"
-          label={tf("purchaseFrequency")}
-          placeholder={t("choose")}
-          options={frequencies}
-          defaultValue={v("purchaseFrequencyId")}
-          error={err("purchaseFrequencyId", tf("purchaseFrequency"))}
-        />
-      )}
       {isIndividual ? null : (
         <TextareaField
           name="needsDescription"

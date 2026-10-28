@@ -67,7 +67,6 @@ export default async function AccessRequestPage({ params }: PageProps<"/[locale]
                         { label: tf("incorporationCountry"), value: country(company.country) },
                         { label: tf("taxId"), value: b.tax_id },
                         { label: tf("economicActivity"), value: b.economic_activity },
-                        { label: tf("sector"), value: names(company.sectors) },
                         { label: tf("website"), value: b.website },
                       ]
                     : [

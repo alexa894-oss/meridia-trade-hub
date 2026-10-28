@@ -150,7 +150,6 @@ export async function submitAccessRequest(values: Values, legalKinds: string[]):
       category_ids: (values.categoryIds ?? "").split(",").filter(Boolean),
       destination_country: values.destinationCountry,
       purchase_volume: values.purchaseVolume,
-      purchase_frequency_id: values.purchaseFrequencyId,
       purchase_purpose: values.purchasePurpose,
       needs_description: values.needsDescription,
       other_products: values.otherProducts,

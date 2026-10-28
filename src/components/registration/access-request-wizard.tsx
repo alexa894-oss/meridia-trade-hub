@@ -8,6 +8,7 @@ import { CheckboxField, Field, FormAlert, SelectField, TextareaField, useFieldEr
 import { MIN_PASSWORD_LENGTH, type FieldErrorCode } from "@/lib/forms";
 import { submitAccessRequest, validateAccessStep, type PublicStep } from "@/lib/registration/public-actions";
 import { companyTypes, idTypes, REQUEST_BASE } from "@/lib/registration/steps";
+import { ActivityField } from "./activity-field";
 import { CategoryPicker } from "./category-picker";
 
 type Option = { value: string; label: string };
@@ -19,8 +20,8 @@ const legalField = { terms: "acceptTerms", privacy: "acceptPrivacy", non_circumv
 export function AccessRequestWizard({
   countries,
   sectors,
+  otherSectorId,
   categories,
-  frequencies,
   legalDocuments,
   allowIndividual,
   demo = false,
@@ -29,8 +30,8 @@ export function AccessRequestWizard({
 }: {
   countries: Option[];
   sectors: Option[];
+  otherSectorId?: string;
   categories: Option[];
-  frequencies: Option[];
   legalDocuments: LegalDoc[];
   allowIndividual: boolean;
   /** Solo en desarrollo: botón para rellenar con una empresa ficticia. */
@@ -59,6 +60,16 @@ export function AccessRequestWizard({
   const kind = isCompany || !accountType ? "company" : "individual";
   const v = (name: string) => values[name] ?? "";
   const err = (name: string, label: string) => fieldError(errors[name], label);
+  const activity = (
+    <ActivityField
+      sectors={sectors}
+      otherId={otherSectorId}
+      defaultSector={v("sectorId")}
+      defaultActivity={v("economicActivity")}
+      sectorError={err("sectorId", tf("economicActivity"))}
+      activityError={err("economicActivity", tf("economicActivityOther"))}
+    />
+  );
 
   function collect(form: HTMLFormElement) {
     const data = new FormData(form);
@@ -121,8 +132,8 @@ export function AccessRequestWizard({
       tradeName: "Demo Pacífico",
       country: "PA",
       taxId: "RUC 0000-DEMO-01",
-      economicActivity: "Construcción de vivienda y oficinas",
       sectorId: pickBy(sectors, "constru"),
+      economicActivity: sectors.find((s) => s.label.toLowerCase().includes("constru"))?.label ?? "",
       website: "",
       contactName: "Representante Demo",
       contactTitle: "Gerente de compras",
@@ -134,7 +145,6 @@ export function AccessRequestWizard({
       categoryIds: [pickBy(categories, "piso"), pickBy(categories, "puerta")].filter(Boolean).join(","),
       destinationCountry: "PA",
       purchaseVolume: "2 contenedores al año",
-      purchaseFrequencyId: pickBy(frequencies, "trimes"),
       needsDescription: "Pisos y puertas para un edificio de 40 apartamentos.",
     }));
     setFillCount((n) => n + 1);
@@ -253,8 +263,7 @@ export function AccessRequestWizard({
                 <Field name="tradeName" label={tf("tradeName")} defaultValue={v("tradeName")} error={err("tradeName", tf("tradeName"))} />
                 <SelectField name="country" label={tf("incorporationCountry")} placeholder={t("choose")} options={countries} defaultValue={v("country")} error={err("country", tf("incorporationCountry"))} />
                 <Field name="taxId" label={tf("taxId")} hint={t("hints.taxId")} defaultValue={v("taxId")} error={err("taxId", tf("taxId"))} />
-                <Field name="economicActivity" label={tf("economicActivity")} hint={t("hints.economicActivity")} defaultValue={v("economicActivity")} error={err("economicActivity", tf("economicActivity"))} />
-                <SelectField name="sectorId" label={tf("sector")} placeholder={t("choose")} options={sectors} defaultValue={v("sectorId")} error={err("sectorId", tf("sector"))} />
+                {activity}
                 <Field name="website" label={`${tf("website")} · ${t("optional")}`} inputMode="url" placeholder="www.empresa.com" defaultValue={v("website")} error={err("website", tf("website"))} />
               </>
             ) : accountType === "individual" ? (
@@ -272,7 +281,7 @@ export function AccessRequestWizard({
                   />
                   <Field name="idNumber" label={tf("idNumber")} defaultValue={v("idNumber")} error={err("idNumber", tf("idNumber"))} />
                 </div>
-                <Field name="economicActivity" label={tf("economicActivity")} hint={t("hints.economicActivityIndividual")} defaultValue={v("economicActivity")} error={err("economicActivity", tf("economicActivity"))} />
+                {activity}
               </>
             ) : null}
           </>
@@ -340,10 +349,7 @@ export function AccessRequestWizard({
             <SelectField name="destinationCountry" label={tf("destinationCountry")} placeholder={t("choose")} options={countries} defaultValue={v("destinationCountry")} error={err("destinationCountry", tf("destinationCountry"))} />
             <Field name="purchaseVolume" label={tf("purchaseVolume")} hint={t("hints.purchaseVolume")} defaultValue={v("purchaseVolume")} error={err("purchaseVolume", tf("purchaseVolume"))} />
             {isCompany ? (
-              <>
-                <SelectField name="purchaseFrequencyId" label={tf("purchaseFrequency")} placeholder={t("choose")} options={frequencies} defaultValue={v("purchaseFrequencyId")} error={err("purchaseFrequencyId", tf("purchaseFrequency"))} />
-                <TextareaField name="needsDescription" label={`${tf("needsDescription")} · ${t("optional")}`} defaultValue={v("needsDescription")} />
-              </>
+              <TextareaField name="needsDescription" label={`${tf("needsDescription")} · ${t("optional")}`} defaultValue={v("needsDescription")} />
             ) : null}
           </>
         ) : null}

@@ -10,6 +10,7 @@ export async function rfqFormOptions(locale: string) {
   return {
     categories: options.categories.map((c) => ({ value: c.id, label: localized(c.names, locale) })),
     units: options.units.map((u) => ({ value: u.id, label: localized(u.names, locale) })),
+    frequencies: options.frequencies.map((f) => ({ value: f.id, label: localized(f.names, locale) })),
     countries: countryOptions(locale).map((c) => ({ value: c.code, label: c.name })),
   };
 }
@@ -22,6 +23,7 @@ export function rfqToInitial(rfq: NonNullable<RfqRecord> | null, defaultCountry:
     description: rfq?.description ?? "",
     quantity: rfq?.quantity !== null && rfq?.quantity !== undefined ? String(rfq.quantity) : "",
     unitId: rfq?.unit_id ?? "",
+    purchaseFrequencyId: rfq?.purchase_frequency_id ?? "",
     destinationCountry: rfq?.destination_country ?? defaultCountry ?? "",
     technicalSpecs: rfq?.technical_specs ?? "",
     deadline: rfq?.deadline ?? "",

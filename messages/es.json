@@ -166,7 +166,7 @@
       "country": "País",
       "legalName": "Razón social / nombre legal",
       "taxId": "Identificación fiscal",
-      "sector": "Sector o industria",
+      "sector": "Actividad económica",
       "website": "Página web",
       "fullName": "Nombre completo",
       "projectDescription": "Descripción del proyecto",
@@ -208,7 +208,8 @@
       "commercialRegistration": "Registro comercial o equivalente",
       "representationDocument": "Documento que acredite la representación",
       "otherProducts": "Otro producto",
-      "interestCategoriesOrOther": "Categorías de productos de interés u Otro producto"
+      "interestCategoriesOrOther": "Categorías de productos de interés u Otro producto",
+      "economicActivityOther": "¿Cuál es tu actividad?"
     },
     "hints": {
       "taxId": "RUC, NIT, RFC, VAT o la identificación fiscal que corresponda en tu país.",
@@ -563,7 +564,7 @@
       "keepDraft": "Mantener como borrador (se muestra el aviso de borrador)",
       "publishVersion": "Guardar como nueva versión",
       "legalSaved": "Nueva versión guardada.",
-      "sectors": "Sectores de compradores",
+      "sectors": "Actividades económicas de compradores",
       "categories": "Categorías de fábricas",
       "optionName": "Nombre",
       "newOption": "Nueva opción",
@@ -587,7 +588,7 @@
       "buyer": "Comprador",
       "buyerName": "Empresa",
       "country": "País",
-      "sector": "Sector",
+      "sector": "Actividad económica",
       "companyStatus": "Estado de la empresa",
       "assignment": "Asignación de fábricas",
       "actions": "Otras acciones",
@@ -671,7 +672,7 @@
         "name": "Empresa o persona",
         "type": "Tipo",
         "country": "País",
-        "sector": "Sector",
+        "sector": "Actividad económica",
         "date": "Fecha de solicitud",
         "status": "Estado",
         "action": "Acción"
@@ -884,7 +885,8 @@
       "acceptsAlternatives": "Acepta alternativas similares",
       "needsSample": "Necesita muestra",
       "acceptsAlternativesLong": "Acepto alternativas similares a lo que pido",
-      "needsSampleLong": "Necesito muestra"
+      "needsSampleLong": "Necesito muestra",
+      "purchaseFrequency": "Frecuencia de compra"
     },
     "sections": {
       "product": "Producto",
@@ -899,7 +901,8 @@
       "incoterms": "Elige al menos uno. La fábrica dará un precio por cada término.",
       "portIfCif": "obligatorio si eliges CIF",
       "deadline": "Fecha hasta la que esperas cotizaciones.",
-      "noContact": "No incluyas teléfonos, correos ni WeChat: toda la comunicación ocurre dentro de Meridia."
+      "noContact": "No incluyas teléfonos, correos ni WeChat: toda la comunicación ocurre dentro de Meridia.",
+      "purchaseFrequency": "¿Es una compra de una sola vez o se repetirá? Ayuda al fabricante a preparar la cotización."
     },
     "form": {
       "submit": "Enviar a Meridia",
@@ -954,7 +957,7 @@
       "assignedOn": "Asignada el {date}",
       "buyer": "Comprador",
       "buyerName": "Nombre",
-      "sector": "Sector",
+      "sector": "Actividad económica",
       "country": "País",
       "verified": "Empresa",
       "verifiedYes": "Verificada por Meridia",

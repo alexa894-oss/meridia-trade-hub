@@ -6,7 +6,7 @@ import { type RfqStatus } from "./constants";
 export * from "./constants";
 
 const RFQ_FIELDS =
-  "id, number, status, product, description, quantity, technical_specs, deadline, destination_country, destination_port, reference_image_path, reference_url, accepts_alternatives, needs_sample, incoterms, shipping_modes, category_id, unit_id, created_at, submitted_at, buyer_company_id, categories(names), units(names)";
+  "id, number, status, product, description, quantity, technical_specs, deadline, destination_country, destination_port, reference_image_path, reference_url, accepts_alternatives, needs_sample, incoterms, shipping_modes, category_id, unit_id, purchase_frequency_id, created_at, submitted_at, buyer_company_id, categories(names), units(names), purchase_frequencies(names)";
 
 export type RfqRecord = Awaited<ReturnType<typeof fetchRfq>>;
 
@@ -40,13 +40,15 @@ async function latestNote(id: string) {
 
 export async function loadRfqOptions() {
   const supabase = await createClient();
-  const [categories, units] = await Promise.all([
+  const [categories, units, frequencies] = await Promise.all([
     supabase.from("categories").select("id, names").order("sort_order"),
     supabase.from("units").select("id, names").order("sort_order"),
+    supabase.from("purchase_frequencies").select("id, names").eq("active", true).order("sort_order"),
   ]);
   return {
     categories: (categories.data ?? []).map((c) => ({ id: c.id, names: c.names as Record<string, string> })),
     units: (units.data ?? []).map((u) => ({ id: u.id, names: u.names as Record<string, string> })),
+    frequencies: (frequencies.data ?? []).map((f) => ({ id: f.id, names: f.names as Record<string, string> })),
   };
 }
 

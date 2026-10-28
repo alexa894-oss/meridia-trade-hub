@@ -8,7 +8,7 @@ test("solicitar acceso: no avanza sin los obligatorios y cada error nombra su ca
   await expect(page.getByText("Completa el campo «¿Cómo deseas registrarte?».")).toBeVisible();
   await page.getByText("Empresa / Persona jurídica").click();
   await page.getByRole("button", { name: "Continuar" }).click();
-  for (const field of ["Razón social / nombre legal", "Nombre comercial", "País de constitución", "Identificación fiscal", "Actividad económica", "Sector o industria"]) {
+  for (const field of ["Razón social / nombre legal", "Nombre comercial", "País de constitución", "Identificación fiscal", "Actividad económica"]) {
     await expect(page.getByText(`Completa el campo «${field}».`)).toBeVisible();
   }
   await expect(page.getByRole("heading", { name: "Información empresarial" })).toBeVisible();
@@ -31,7 +31,7 @@ test("solicitud: al enviar sin datos se nombran los campos que faltan", async ({
   await login(page, accounts.buyerAndina, "/comprador/solicitudes/nueva");
   await page.getByLabel("Producto").first().fill("Prueba de campos obligatorios");
   await page.getByRole("button", { name: "Enviar a Meridia" }).click();
-  for (const field of ["Categoría", "Descripción", "Especificaciones técnicas", "Cantidad", "Unidad", "Fecha límite"]) {
+  for (const field of ["Categoría", "Descripción", "Especificaciones técnicas", "Cantidad", "Unidad", "Frecuencia de compra", "Fecha límite"]) {
     await expect(page.getByText(`Completa el campo «${field}».`)).toBeVisible();
   }
   await expect(page.getByText("Elige al menos una opción en «Términos de cotización».")).toBeVisible();

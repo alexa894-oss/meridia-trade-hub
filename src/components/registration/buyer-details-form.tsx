@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Field, FormAlert, SelectField, SubmitButton, useFieldError } from "@/components/forms";
+import { ActivityField } from "./activity-field";
 import { initialFormState } from "@/lib/forms";
 import { saveBuyerDetails } from "@/lib/registration/actions";
 import { idTypes } from "@/lib/registration/steps";
@@ -26,11 +27,13 @@ export function BuyerDetailsForm({
   initial,
   countries,
   sectors,
+  otherSectorId,
   allowIndividual,
 }: {
   initial: Initial;
   countries: { value: string; label: string }[];
   sectors: { value: string; label: string }[];
+  otherSectorId?: string;
   allowIndividual: boolean;
 }) {
   const t = useTranslations("Registration");
@@ -40,6 +43,16 @@ export function BuyerDetailsForm({
   const v = { ...initial, ...state.values } as Record<string, string | null | undefined>;
   const [accountType, setAccountType] = useState<string>(v.accountType ?? (allowIndividual ? "" : "company"));
   const err = (name: keyof Initial, label: string) => fieldError(state.fieldErrors?.[name], label);
+  const activity = (
+    <ActivityField
+      sectors={sectors}
+      otherId={otherSectorId}
+      defaultSector={v.sectorId ?? ""}
+      defaultActivity={v.economicActivity ?? ""}
+      sectorError={err("sectorId", tf("economicActivity"))}
+      activityError={err("economicActivity", tf("economicActivityOther"))}
+    />
+  );
 
   const types = allowIndividual ? (["company", "individual"] as const) : (["company"] as const);
   const typeError = err("accountType", t("accountTypeQuestion"));
@@ -98,21 +111,7 @@ export function BuyerDetailsForm({
             error={err("country", tf("incorporationCountry"))}
           />
           <Field name="taxId" label={tf("taxId")} hint={t("hints.taxId")} defaultValue={v.taxId ?? ""} error={err("taxId", tf("taxId"))} />
-          <Field
-            name="economicActivity"
-            label={tf("economicActivity")}
-            hint={t("hints.economicActivity")}
-            defaultValue={v.economicActivity ?? ""}
-            error={err("economicActivity", tf("economicActivity"))}
-          />
-          <SelectField
-            name="sectorId"
-            label={tf("sector")}
-            placeholder={t("choose")}
-            options={sectors}
-            defaultValue={v.sectorId ?? ""}
-            error={err("sectorId", tf("sector"))}
-          />
+          {activity}
           <Field
             name="website"
             label={`${tf("website")} · ${t("optional")}`}
@@ -144,13 +143,7 @@ export function BuyerDetailsForm({
             />
             <Field name="idNumber" label={tf("idNumber")} defaultValue={v.idNumber ?? ""} error={err("idNumber", tf("idNumber"))} />
           </div>
-          <Field
-            name="economicActivity"
-            label={tf("economicActivity")}
-            hint={t("hints.economicActivityIndividual")}
-            defaultValue={v.economicActivity ?? ""}
-            error={err("economicActivity", tf("economicActivity"))}
-          />
+          {activity}
         </>
       ) : null}
 

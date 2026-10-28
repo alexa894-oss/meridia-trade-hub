@@ -165,7 +165,7 @@ export async function loadRegistration(profile: CurrentProfile): Promise<Registr
 export async function loadOptions() {
   const supabase = await createClient();
   const [sectors, categories, frequencies] = await Promise.all([
-    supabase.from("sectors").select("id, slug, names").order("sort_order"),
+    supabase.from("sectors").select("id, slug, names").eq("active", true).order("sort_order"),
     supabase.from("categories").select("id, slug, names").order("sort_order"),
     supabase.from("purchase_frequencies").select("id, slug, names").order("sort_order"),
   ]);

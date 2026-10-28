@@ -1,4 +1,3 @@
-// Generado desde Supabase (npx supabase gen types typescript --linked). No editar a mano.
 export type Json =
   | string
   | number
@@ -1357,6 +1356,7 @@ export type Database = {
           needs_sample: boolean
           number: number
           product: string | null
+          purchase_frequency_id: string | null
           quantity: number | null
           reference_image_path: string | null
           reference_url: string | null
@@ -1382,6 +1382,7 @@ export type Database = {
           needs_sample?: boolean
           number?: never
           product?: string | null
+          purchase_frequency_id?: string | null
           quantity?: number | null
           reference_image_path?: string | null
           reference_url?: string | null
@@ -1407,6 +1408,7 @@ export type Database = {
           needs_sample?: boolean
           number?: never
           product?: string | null
+          purchase_frequency_id?: string | null
           quantity?: number | null
           reference_image_path?: string | null
           reference_url?: string | null
@@ -1430,6 +1432,13 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rfqs_purchase_frequency_id_fkey"
+            columns: ["purchase_frequency_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_frequencies"
             referencedColumns: ["id"]
           },
           {

@@ -18,6 +18,7 @@ test("solicitud de punta a punta hasta la orden", async ({ page }) => {
   await page.getByLabel("Especificaciones técnicas").fill("Aluminio serie 80, vidrio laminado 6 mm, color negro.");
   await page.getByLabel("Cantidad").fill("200");
   await page.getByLabel("Unidad").selectOption({ label: "Unidades" });
+  await page.getByLabel("Frecuencia de compra").selectOption({ label: "Una sola vez" });
   await page.getByLabel("Enlace de referencia").fill("https://example.com/ventana");
   await page.getByLabel("Fecha límite").fill(inDays(30));
   await page.getByText("FOB", { exact: true }).click();
